@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>履歴 — 学歴・職歴／論文・口頭発表・活動/研究費</title>
+
+<style>
+:root{
+  --brand:#e60033;--ink:#222;--muted:#666;
+  --line:#e8e8e8;--bg:#f6f7f8;--card:#fff;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:14px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
+}
+
+a{color:inherit;text-decoration:none}
+
+.container{max-width:1200px;margin:0 auto;padding:0 14px}
+
+/* ヘッダー */
+header.site{
+  position:sticky;
+  top:0;
+  z-index:60;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  color:var(--brand);
+  white-space:nowrap;
+}
+.logo-mark{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#ff4a6e,var(--brand));
+}
+.actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.btn{
+  height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* 検索 */
+.search-row{
+  margin:14px 0 10px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.search-row input{
+  flex:1;height:38px;min-width:220px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  padding:0 14px;
+}
+.search-row button{
+  height:38px;border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;padding:0 14px;
+  cursor:pointer;
+}
+.btn-search{
+  background:var(--brand)!important;
+  border-color:var(--brand)!important;
+  color:#fff;
+}
+
+/* セクション */
+main.container{margin:16px auto 24px}
+section+section{margin-top:26px}
+h2{
+  margin:0 0 8px;
+  font-size:1.05rem;
+  font-weight:900;
+}
+
+/* テーブル */
+.table-wrap{
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+
+table.list{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.86rem;
+}
+
+table.list th,
+table.list td{
+  padding:6px 10px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+
+table.list th{
+  background:#fafafa;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+table.list tbody tr:hover{
+  background:#fff8fb;
+}
+
+td.col-date{width:130px;white-space:nowrap}
+td.col-role{width:100px;white-space:nowrap}
+td.col-venue{width:100px}
+td.col-loc{width:150px}
+td.col-title{width:360px}
+
+.preserve-break{
+  white-space:pre-line;
+  word-break:break-word;
+}
+
+.empty-cell{
+  padding:12px;color:var(--muted)
+}
+
+.link-title{text-decoration:underline}
+
+/* footer */
+footer{
+  margin-top:30px;background:#fff;
+  border-top:1px solid var(--line);
+}
+.footer-links{
+  padding:12px 0;
+  display:flex;gap:10px;flex-wrap:wrap;
+}
+.sep{color:#bbb}
+.copyright{
+  border-top:1px solid var(--line);
+  padding:12px 0;
+  font-size:.85rem;color:#777;
+}
+
+@media (max-width:768px){
+  td.col-venue, td.col-loc { display:none; }
+  .header-inner{flex-wrap:wrap}
+}
+
+.btn.disabled{
+  background:#d9d9d9;
+  border-color:#d9d9d9;
+  color:#777;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<header class="site">
+<div class="container header-inner">
+
+<a class="logo" href="index.html">
+<span class="logo-mark"></span>
+<span>長峰実央</span>
+</a>
+
+<div class="actions">
+<a class="btn primary" href="history.html">履歴</a>
+<a class="btn" href="units.html">取得単位</a>
+<a class="btn" href="lecture.html">講義情報</a>
+<a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
+<a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
+<a class="btn" href="links.html">リンク集</a>
+</div>
+
+</div>
+</header>
+
+<main class="container">
+
+<div class="search-row">
+  <input id="q" placeholder="検索（学歴・職歴・論文・発表・学術活動・その他活動・受賞・研究費・役割）">
+  <button class="btn-search" onclick="doSearch()">検索</button>
+  <button onclick="clearSearch()">クリア</button>
+</div>
+
+<section>
+  <h2>学歴</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th class="col-date">期間</th>
+          <th>学校</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-edu"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>職歴</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th class="col-date">期間</th>
+          <th>職歴</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-car"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>論文</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th style="width:70px">No.</th>
+          <th class="col-date">日付</th>
+          <th>タイトル</th>
+          <th class="col-venue">掲載誌</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-papers"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>口頭発表</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th style="width:70px">No.</th>
+          <th class="col-date">日付</th>
+          <th>タイトル</th>
+          <th class="col-venue">会議</th>
+          <th class="col-loc">場所</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-talks"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>学術活動</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th style="width:70px">No.</th>
+          <th class="col-date">期間</th>
+          <th class="col-title">タイトル</th>
+          <th class="col-role">役割</th>
+          <th class="col-venue">主催</th>
+          <th class="col-loc">場所</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-academic"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>その他活動</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th style="width:70px">No.</th>
+          <th class="col-date">日付</th>
+          <th class="col-title">タイトル</th>
+          <th class="col-role">役割</th>
+          <th class="col-venue">主催</th>
+          <th class="col-loc">場所</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-other"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>受賞・認定</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th style="width:70px">No.</th>
+          <th class="col-date">日付</th>
+          <th>賞名</th>
+          <th class="col-venue">授与元</th>
+          <th class="col-loc">場所</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-awards"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>研究費</h2>
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th class="col-date">期間</th>
+          <th>研究課題</th>
+          <th class="col-venue">採択元</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-grant"></tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container footer-links" id="footer-links"></div>
+  <div class="container copyright">
+    © 2025 Mao Nagamine
+  </div>
+</footer>
+
+<script>
+/* ==============================
+ Google Sheets CMS
+============================== */
+
+const SPREADSHEET_ID = "1uV2Rdpa86KHv92NxBBcDZY1UI0V8dScUHtMbWanX2ks";
+const SHEET_NAME = "history";
+const SHEET_URL = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${encodeURIComponent(SHEET_NAME)}`;
+
+let DATA = [];
+
+async function load(){
+  if(DATA.length) return DATA;
+  const res = await fetch(SHEET_URL);
+  if(!res.ok) throw new Error("履歴シートの取得に失敗しました");
+  DATA = await res.json();
+  return DATA;
+}
+
+/* ==============================
+ 検索
+============================== */
+function doSearch(){
+  const q = document.getElementById("q").value.toLowerCase().trim();
+  sessionStorage.setItem("hist_q", q);
+  render();
+}
+
+function clearSearch(){
+  sessionStorage.removeItem("hist_q");
+  document.getElementById("q").value = "";
+  render();
+}
+
+function filter(list){
+  const q = (sessionStorage.getItem("hist_q") || "").trim();
+  if(!q) return list;
+  return list.filter(x =>
+    JSON.stringify(x).toLowerCase().includes(q)
+  );
+}
+
+/* ==============================
+ 行生成
+============================== */
+function rowEdu(x){
+  const period = x.end ? `${x.start || ""}〜${x.end}` : `${x.start || ""}〜現在`;
+  return `
+  <tr>
+    <td class="col-date">${x.start || x.end ? period : (x.date || "")}</td>
+    <td>${x.school || x.title || ""}</td>
+  </tr>`;
+}
+
+function rowCar(x){
+  const period = x.end ? `${x.start || ""}〜${x.end}` : `${x.start || ""}〜現在`;
+  return `
+  <tr>
+    <td class="col-date">${x.start || x.end ? period : (x.date || "")}</td>
+    <td>${x.title || ""}</td>
+  </tr>`;
+}
+
+function rowPaper(x,n){
+  const href = (x.url || "").trim() || (x.id ? `item_detail.html?id=${encodeURIComponent(x.id)}` : "#");
+  const title = x.title || "";
+  const isExternal = (x.url || "").trim();
+
+  return `
+  <tr>
+    <td>${n}</td>
+    <td class="col-date">${x.date || ""}</td>
+    <td>${
+      href !== "#"
+        ? `<a class="link-title" href="${href}" ${isExternal ? 'target="_blank" rel="noopener"' : ''}>${title}</a>`
+        : title
+    }</td>
+    <td>${x.venue || ""}</td>
+  </tr>`;
+}
+
+function rowTalk(x,n){
+  const href = (x.url || "").trim() || (x.id ? `item_detail.html?id=${encodeURIComponent(x.id)}` : "#");
+  const title = x.title || "";
+  const isExternal = (x.url || "").trim();
+
+  return `
+  <tr>
+    <td>${n}</td>
+    <td class="col-date">${x.date || ""}</td>
+    <td>${
+      href !== "#"
+        ? `<a class="link-title" href="${href}" ${isExternal ? 'target="_blank" rel="noopener"' : ''}>${title}</a>`
+        : title
+    }</td>
+    <td>${x.venue || ""}</td>
+    <td>${x.loc || ""}</td>
+  </tr>`;
+}
+
+function rowActivity(x,n){
+  const href = (x.url || "").trim();
+  const title = x.title || "";
+  const role = x.role || "";
+
+  return `
+  <tr>
+    <td>${n}</td>
+    <td class="col-date">${x.date || ""}</td>
+    <td class="col-title preserve-break">${href ? `<a class="link-title preserve-break" href="${href}" target="_blank" rel="noopener">${title}</a>` : title}</td>
+    <td class="col-role preserve-break">${role}</td>
+    <td class="col-venue preserve-break">${x.venue || ""}</td>
+    <td class="col-loc preserve-break">${x.loc || ""}</td>
+  </tr>`;
+}
+
+function rowAcademic(x,n){
+  const href = (x.url || "").trim();
+  const title = x.title || "";
+  const role = x.role || "";
+  const period = (x.start || x.end)
+    ? `${x.start || ""}〜${x.end || "現在"}`
+    : (x.date || "");
+
+  return `
+  <tr>
+    <td>${n}</td>
+    <td class="col-date">${period}</td>
+    <td class="col-title preserve-break">${href ? `<a class="link-title preserve-break" href="${href}" target="_blank" rel="noopener">${title}</a>` : title}</td>
+    <td class="col-role preserve-break">${role}</td>
+    <td class="col-venue preserve-break">${x.venue || ""}</td>
+    <td class="col-loc preserve-break">${x.loc || ""}</td>
+  </tr>`;
+}
+
+function rowAward(x,n){
+  const href = (x.url || "").trim();
+  return `
+  <tr>
+    <td>${n}</td>
+    <td class="col-date">${x.date || ""}</td>
+    <td>${href ? `<a class="link-title" href="${href}" target="_blank" rel="noopener">${x.title || ""}</a>` : (x.title || "")}</td>
+    <td>${x.venue || ""}</td>
+    <td>${x.loc || ""}</td>
+  </tr>`;
+}
+
+function rowGrant(x){
+  const period = x.end ? `${x.start || ""}〜${x.end}` : `${x.start || ""}〜現在`;
+  return `
+  <tr>
+    <td class="col-date">${x.start || x.end ? period : (x.date || "")}</td>
+    <td>${x.title || ""}</td>
+    <td>${x.venue || ""}</td>
+  </tr>`;
+}
+
+/* ==============================
+ 描画
+============================== */
+async function render(){
+  try{
+    const arr = filter(await load());
+
+    const edu = arr.filter(x => x.type === "education");
+    const car = arr.filter(x => x.type === "career");
+    const papers = arr.filter(x => x.type === "paper");
+    const talks = arr.filter(x => x.type === "talk");
+
+    // 学術活動
+    const academic = arr.filter(x => x.type === "academic");
+
+    // その他活動
+    // 互換性のため old type も拾えるようにしておく
+    const other = arr.filter(x =>
+      x.type === "other" ||
+      x.type === "activity_other" ||
+      x.type === "activity"
+    );
+
+    const awards = arr.filter(x => x.type === "award");
+    const grant = arr.filter(x => x.type === "grant");
+
+    document.getElementById("tbody-edu").innerHTML =
+      edu.map(rowEdu).join("") || `<tr><td colspan="2" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-car").innerHTML =
+      car.map(rowCar).join("") || `<tr><td colspan="2" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-papers").innerHTML =
+      papers.map((x,i)=>rowPaper(x, i+1)).join("") || `<tr><td colspan="4" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-talks").innerHTML =
+      talks.map((x,i)=>rowTalk(x, i+1)).join("") || `<tr><td colspan="5" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-academic").innerHTML =
+      academic.map((x,i)=>rowAcademic(x, i+1)).join("") || `<tr><td colspan="6" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-other").innerHTML =
+      other.map((x,i)=>rowActivity(x, i+1)).join("") || `<tr><td colspan="6" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-awards").innerHTML =
+      awards.map((x,i)=>rowAward(x, i+1)).join("") || `<tr><td colspan="5" class="empty-cell">未登録</td></tr>`;
+
+    document.getElementById("tbody-grant").innerHTML =
+      grant.map(rowGrant).join("") || `<tr><td colspan="3" class="empty-cell">未登録</td></tr>`;
+  }catch(e){
+    const msg2 = `<tr><td colspan="2" class="empty-cell">データの読み込みに失敗しました</td></tr>`;
+    const msg3 = `<tr><td colspan="3" class="empty-cell">データの読み込みに失敗しました</td></tr>`;
+    const msg4 = `<tr><td colspan="4" class="empty-cell">データの読み込みに失敗しました</td></tr>`;
+    const msg5 = `<tr><td colspan="5" class="empty-cell">データの読み込みに失敗しました</td></tr>`;
+    const msg6 = `<tr><td colspan="6" class="empty-cell">データの読み込みに失敗しました</td></tr>`;
+
+    document.getElementById("tbody-edu").innerHTML = msg2;
+    document.getElementById("tbody-car").innerHTML = msg2;
+    document.getElementById("tbody-papers").innerHTML = msg4;
+    document.getElementById("tbody-talks").innerHTML = msg5;
+    document.getElementById("tbody-academic").innerHTML = msg6;
+    document.getElementById("tbody-other").innerHTML = msg6;
+    document.getElementById("tbody-awards").innerHTML = msg5;
+    document.getElementById("tbody-grant").innerHTML = msg3;
+    console.error(e);
+  }
+}
+
+/* ==============================
+ footer
+============================== */
+const FOOTER_LINKS = [
+  {label:'ホーム',href:'index.html'},
+  {label:'履歴',href:'history.html'},
+  {label:'取得単位',href:'units.html'},
+  {label:'リンク集',href:'links.html'}
+];
+
+function renderFooter(){
+  const box = document.getElementById("footer-links");
+  box.innerHTML = FOOTER_LINKS.map((x,i)=>`
+    <a href="${x.href}">${x.label}</a>
+    ${i<FOOTER_LINKS.length-1?'<span class="sep">/</span>':''}
+  `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  const saved = sessionStorage.getItem("hist_q") || "";
+  document.getElementById("q").value = saved;
+  renderFooter();
+  render();
+});
+</script>
+
+</body>
+</html>

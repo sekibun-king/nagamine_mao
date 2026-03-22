@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>リンク集</title>
+<style>
+:root{
+  --brand:#e60033;
+  --brand-d:#cc002d;
+  --ink:#222;
+  --muted:#666;
+  --line:#e8e8e8;
+  --bg:#f6f7f8;
+  --card:#fff;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:14px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%;height:auto}
+.container{max-width:1200px;margin:0 auto;padding:0 14px}
+
+/* header */
+header.site{
+  position:sticky;top:0;z-index:60;
+  background:#fff;border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+}
+
+.thumb{
+  position:relative;
+  aspect-ratio:16/9;
+  background:#fff;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+
+.thumb img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+}
+
+.thumb::after{
+  content:none;
+}
+
+.actions{
+  display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;
+}
+.btn{
+  height:34px;padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;background:#fff;
+  cursor:pointer;color:#222;
+  text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn:hover{border-color:#d8d8d8}
+.btn.sm{height:28px;padding:0 10px;font-size:.88rem}
+
+/* main */
+main.container{margin:18px auto 26px}
+.page-head{
+  display:flex;justify-content:space-between;align-items:end;
+  gap:12px;flex-wrap:wrap;margin-bottom:10px;
+}
+.h2{
+  font-weight:900;
+  font-size:1.35rem;
+  margin:0;
+}
+.page-note{
+  color:var(--muted);
+  font-size:.92rem;
+  margin-top:2px;
+}
+
+/* toolbar */
+.tools{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  margin:10px 0 12px;
+}
+.search{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin:0 0 12px;
+}
+.search input{
+  flex:1;min-width:260px;height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;padding:0 14px;
+  background:#fff;
+}
+.search .btn{height:42px;border-radius:999px}
+.search .btn-search{
+  background:var(--brand);border-color:var(--brand);color:#fff;
+}
+
+/* category chips */
+.chips{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin:0 0 14px;
+}
+.chip{
+  border:1px solid var(--line);
+  background:#fff;
+  color:#444;
+  border-radius:999px;
+  padding:7px 12px;
+  cursor:pointer;
+  font-size:.88rem;
+}
+.chip.active{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+
+/* states */
+.empty{
+  color:#777;
+  border:1px dashed var(--line);
+  background:#fff;
+  padding:14px;
+  border-radius:10px;
+}
+.loading{
+  color:#666;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+}
+.error{
+  color:#a40018;
+  background:#fff5f7;
+  border:1px solid #f2c9d3;
+  border-radius:10px;
+  padding:14px;
+}
+
+/* stats */
+.meta-row{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;flex-wrap:wrap;
+  margin:0 0 12px;
+}
+.count{
+  color:#666;font-size:.92rem;
+}
+
+/* grid cards */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:14px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:#ddd;
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+.thumb{
+  position:relative;
+  aspect-ratio:16/9;
+  background:#f0f0f0;
+  overflow:hidden;
+}
+.thumb img{
+  width:100%;height:100%;object-fit:cover;
+}
+.thumb::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.14), rgba(0,0,0,0) 45%);
+  pointer-events:none;
+}
+.pin-badge{
+  position:absolute;top:10px;left:10px;z-index:1;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 9px;border-radius:999px;
+  background:rgba(255,255,255,.94);
+  color:#8a5a00;border:1px solid #f0cf7a;
+  font-size:.76rem;font-weight:700;
+}
+.category-badge{
+  position:absolute;right:10px;bottom:10px;z-index:1;
+  padding:4px 9px;border-radius:999px;
+  background:rgba(255,255,255,.94);
+  color:#444;border:1px solid rgba(0,0,0,.08);
+  font-size:.76rem;font-weight:700;
+  max-width:75%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.card-body{
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+}
+.card-title{
+  font-weight:900;
+  line-height:1.4;
+  font-size:1rem;
+}
+.card-desc{
+  color:#555;
+  font-size:.92rem;
+  line-height:1.7;
+  white-space:pre-wrap;
+}
+.tags{
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.tag{
+  display:inline-block;
+  font-size:.8rem;
+  padding:3px 8px;
+  border:1px solid #e1e1e1;
+  border-radius:999px;
+  background:#fff;color:#555;
+}
+.card-actions{
+  display:flex;gap:8px;align-items:center;
+  margin-top:auto;
+  padding-top:2px;
+}
+.open-link{
+  flex:1;
+  height:36px;
+  border-radius:8px;
+  background:var(--brand);
+  color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:700;
+}
+.open-link:hover{background:var(--brand-d)}
+.url-label{
+  color:#888;
+  font-size:.78rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* footer */
+footer{
+  margin-top:28px;background:#fff;border-top:1px solid var(--line);
+}
+.footer-links{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0;
+}
+.footer-links a{
+  color:#444;text-decoration:none;padding:4px 6px;border-radius:8px;
+}
+.footer-links a:hover{
+  background:rgba(0,0,0,.05);
+}
+.sep{color:#bbb}
+.copyright{
+  border-top:1px solid var(--line);
+  color:#777;padding:12px 0;font-size:.88rem;
+}
+
+.btn.disabled{
+  background:#d9d9d9;
+  border-color:#d9d9d9;
+  color:#777;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+header.site{
+  position:sticky;
+  top:0;
+  z-index:60;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  color:var(--brand);
+  white-space:nowrap;
+}
+.logo-mark{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#ff4a6e,var(--brand));
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-left:auto;
+}
+.btn{
+  height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  color:#222;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+}
+.btn.primary{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+
+
+.thumb{
+  display:none !important;
+}
+
+.card-body{
+  padding:14px 12px;
+}
+
+@media (max-width:800px){
+  .header-inner{flex-wrap:wrap}
+  .actions{margin-left:0}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:1fr}
+  .search input{min-width:100%}
+}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="container header-inner">
+<a class="logo" href="index.html">
+<span class="logo-mark"></span>
+<span>長峰実央</span>
+</a>
+    <div class="actions">
+      <a class="btn" href="history.html">履歴</a>
+      <a class="btn" href="units.html">取得単位</a>
+      <a class="btn" href="lecture.html">講義情報</a>
+      <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
+      <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
+      <a class="btn primary" href="links.html">リンク集</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div>
+      <h1 class="h2">リンク集</h1>
+      <div class="page-note">researchmap・SNS・所属先・資料ページなどをまとめています。</div>
+    </div>
+  </div>
+
+  <form class="search" onsubmit="event.preventDefault(); applyFilters()">
+    <input id="q" placeholder="検索（タイトル／説明／URL／タグ）" aria-label="検索">
+    <button type="submit" class="btn btn-search">検索</button>
+    <button type="button" class="btn" onclick="clearFilters()">クリア</button>
+  </form>
+
+  <div id="chips" class="chips"></div>
+
+  <div class="meta-row">
+    <div id="count" class="count">読み込み中…</div>
+  </div>
+
+  <div id="state" class="loading">リンクを読み込んでいます…</div>
+  <div id="list" class="grid" hidden></div>
+</main>
+
+<footer>
+  <div class="container footer-links" id="footer-links"></div>
+  <div class="container copyright">© 2025 Mao Nagamine</div>
+</footer>
+
+<script>
+/* ===== フッター ===== */
+const FOOTER_LINKS = [
+  {label:'ホーム',href:'index.html'},
+  {label:'履歴',href:'history.html'},
+  {label:'取得単位',href:'units.html'},
+  {label:'講義情報',href:'lecture.html'},
+  {label:'リンク集',href:'links.html'},
+  {label:'お問い合わせ',href:'mailto:nagamine.mao.d9@elms.hokudai.ac.jp'}
+];
+function renderFooter(){
+  const nav = document.getElementById('footer-links');
+  nav.innerHTML = FOOTER_LINKS.map((x,i)=>`
+    <a href="${x.href}">${x.label}</a>
+    ${i<FOOTER_LINKS.length-1 ? '<span class="sep">/</span>' : ''}
+  `).join('');
+}
+document.addEventListener('DOMContentLoaded', renderFooter);
+
+/* ===== 設定 =====
+   既存で loadSheet("links") が使えるならそのまま利用。
+   ない場合だけ下の FALLBACK_CSV_URL を使う。
+*/
+const FALLBACK_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToeRTiUst366MSrFV6SkA24sdFmUBFouyl-DvC_abOZd9NCK_8xrA4doxcZjX_OdYYAF8MXPHFYsjH/pub?gid=1260198082&single=true&output=csv';
+
+/* ===== 共有状態 ===== */
+let ALL_LINKS = [];
+let CURRENT_CATEGORY = 'すべて';
+
+/* ===== ユーティリティ ===== */
+function esc(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function norm(v){
+  return String(v ?? '').trim();
+}
+function parseTags(v){
+  return String(v || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+function isPinned(v){
+  return ['1','true','TRUE','yes','YES','pin','PIN'].includes(String(v || '').trim());
+}
+function toNum(v, fallback=999999){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+function domainOf(u){
+  try{ return new URL(u).hostname.replace(/^www\./,''); }
+  catch(_){ return ''; }
+}
+function fallbackThumb(title='LINK'){
+  const t = encodeURIComponent(title || 'LINK');
+  return `https://placehold.co/800x450/f2f2f2/555555?text=${t}`;
+}
+
+/* ===== CSV fallback loader ===== */
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let i = 0;
+  let inQuotes = false;
+
+  while(i < text.length){
+    const ch = text[i];
+    const next = text[i+1];
+
+    if(inQuotes){
+      if(ch === '"' && next === '"'){
+        cell += '"';
+        i += 2;
+        continue;
+      }
+      if(ch === '"'){
+        inQuotes = false;
+        i++;
+        continue;
+      }
+      cell += ch;
+      i++;
+      continue;
+    }
+
+    if(ch === '"'){
+      inQuotes = true;
+      i++;
+      continue;
+    }
+    if(ch === ','){
+      row.push(cell);
+      cell = '';
+      i++;
+      continue;
+    }
+    if(ch === '\n'){
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+      i++;
+      continue;
+    }
+    if(ch === '\r'){
+      i++;
+      continue;
+    }
+    cell += ch;
+    i++;
+  }
+
+  row.push(cell);
+  rows.push(row);
+
+  if(!rows.length) return [];
+  const header = rows[0].map(h => String(h || '').trim());
+  return rows.slice(1)
+    .filter(r => r.some(v => String(v || '').trim() !== ''))
+    .map(r => {
+      const obj = {};
+      header.forEach((h, idx) => obj[h] = r[idx] ?? '');
+      return obj;
+    });
+}
+
+async function loadSheetFallback(){
+  if(!FALLBACK_CSV_URL) throw new Error('loadSheet() が未定義で、FALLBACK_CSV_URL も未設定です。');
+  const res = await fetch(FALLBACK_CSV_URL);
+  if(!res.ok) throw new Error('シートの取得に失敗しました。');
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+async function getLinksData(){
+  if(typeof loadSheet === 'function'){
+    return await loadSheet('links');
+  }
+  return await loadSheetFallback();
+}
+
+/* ===== 正規化 ===== */
+function normalizeRow(x){
+  return {
+    title: norm(x.title),
+    desc: norm(x.desc),
+    url: norm(x.url),
+    category: norm(x.category) || 'その他',
+    tags: Array.isArray(x.tags) ? x.tags : parseTags(x.tags),
+    thumb: norm(x.thumb),
+    order: toNum(x.order),
+    pinned: isPinned(x.pinned)
+  };
+}
+
+/* ===== 描画 ===== */
+function renderChips(items){
+  const box = document.getElementById('chips');
+  const cats = ['すべて', ...Array.from(new Set(items.map(x => x.category).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'ja'))];
+
+  box.innerHTML = cats.map(cat => `
+    <button class="chip ${cat===CURRENT_CATEGORY ? 'active' : ''}" type="button" data-cat="${esc(cat)}">
+      ${esc(cat)}
+    </button>
+  `).join('');
+
+  box.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      CURRENT_CATEGORY = btn.dataset.cat;
+      applyFilters();
+    });
+  });
+}
+
+function cardHTML(x){
+  const thumb = x.thumb || fallbackThumb(x.title || 'Link');
+  const tags = (x.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+  const dom = domainOf(x.url);
+
+  return `
+    <article class="card">
+      <div class="thumb">
+        <img src="${esc(thumb)}" alt="${esc(x.title)}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackThumb('No Image')}'">
+        ${x.pinned ? `<span class="pin-badge">PIN</span>` : ''}
+        <span class="category-badge">${esc(x.category)}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${esc(x.title || '(無題)')}</div>
+        ${x.desc ? `<div class="card-desc">${esc(x.desc)}</div>` : ''}
+        ${tags ? `<div class="tags">${tags}</div>` : ''}
+        <div class="card-actions">
+          <a class="open-link" href="${esc(x.url || '#')}" ${x.url ? 'target="_blank" rel="noopener"' : ''}>開く</a>
+        </div>
+        ${dom ? `<div class="url-label">${esc(dom)}</div>` : ''}
+      </div>
+    </article>
+  `;
+}
+
+function renderList(items){
+  const state = document.getElementById('state');
+  const list = document.getElementById('list');
+  const count = document.getElementById('count');
+
+  if(!items.length){
+    list.hidden = true;
+    state.hidden = false;
+    state.className = 'empty';
+    state.textContent = '該当するリンクがありません。';
+    count.textContent = '0件';
+    return;
+  }
+
+  state.hidden = true;
+  list.hidden = false;
+  list.innerHTML = items.map(cardHTML).join('');
+  count.textContent = `${items.length}件表示`;
+}
+
+function applyFilters(){
+  const q = norm(document.getElementById('q').value).toLowerCase();
+  sessionStorage.setItem('links_q', q);
+  sessionStorage.setItem('links_cat', CURRENT_CATEGORY);
+
+  let items = ALL_LINKS.slice();
+
+  if(CURRENT_CATEGORY !== 'すべて'){
+    items = items.filter(x => x.category === CURRENT_CATEGORY);
+  }
+
+  if(q){
+    items = items.filter(x => {
+      const hay = [
+        x.title,
+        x.desc,
+        x.url,
+        x.category,
+        ...(x.tags || [])
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  items.sort((a,b)=>{
+    if(a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    return a.order - b.order;
+  });
+
+  renderChips(ALL_LINKS);
+  renderList(items);
+}
+
+function clearFilters(){
+  document.getElementById('q').value = '';
+  CURRENT_CATEGORY = 'すべて';
+  sessionStorage.removeItem('links_q');
+  sessionStorage.removeItem('links_cat');
+  applyFilters();
+}
+
+/* ===== 初期化 ===== */
+async function init(){
+  const state = document.getElementById('state');
+  try{
+    const raw = await getLinksData();
+    ALL_LINKS = raw
+      .map(normalizeRow)
+      .filter(x => x.title || x.url);
+
+    const savedQ = sessionStorage.getItem('links_q') || '';
+    const savedCat = sessionStorage.getItem('links_cat') || 'すべて';
+
+    document.getElementById('q').value = savedQ;
+    CURRENT_CATEGORY = savedCat;
+
+    applyFilters();
+  }catch(err){
+    document.getElementById('list').hidden = true;
+    state.hidden = false;
+    state.className = 'error';
+    state.textContent = 'リンク集を読み込めませんでした。シート設定またはURLを確認してください。';
+    document.getElementById('count').textContent = '読み込み失敗';
+    console.error(err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

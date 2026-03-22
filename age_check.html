@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>年齢確認</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      min-height:100vh;
+      background:#fff;
+      color:#333;
+      font:14px/1.8 Arial,Helvetica,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    }
+
+    .page{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px 16px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:760px;
+      text-align:center;
+    }
+
+    .logo{
+      margin:0 0 34px;
+      font-size:46px;
+      line-height:1;
+      font-weight:700;
+      color:#e60033;
+      letter-spacing:0;
+    }
+
+    .lead{
+      margin:0 0 18px;
+      font-size:31px;
+      line-height:1.35;
+      font-weight:400;
+      color:#222;
+    }
+
+    .text{
+      margin:0 0 18px;
+      font-size:15px;
+      line-height:1.95;
+      color:#333;
+    }
+
+    .legal{
+      margin:0 0 26px;
+      font-size:13px;
+      line-height:1.9;
+      color:#666;
+    }
+
+    .question{
+      margin:0 0 30px;
+      font-size:31px;
+      line-height:1.35;
+      font-weight:400;
+      color:#222;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:center;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid #bfbfbf;
+      border-radius:0;
+      background:#f3f3f3;
+      color:#222;
+      width:220px;
+      height:52px;
+      padding:0 16px;
+      font-size:22px;
+      line-height:1;
+      font-weight:400;
+      cursor:pointer;
+    }
+
+    .btn:hover{opacity:.92}
+
+    .btn-agree{
+      background:#e60033;
+      border-color:#e60033;
+      color:#fff;
+    }
+
+    @media (max-width:640px){
+      .logo{font-size:34px}
+      .lead,.question{font-size:24px}
+      .text{font-size:14px}
+      .btn{
+        width:min(100%,320px);
+        font-size:20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="wrap">
+      <div class="logo">Website of 上野龍</div>
+
+      <p class="lead">ようこそ</p>
+
+      <p class="text">
+        当サイトは、安心してご利用いただける閲覧ページです。
+      </p>
+
+      <p class="text">
+        この先には、18歳以上を対象とした内容が含まれます。<br>
+        18歳未満の方のアクセスは固くお断りします。
+      </p>
+
+      <p class="legal">
+        当サイトは関係法令を踏まえて運営されています。<br>
+        閲覧はご自身の責任で行ってください。
+      </p>
+
+      <p class="question">あなたは18歳以上ですか？</p>
+
+      <div class="actions">
+        <button class="btn btn-agree" id="agreeBtn" type="button">はい</button>
+        <button class="btn" id="rejectBtn" type="button">いいえ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var KEY = 'site_age_verified_at';
+      var DAYS = 0;
+      var params = new URLSearchParams(location.search);
+      var rurl = params.get('rurl') || 'index.html';
+
+      function safeUrl(url){
+        try {
+          var u = new URL(url, location.href);
+          if (u.origin !== location.origin) return 'index.html';
+          if (u.pathname.split('/').pop() === 'age_check.html') return 'index.html';
+          return u.href;
+        } catch(e){
+          return 'index.html';
+        }
+      }
+
+      var nextUrl = safeUrl(rurl);
+
+      document.getElementById('agreeBtn').addEventListener('click', function(){
+        try {
+          localStorage.setItem(KEY, String(Date.now()));
+        } catch(e) {}
+        location.href = 'https://sites.google.com/view/ryu--ueno/';
+      });
+
+      document.getElementById('rejectBtn').addEventListener('click', function(){
+        try {
+          localStorage.removeItem(KEY);
+        } catch(e) {}
+        location.href = 'https://sites.google.com/site/kobayashishimpeisite/';
+      });
+
+      try {
+        var raw = localStorage.getItem(KEY);
+        var verifiedAt = raw ? parseInt(raw, 10) : 0;
+        var valid =
+          verifiedAt &&
+          !Number.isNaN(verifiedAt) &&
+          (Date.now() - verifiedAt) < DAYS * 24 * 60 * 60 * 1000;
+
+        if (valid) location.replace(nextUrl);
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>
