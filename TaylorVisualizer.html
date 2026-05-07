@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>テイラー展開を視覚的に理解できるソフト</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#6b7280;
+      --border:#d1d5db;
+      --accent:#2563eb;
+      --func:#2563eb;
+      --taylor:#dc2626;
+      --err:#7c3aed;
+      --good:rgba(34,197,94,.12);
+      --grid:#e5e7eb;
+      --axis:#9ca3af;
+      --danger:#dc2626;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+    }
+    header{
+      text-align:center;
+      padding:24px 16px 12px;
+    }
+    header h1{
+      margin:0 0 8px;
+      font-size:clamp(24px,4vw,38px);
+      letter-spacing:.02em;
+    }
+    header p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+    }
+    main{
+      width:min(1300px,calc(100% - 28px));
+      margin:0 auto 40px;
+      display:grid;
+      grid-template-columns:365px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:0 14px 36px rgba(15,23,42,.07);
+    }
+    .panel{
+      padding:18px;
+      position:sticky;
+      top:16px;
+    }
+    .field{margin-bottom:14px}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    label{
+      display:block;
+      font-size:14px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+    input,button,select{
+      width:100%;
+      font:inherit;
+      border-radius:12px;
+    }
+    input,select{
+      padding:10px 12px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+    input[type="range"]{
+      padding:0;
+      accent-color:var(--accent);
+    }
+    button{
+      padding:12px 14px;
+      border:0;
+      background:var(--accent);
+      color:white;
+      font-weight:900;
+      cursor:pointer;
+    }
+    button:hover{filter:brightness(.96)}
+    .hint{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .examples{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    .example-button{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--border);
+      padding:8px 10px;
+      font-size:13px;
+      font-weight:800;
+    }
+    .example-button:hover{background:#eef2ff;color:var(--accent)}
+    .check-row{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#f9fafb;
+      margin-bottom:10px;
+    }
+    .check-row input{width:auto;margin-top:3px}
+    .check-row label{margin:0;font-size:13px;font-weight:700;line-height:1.45}
+    .error{
+      min-height:20px;
+      margin-top:12px;
+      color:var(--danger);
+      font-size:13px;
+      font-weight:800;
+      line-height:1.5;
+    }
+    .formula-box{
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#f9fafb;
+      padding:14px;
+    }
+    .formula-box h2{margin:0 0 8px;font-size:16px}
+    .formula{
+      font-family:var(--mono);
+      font-size:13px;
+      line-height:1.65;
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      max-height:270px;
+      overflow:auto;
+    }
+    .plots{
+      padding:14px;
+      display:grid;
+      gap:14px;
+    }
+    .plot-card{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:#fff;
+      overflow:hidden;
+    }
+    .plot-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      padding:12px 14px 0;
+      flex-wrap:wrap;
+    }
+    .plot-head h3{margin:0;font-size:16px}
+    .plot-head .sub{color:var(--muted);font-size:12px;line-height:1.45}
+    .canvas-wrap{width:100%;height:330px;position:relative}
+    canvas{display:block;width:100%;height:100%;background:white}
+    .legend{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      padding:0 14px 12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .legend span{display:inline-flex;align-items:center;gap:6px}
+    .line-blue,.line-red,.line-purple,.band-green{
+      width:20px;height:3px;display:inline-block;border-radius:999px;
+    }
+    .line-blue{background:var(--func)}
+    .line-red{background:repeating-linear-gradient(to right,var(--taylor) 0 6px,transparent 6px 10px)}
+    .line-purple{background:var(--err)}
+    .band-green{height:10px;background:var(--good);border:1px solid rgba(34,197,94,.35)}
+    .readout{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    .mini{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#f9fafb;
+      padding:10px;
+    }
+    .mini .label{font-size:12px;color:var(--muted)}
+    .mini .value{margin-top:4px;font-family:var(--mono);font-weight:900;overflow-wrap:anywhere}
+    @media (max-width:980px){
+      main{grid-template-columns:1fr}
+      .panel{position:static}
+      .readout{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:640px){
+      .row{grid-template-columns:1fr}
+      .readout{grid-template-columns:1fr}
+      .canvas-wrap{height:285px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>テイラー展開</h1>
+    <p>高次数でも近似が見えるように、全体図・中心拡大図・対数誤差図を分けて表示します。</p>
+  </header>
+
+  <main>
+    <section class="card panel">
+      <div class="field">
+        <label for="funcInput">関数 f(x)</label>
+        <input id="funcInput" value="sin(x)" autocomplete="off">
+        <div class="hint">
+          例：sin(x), cos(x), exp(x), log(1+x), sqrt(1+x), 1/(1-x)<br>
+          使える記号：+, -, *, /, ^, sin, cos, tan, exp, log, sqrt, abs, pi, e
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="centerInput">中心 a</label>
+          <input id="centerInput" type="number" step="any" value="0">
+        </div>
+        <div class="field">
+          <label for="maxOrderInput">最大次数</label>
+          <input id="maxOrderInput" type="number" min="0" max="12" step="1" value="10">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="orderRange">表示次数 n：<span id="orderLabel">5</span></label>
+        <input id="orderRange" type="range" min="0" max="10" step="1" value="5">
+      </div>
+
+      <div class="field">
+        <label for="zoomRange">中心拡大の半幅：<span id="zoomLabel">1.5</span></label>
+        <input id="zoomRange" type="range" min="0.05" max="5" step="0.05" value="1.5">
+        <div class="hint">高次数の近似を見るときは、ここを 0.2〜1.0 程度にすると分かりやすいです。</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="xminInput">全体図 x 左端</label>
+          <input id="xminInput" type="number" step="any" value="-6">
+        </div>
+        <div class="field">
+          <label for="xmaxInput">全体図 x 右端</label>
+          <input id="xmaxInput" type="number" step="any" value="6">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="samplesInput">サンプル数</label>
+          <input id="samplesInput" type="number" min="300" max="3000" step="100" value="1200">
+        </div>
+        <div class="field">
+          <label for="tolInput">許容誤差 ε</label>
+          <input id="tolInput" type="number" min="1e-16" step="any" value="0.01">
+        </div>
+      </div>
+
+      <div class="check-row">
+        <input id="scaleByFunction" type="checkbox" checked>
+        <label for="scaleByFunction">縦軸を f(x) 基準に固定する<br><span class="hint">Taylor 多項式の暴走で縮尺が壊れるのを防ぎます。</span></label>
+      </div>
+
+      <div class="check-row">
+        <input id="clipTaylor" type="checkbox" checked>
+        <label for="clipTaylor">画面外に飛ぶ Taylor 曲線をクリップする<br><span class="hint">中心付近の一致を見やすくします。</span></label>
+      </div>
+
+      <button id="recalcButton">再計算</button>
+
+      <div class="examples">
+        <button class="example-button" data-f="sin(x)" data-a="0" data-m="10" data-n="9" data-z="1.2" data-min="-8" data-max="8">sin(x)</button>
+        <button class="example-button" data-f="exp(x)" data-a="0" data-m="10" data-n="8" data-z="1.0" data-min="-4" data-max="4">exp(x)</button>
+        <button class="example-button" data-f="log(1+x)" data-a="0" data-m="10" data-n="8" data-z="0.45" data-min="-0.95" data-max="3">log(1+x)</button>
+        <button class="example-button" data-f="1/(1-x)" data-a="0" data-m="10" data-n="8" data-z="0.45" data-min="-3" data-max="0.95">1/(1-x)</button>
+      </div>
+
+      <div id="errorBox" class="error"></div>
+
+      <div class="formula-box">
+        <h2>テイラー多項式</h2>
+        <div id="formulaBox" class="formula">まだ計算されていません。</div>
+      </div>
+    </section>
+
+    <section class="card plots">
+      <div class="plot-card">
+        <div class="plot-head">
+          <h3>全体図</h3>
+          <div class="sub">縦軸は初期設定で f(x) 基準。高次数で Taylor が暴れても中心付近が潰れません。</div>
+        </div>
+        <div class="canvas-wrap"><canvas id="globalCanvas"></canvas></div>
+        <div class="legend">
+          <span><i class="line-blue"></i>f(x)</span>
+          <span><i class="line-red"></i>T_n(x)</span>
+          <span><i class="band-green"></i>|f-T_n| &lt; ε</span>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-head">
+          <h3>中心付近の拡大図</h3>
+          <div class="sub">高次数の意味はこの図で見るのが一番分かりやすいです。</div>
+        </div>
+        <div class="canvas-wrap"><canvas id="localCanvas"></canvas></div>
+        <div class="legend">
+          <span><i class="line-blue"></i>f(x)</span>
+          <span><i class="line-red"></i>T_n(x)</span>
+          <span><i class="band-green"></i>|f-T_n| &lt; ε</span>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-head">
+          <h3>対数誤差図</h3>
+          <div class="sub">log10(|f(x)-T_n(x)|) を表示。高次数でも誤差の差が潰れにくいです。</div>
+        </div>
+        <div class="canvas-wrap"><canvas id="errorCanvas"></canvas></div>
+        <div class="legend">
+          <span><i class="line-purple"></i>log10(|f-T_n|)</span>
+        </div>
+      </div>
+
+      <div class="readout">
+        <div class="mini"><div class="label">カーソル x</div><div id="readX" class="value">-</div></div>
+        <div class="mini"><div class="label">f(x)</div><div id="readF" class="value">-</div></div>
+        <div class="mini"><div class="label">T_n(x)</div><div id="readT" class="value">-</div></div>
+        <div class="mini"><div class="label">誤差</div><div id="readE" class="value">-</div></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const state = {
+      f:null,
+      expr:"",
+      a:0,
+      maxOrder:10,
+      n:5,
+      coeffs:[],
+      derivs:[],
+      lastHoverX:null,
+      raf:false,
+      ranges:null
+    };
+
+    function fmt(x){
+      if(x===null || !Number.isFinite(x)) return "-";
+      if(Math.abs(x)<1e-12) return "0";
+      if(Math.abs(x)>=1e5 || Math.abs(x)<1e-5) return x.toExponential(4);
+      return String(Number(x.toPrecision(7)));
+    }
+
+    function compileFunction(text){
+      let s=String(text).trim();
+      if(!s) throw new Error("関数を入力してください。");
+      s=s.replace(/π/g,"pi").replace(/\^/g,"**");
+      if(/[^0-9A-Za-z_+\-*/().,\s*]/.test(s)) throw new Error("使えない文字が含まれています。");
+      const body=`
+        const sin=Math.sin, cos=Math.cos, tan=Math.tan,
+              asin=Math.asin, acos=Math.acos, atan=Math.atan,
+              sinh=Math.sinh, cosh=Math.cosh, tanh=Math.tanh,
+              exp=Math.exp, log=Math.log, ln=Math.log,
+              sqrt=Math.sqrt, abs=Math.abs,
+              floor=Math.floor, ceil=Math.ceil, round=Math.round,
+              pi=Math.PI, e=Math.E;
+        return (${s});
+      `;
+      let raw;
+      try{
+        raw=new Function("x",body);
+        const y=raw(0.123);
+        if(typeof y!=="number" && !(y instanceof Number)) throw new Error();
+      }catch(_){
+        throw new Error("関数の式を解釈できません。例：sin(x), exp(x), log(1+x)");
+      }
+      return x=>{
+        try{
+          const y=Number(raw(x));
+          if(!Number.isFinite(y) || Math.abs(y)>1e10) return null;
+          return y;
+        }catch(_){return null;}
+      };
+    }
+
+    function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+
+    function solveLinear(A,b){
+      const n=b.length;
+      const M=A.map((row,i)=>row.concat([b[i]]));
+      for(let col=0;col<n;col++){
+        let p=col;
+        for(let r=col+1;r<n;r++) if(Math.abs(M[r][col])>Math.abs(M[p][col])) p=r;
+        if(Math.abs(M[p][col])<1e-14) throw new Error("数値計算が不安定です。最大次数を下げてください。");
+        [M[col],M[p]]=[M[p],M[col]];
+        const div=M[col][col];
+        for(let c=col;c<=n;c++) M[col][c]/=div;
+        for(let r=0;r<n;r++){
+          if(r===col) continue;
+          const factor=M[r][col];
+          for(let c=col;c<=n;c++) M[r][c]-=factor*M[col][c];
+        }
+      }
+      return M.map(row=>row[n]);
+    }
+
+    function finiteDiffWeights(zs,k){
+      const m=zs.length,A=[],b=[];
+      for(let p=0;p<m;p++){
+        A.push(zs.map(z=>Math.pow(z,p)));
+        b.push(p===k?factorial(k):0);
+      }
+      return solveLinear(A,b);
+    }
+
+    function derivativeApprox(f,a,k,maxOrder){
+      if(k===0){
+        const y=f(a);
+        if(y===null) throw new Error(`中心 a=${a} で関数が定義されていません。`);
+        return y;
+      }
+      const radius=Math.max(4,Math.min(8,maxOrder+2));
+      const zs=[];
+      for(let j=-radius;j<=radius;j++) zs.push(j);
+      const h=1e-3*Math.max(1,Math.abs(a));
+      const w=finiteDiffWeights(zs,k);
+      let sum=0;
+      for(let i=0;i<zs.length;i++){
+        const y=f(a+h*zs[i]);
+        if(y===null) throw new Error(`${k}階導関数の近似に必要な点で関数が定義されていません。`);
+        sum+=w[i]*y;
+      }
+      return sum/Math.pow(h,k);
+    }
+
+    function computeTaylor(){
+      const expr=$("funcInput").value.trim();
+      const a=Number($("centerInput").value);
+      const maxOrder=Number($("maxOrderInput").value);
+      if(!Number.isFinite(a)) throw new Error("中心 a を数値で入力してください。");
+      if(!Number.isInteger(maxOrder)||maxOrder<0||maxOrder>12) throw new Error("最大次数は 0 以上 12 以下にしてください。");
+      const f=compileFunction(expr);
+      const derivs=[], coeffs=[];
+      for(let k=0;k<=maxOrder;k++){
+        const d=derivativeApprox(f,a,k,maxOrder);
+        derivs.push(d);
+        coeffs.push(d/factorial(k));
+      }
+      state.f=f; state.expr=expr; state.a=a; state.maxOrder=maxOrder; state.derivs=derivs; state.coeffs=coeffs;
+      $("orderRange").max=String(maxOrder);
+      if(state.n>maxOrder) state.n=maxOrder;
+      $("orderRange").value=String(state.n);
+      $("orderLabel").textContent=String(state.n);
+    }
+
+    function polyValue(x,n=state.n){
+      let y=0,power=1;
+      const dx=x-state.a;
+      for(let k=0;k<=n;k++){
+        if(k===0) power=1; else power*=dx;
+        y+=state.coeffs[k]*power;
+      }
+      if(!Number.isFinite(y)||Math.abs(y)>1e10) return null;
+      return y;
+    }
+
+    function linspace(min,max,count){
+      const arr=new Array(count),step=(max-min)/(count-1);
+      for(let i=0;i<count;i++) arr[i]=min+step*i;
+      return arr;
+    }
+
+    function quantile(sorted,q){
+      if(!sorted.length) return 0;
+      const pos=(sorted.length-1)*q, base=Math.floor(pos), rest=pos-base;
+      if(sorted[base+1]===undefined) return sorted[base];
+      return sorted[base]+rest*(sorted[base+1]-sorted[base]);
+    }
+
+    function robustRange(values,opts={}){
+      const ys=values.filter(v=>v!==null&&Number.isFinite(v)).sort((a,b)=>a-b);
+      if(!ys.length) return [-1,1];
+      let lo=quantile(ys,opts.qlo??0.02), hi=quantile(ys,opts.qhi??0.98);
+      if(opts.zeroBottom) lo=Math.max(0,lo);
+      if(lo===hi){lo-=1;hi+=1;}
+      const margin=Math.max(opts.minMargin??0.5,(hi-lo)*0.12);
+      return [opts.zeroBottom?Math.max(0,lo-margin*.1):lo-margin, hi+margin];
+    }
+
+    function niceStep(raw){
+      if(!Number.isFinite(raw)||raw<=0) return 1;
+      const e=Math.floor(Math.log10(raw)), b=Math.pow(10,e), f=raw/b;
+      if(f<=1) return b;
+      if(f<=2) return 2*b;
+      if(f<=5) return 5*b;
+      return 10*b;
+    }
+
+    function axisLabel(x){
+      if(Math.abs(x)<1e-12) return "0";
+      if(Math.abs(x)>=1000||Math.abs(x)<0.001) return x.toExponential(1);
+      return String(Number(x.toPrecision(4)));
+    }
+
+    function fitCanvas(canvas){
+      const rect=canvas.getBoundingClientRect();
+      const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,2));
+      const w=Math.max(10,Math.floor(rect.width)), h=Math.max(10,Math.floor(rect.height));
+      canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
+      const ctx=canvas.getContext("2d");
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      return {ctx,width:w,height:h};
+    }
+
+    function drawGrid(ctx,width,height,xr,yr,title){
+      const pad={left:58,right:20,top:30,bottom:38};
+      const plotW=width-pad.left-pad.right, plotH=height-pad.top-pad.bottom;
+      const xToPx=x=>pad.left+((x-xr[0])/(xr[1]-xr[0]))*plotW;
+      const yToPx=y=>pad.top+(1-(y-yr[0])/(yr[1]-yr[0]))*plotH;
+
+      ctx.clearRect(0,0,width,height);
+      ctx.fillStyle="#fff"; ctx.fillRect(0,0,width,height);
+      ctx.strokeStyle=getCss("--grid"); ctx.lineWidth=1; ctx.fillStyle="#6b7280"; ctx.font="12px system-ui,sans-serif";
+      const xs=niceStep((xr[1]-xr[0])/8), ys=niceStep((yr[1]-yr[0])/6);
+      for(let x=Math.ceil(xr[0]/xs)*xs; x<=xr[1]+1e-12; x+=xs){
+        const px=xToPx(x); ctx.beginPath(); ctx.moveTo(px,pad.top); ctx.lineTo(px,pad.top+plotH); ctx.stroke(); ctx.fillText(axisLabel(x),px+3,height-10);
+      }
+      for(let y=Math.ceil(yr[0]/ys)*ys; y<=yr[1]+1e-12; y+=ys){
+        const py=yToPx(y); ctx.beginPath(); ctx.moveTo(pad.left,py); ctx.lineTo(pad.left+plotW,py); ctx.stroke(); ctx.fillText(axisLabel(y),8,py-4);
+      }
+      ctx.strokeStyle=getCss("--axis"); ctx.lineWidth=1.4;
+      if(xr[0]<=0&&0<=xr[1]){const px=xToPx(0);ctx.beginPath();ctx.moveTo(px,pad.top);ctx.lineTo(px,pad.top+plotH);ctx.stroke();}
+      if(yr[0]<=0&&0<=yr[1]){const py=yToPx(0);ctx.beginPath();ctx.moveTo(pad.left,py);ctx.lineTo(pad.left+plotW,py);ctx.stroke();}
+      ctx.fillStyle="#111827"; ctx.font="bold 15px system-ui,sans-serif"; ctx.fillText(title,14,21);
+      return {pad,plotW,plotH,xToPx,yToPx};
+    }
+
+    function getCss(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+
+    function clipSeries(ys,yr){
+      if(!$("clipTaylor").checked) return ys;
+      const lo=yr[0], hi=yr[1], span=hi-lo;
+      const min=lo-span*.35, max=hi+span*.35;
+      return ys.map(v=>(v===null||v<min||v>max)?null:v);
+    }
+
+    function drawGoodBands(ctx,xs,errs,xToPx,pad,plotH,tol){
+      if(!Number.isFinite(tol)||tol<=0) return;
+      ctx.save(); ctx.fillStyle=getCss("--good");
+      let start=null;
+      for(let i=0;i<xs.length;i++){
+        const ok=errs[i]!==null&&errs[i]<tol;
+        if(ok && start===null) start=xs[i];
+        if((!ok||i===xs.length-1) && start!==null){
+          const end=ok?xs[i]:xs[i-1];
+          ctx.fillRect(xToPx(start),pad.top,Math.max(1,xToPx(end)-xToPx(start)),plotH);
+          start=null;
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawLine(ctx,xs,ys,xToPx,yToPx,color,dashed=false){
+      ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=2.7; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.setLineDash(dashed?[8,5]:[]); ctx.beginPath();
+      let on=false;
+      for(let i=0;i<xs.length;i++){
+        const y=ys[i];
+        if(y===null||!Number.isFinite(y)){on=false;continue;}
+        const px=xToPx(xs[i]), py=yToPx(y);
+        if(!on){ctx.moveTo(px,py);on=true;} else ctx.lineTo(px,py);
+      }
+      ctx.stroke(); ctx.restore();
+    }
+
+    function sample(xmin,xmax,count){
+      const xs=linspace(xmin,xmax,count), fvals=new Array(count), tvals=new Array(count), errs=new Array(count), logs=new Array(count);
+      for(let i=0;i<count;i++){
+        const x=xs[i], f=state.f(x), t=polyValue(x);
+        fvals[i]=f; tvals[i]=t;
+        errs[i]=(f!==null&&t!==null)?Math.abs(f-t):null;
+        logs[i]=(errs[i]!==null)?Math.log10(Math.max(errs[i],1e-16)):null;
+      }
+      return {xs,fvals,tvals,errs,logs};
+    }
+
+    function drawFunctionPlot(canvas,data,xr,yr,title,tol){
+      const {ctx,width,height}=fitCanvas(canvas);
+      const g=drawGrid(ctx,width,height,xr,yr,title);
+      drawGoodBands(ctx,data.xs,data.errs,g.xToPx,g.pad,g.plotH,tol);
+      drawLine(ctx,data.xs,data.fvals,g.xToPx,g.yToPx,getCss("--func"),false);
+      drawLine(ctx,data.xs,clipSeries(data.tvals,yr),g.xToPx,g.yToPx,getCss("--taylor"),true);
+      const fc=state.f(state.a);
+      if(fc!==null&&state.a>=xr[0]&&state.a<=xr[1]&&fc>=yr[0]&&fc<=yr[1]){
+        ctx.fillStyle="#111827"; ctx.beginPath(); ctx.arc(g.xToPx(state.a),g.yToPx(fc),5,0,Math.PI*2); ctx.fill();
+      }
+      drawCursor(ctx,g,xr);
+      attachHover(canvas,xr);
+    }
+
+    function drawErrorPlot(canvas,data,xr,yr,title,tol){
+      const {ctx,width,height}=fitCanvas(canvas);
+      const g=drawGrid(ctx,width,height,xr,yr,title);
+      drawLine(ctx,data.xs,data.logs,g.xToPx,g.yToPx,getCss("--err"),false);
+      if(Number.isFinite(tol)&&tol>0){
+        const y=Math.log10(tol);
+        if(y>=yr[0]&&y<=yr[1]){
+          ctx.strokeStyle="rgba(220,38,38,.7)"; ctx.lineWidth=1.5; ctx.setLineDash([6,5]);
+          ctx.beginPath(); ctx.moveTo(g.pad.left,g.yToPx(y)); ctx.lineTo(g.pad.left+g.plotW,g.yToPx(y)); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle="#dc2626"; ctx.font="12px system-ui,sans-serif"; ctx.fillText(`log10 ε = ${fmt(y)}`,g.pad.left+8,g.yToPx(y)-6);
+        }
+      }
+      drawCursor(ctx,g,xr);
+      attachHover(canvas,xr);
+    }
+
+    function drawCursor(ctx,g,xr){
+      if(state.lastHoverX===null||state.lastHoverX<xr[0]||state.lastHoverX>xr[1]) return;
+      const px=g.xToPx(state.lastHoverX);
+      ctx.save(); ctx.strokeStyle="rgba(17,24,39,.55)"; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(px,g.pad.top); ctx.lineTo(px,g.pad.top+g.plotH); ctx.stroke(); ctx.restore();
+    }
+
+    function attachHover(canvas,xr){
+      canvas.onmousemove=ev=>{
+        const rect=canvas.getBoundingClientRect();
+        const px=ev.clientX-rect.left;
+        state.lastHoverX=xr[0]+(px/rect.width)*(xr[1]-xr[0]);
+        scheduleDraw();
+      };
+      canvas.onmouseleave=()=>{state.lastHoverX=null;scheduleDraw();};
+    }
+
+    function updateReadout(){
+      const x=state.lastHoverX;
+      if(x===null||!state.f){$("readX").textContent=$("readF").textContent=$("readT").textContent=$("readE").textContent="-";return;}
+      const f=state.f(x), t=polyValue(x), e=(f!==null&&t!==null)?Math.abs(f-t):null;
+      $("readX").textContent=fmt(x); $("readF").textContent=fmt(f); $("readT").textContent=fmt(t); $("readE").textContent=fmt(e);
+    }
+
+    function updateFormula(){
+      const pieces=[];
+      for(let k=0;k<=state.n;k++){
+        const c=fmt(state.coeffs[k]);
+        if(k===0) pieces.push(c);
+        else if(k===1) pieces.push(`(${c})(x - ${fmt(state.a)})`);
+        else pieces.push(`(${c})(x - ${fmt(state.a)})^${k}`);
+      }
+      const body=pieces.join(" + ").replace(/\+ \(-/g,"- (");
+      const details=[];
+      for(let k=0;k<=state.n;k++) details.push(`k=${k}: f^(${k})(${fmt(state.a)}) ≒ ${fmt(state.derivs[k])}, 係数 ≒ ${fmt(state.coeffs[k])}`);
+      $("formulaBox").textContent=`T_${state.n}(x) = ${body}\n\n${details.join("\n")}`;
+    }
+
+    function drawAll(){
+      if(!state.f) return;
+      const xmin=Number($("xminInput").value), xmax=Number($("xmaxInput").value), samples=Number($("samplesInput").value);
+      const zoom=Number($("zoomRange").value), tol=Number($("tolInput").value);
+      if(!Number.isFinite(xmin)||!Number.isFinite(xmax)||xmin>=xmax) throw new Error("全体図の x 範囲を正しく入力してください。");
+      if(!Number.isInteger(samples)||samples<300||samples>3000) throw new Error("サンプル数は 300 以上 3000 以下にしてください。");
+      if(!Number.isFinite(zoom)||zoom<=0) throw new Error("中心拡大の半幅を正しく入力してください。");
+
+      $("orderLabel").textContent=String(state.n);
+      $("zoomLabel").textContent=fmt(zoom);
+
+      const global=sample(xmin,xmax,samples);
+      const local=sample(state.a-zoom,state.a+zoom,samples);
+      if(!global.fvals.some(v=>v!==null)) throw new Error("この範囲では f(x) を描画できません。");
+
+      const scaleByF=$("scaleByFunction").checked;
+      const gy=scaleByF?robustRange(global.fvals):robustRange(global.fvals.concat(global.tvals));
+      const ly=scaleByF?robustRange(local.fvals):robustRange(local.fvals.concat(local.tvals));
+      const ey=robustRange(local.logs,{qlo:0.02,qhi:0.98,minMargin:0.25});
+
+      drawFunctionPlot($("globalCanvas"),global,[xmin,xmax],gy,`全体図：T_${state.n}(x)`,tol);
+      drawFunctionPlot($("localCanvas"),local,[state.a-zoom,state.a+zoom],ly,`中心付近：a=${fmt(state.a)}, 半幅=${fmt(zoom)}`,tol);
+      drawErrorPlot($("errorCanvas"),local,[state.a-zoom,state.a+zoom],ey,`対数誤差：log10 |f-T_${state.n}|`,tol);
+      updateFormula();
+      updateReadout();
+    }
+
+    function scheduleDraw(){
+      if(state.raf) return;
+      state.raf=true;
+      requestAnimationFrame(()=>{
+        state.raf=false;
+        try{$("errorBox").textContent=""; drawAll();}
+        catch(err){$("errorBox").textContent=err.message||String(err);}
+      });
+    }
+
+    function recalcAll(){
+      try{$("errorBox").textContent=""; computeTaylor(); scheduleDraw();}
+      catch(err){$("errorBox").textContent=err.message||String(err);}
+    }
+
+    $("recalcButton").addEventListener("click",recalcAll);
+    $("orderRange").addEventListener("input",()=>{state.n=Number($("orderRange").value);scheduleDraw();});
+    ["zoomRange","xminInput","xmaxInput","samplesInput","tolInput","scaleByFunction","clipTaylor"].forEach(id=>$(id).addEventListener("input",scheduleDraw));
+    ["funcInput","centerInput","maxOrderInput"].forEach(id=>$(id).addEventListener("keydown",ev=>{if(ev.key==="Enter")recalcAll();}));
+
+    document.querySelectorAll(".example-button").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        $("funcInput").value=btn.dataset.f;
+        $("centerInput").value=btn.dataset.a;
+        $("maxOrderInput").value=btn.dataset.m;
+        $("orderRange").max=btn.dataset.m;
+        $("orderRange").value=btn.dataset.n;
+        state.n=Number(btn.dataset.n);
+        $("zoomRange").value=btn.dataset.z;
+        $("xminInput").value=btn.dataset.min;
+        $("xmaxInput").value=btn.dataset.max;
+        recalcAll();
+      });
+    });
+
+    window.addEventListener("resize",scheduleDraw);
+    window.addEventListener("DOMContentLoaded",recalcAll);
+  </script>
+</body>
+</html>
