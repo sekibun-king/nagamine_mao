@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>後半へ続くスロット</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at top, #fff6bf 0%, #ef8b4a 45%, #9e2a1d 100%);
+      font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+      color: #3a1d12;
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding:
+        max(12px, env(safe-area-inset-top))
+        12px
+        max(20px, env(safe-area-inset-bottom));
+    }
+
+    .app {
+      width: min(96vw, 720px);
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(26px, 7vw, 42px);
+      line-height: 1.1;
+      color: #fff7cf;
+      text-shadow:
+        3px 3px #7a120c,
+        0 0 14px #ffdf4d;
+    }
+
+    .machine {
+      width: 100%;
+      padding: clamp(12px, 3.5vw, 24px);
+      background: linear-gradient(#e54335, #8c1712);
+      border: clamp(5px, 1.5vw, 8px) solid #55100c;
+      border-radius: clamp(18px, 5vw, 30px);
+      box-shadow: 0 10px 0 #3a0b08, 0 0 18px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .machine::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(45deg, rgba(255,255,255,0.16), transparent 35%),
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.24), transparent 20%);
+      pointer-events: none;
+    }
+
+    .machine.fever {
+      animation: feverGlow 0.16s linear 18;
+    }
+
+    .status {
+      position: relative;
+      background: #fff8dd;
+      border: 4px solid #5a120f;
+      border-radius: 16px;
+      padding: 10px;
+      font-size: clamp(18px, 4.8vw, 24px);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .mode-normal {
+      color: #333;
+    }
+
+    .mode-bonus {
+      color: #d10000;
+    }
+
+    .mode-upper {
+      color: #ff6a00;
+      text-shadow: 0 0 6px #fff000;
+    }
+
+    .reels {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 2.5vw, 16px);
+      background: #fff8dd;
+      border: 5px solid #5a120f;
+      border-radius: 18px;
+      padding: clamp(10px, 3vw, 22px);
+    }
+
+    .reel {
+      aspect-ratio: 1 / 1;
+      min-height: 86px;
+      background: linear-gradient(#fff, #ffeecb);
+      border: clamp(3px, 1vw, 5px) solid #3a1d12;
+      border-radius: clamp(12px, 3vw, 18px);
+      font-size: clamp(40px, 13vw, 76px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 0 14px rgba(0,0,0,0.22),
+        0 5px 0 rgba(0,0,0,0.24);
+      overflow: hidden;
+    }
+
+    .reel.win {
+      animation: reelWin 0.2s linear 12;
+    }
+
+    .panel {
+      position: relative;
+      margin-top: 14px;
+      background: #fff8dd;
+      border: 4px solid #5a120f;
+      border-radius: 16px;
+      padding: 12px;
+      font-size: clamp(15px, 3.8vw, 20px);
+      line-height: 1.55;
+      font-weight: bold;
+    }
+
+    .button-area {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .sub-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      min-height: 58px;
+      border: none;
+      border-radius: 999px;
+      font-size: clamp(20px, 5.5vw, 30px);
+      font-weight: 900;
+      color: #3a1d12;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #spinButton {
+      background: linear-gradient(#fff36a, #ffc400);
+      box-shadow: 0 7px 0 #9a6b00, 0 0 18px #fff000;
+    }
+
+    #judgeButton {
+      background: linear-gradient(#ff6b6b, #e00000);
+      color: white;
+      text-shadow: 2px 2px #5a0000;
+      box-shadow: 0 7px 0 #650000, 0 0 18px #ff0000;
+    }
+
+    #resetButton {
+      background: linear-gradient(#ffffff, #d9d9d9);
+      box-shadow: 0 6px 0 #777;
+      font-size: clamp(16px, 4.2vw, 22px);
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.55) !important;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      filter: grayscale(0.6);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #message {
+      position: relative;
+      min-height: 96px;
+      margin-top: 14px;
+      padding: 8px;
+      font-size: clamp(20px, 5.5vw, 34px);
+      font-weight: 900;
+      color: #fff;
+      text-shadow:
+        3px 3px #3a1d12,
+        0 0 10px #ff0000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .huge {
+      font-size: clamp(34px, 9vw, 58px);
+      color: #fff000;
+      line-height: 1.05;
+      animation: pulse 0.32s infinite alternate;
+    }
+
+    .super-huge {
+      font-size: clamp(42px, 12vw, 78px);
+      color: #fff000;
+      line-height: 1.05;
+      text-shadow:
+        4px 4px #d00000,
+        8px 8px #3a1d12,
+        0 0 18px #fff;
+      animation: insanePulse 0.14s infinite alternate;
+    }
+
+    .kouhan {
+      font-size: clamp(42px, 12vw, 76px);
+      color: #fff000;
+      line-height: 1.05;
+      text-shadow:
+        4px 4px #d00000,
+        8px 8px #3a1d12,
+        0 0 18px #fff;
+      animation: kouhan 0.4s ease-in-out infinite alternate;
+    }
+
+    .gogo {
+      display: inline-block;
+      padding: 6px 18px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #fff, #00e5ff, #003cff);
+      color: #fff000;
+      text-shadow:
+        2px 2px #003,
+        0 0 10px #fff;
+      box-shadow:
+        0 0 12px #00e5ff,
+        0 0 26px #fff000;
+      animation: gogoLamp 0.18s infinite alternate;
+    }
+
+    .note {
+      margin: 14px auto 0;
+      background: rgba(255, 255, 255, 0.72);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .reel-spinning {
+      animation: reelBlur 0.075s linear infinite;
+    }
+
+    .shake {
+      animation: shake 0.22s linear 8;
+    }
+
+    .flash {
+      animation: flash 0.11s linear 16;
+    }
+
+    .big-vibrate {
+      animation: bigVibrate 0.04s linear 28;
+    }
+
+    .push-notice {
+      display: inline-block;
+      animation: pushNotice 0.5s infinite alternate;
+    }
+
+    .payout-popup {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      font-size: clamp(32px, 10vw, 70px);
+      font-weight: 900;
+      color: #fff000;
+      text-shadow:
+        4px 4px #d00000,
+        7px 7px #000,
+        0 0 20px #fff;
+      pointer-events: none;
+      animation: payoutPop 1.25s ease-out forwards;
+      white-space: nowrap;
+    }
+
+    .cutin {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      color: white;
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .cutin.show {
+      display: flex;
+    }
+
+    .cutin-small {
+      font-size: clamp(22px, 6vw, 38px);
+      opacity: 0.96;
+      margin-bottom: 18px;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 12px #fff;
+    }
+
+    .cutin-main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(3px, 1vw, 8px);
+      font-size: clamp(54px, 16vw, 104px);
+      color: #fff000;
+      line-height: 1.05;
+      text-shadow:
+        4px 4px #d00000,
+        8px 8px #000,
+        0 0 18px #fff;
+    }
+
+    .cutin-letter {
+      opacity: 0;
+      transform: scale(0.2) rotate(-20deg);
+      animation: letterPop 0.24s forwards;
+    }
+
+    .rainbow-burst {
+      animation: rainbowBurst 0.085s linear 22;
+    }
+
+    .confetti {
+      position: fixed;
+      top: -30px;
+      font-size: 24px;
+      pointer-events: none;
+      animation: fall 1.8s linear forwards;
+      z-index: 9999;
+    }
+
+    @keyframes reelBlur {
+      0% { transform: translateY(0) scale(1); filter: blur(0px); }
+      50% { transform: translateY(9px) scale(1.04); filter: blur(2px); }
+      100% { transform: translateY(0) scale(1); filter: blur(0px); }
+    }
+
+    @keyframes reelWin {
+      0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+      50% { transform: scale(1.14) rotate(4deg); filter: brightness(2.7); }
+      100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); filter: brightness(1); }
+      to { transform: scale(1.08); filter: brightness(1.5); }
+    }
+
+    @keyframes insanePulse {
+      from { transform: scale(1) rotate(-1deg); filter: brightness(1); }
+      to { transform: scale(1.16) rotate(1deg); filter: brightness(2.4); }
+    }
+
+    @keyframes kouhan {
+      from { transform: scale(1) rotate(-2deg); }
+      to { transform: scale(1.15) rotate(2deg); }
+    }
+
+    @keyframes gogoLamp {
+      from { filter: brightness(1); transform: scale(1); }
+      to { filter: brightness(2.2); transform: scale(1.1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(7px, -4px); }
+      50% { transform: translate(-7px, 4px); }
+      75% { transform: translate(5px, 5px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes flash {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(3.8) saturate(3); }
+      100% { filter: brightness(1); }
+    }
+
+    @keyframes bigVibrate {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(12px, -9px) rotate(1.4deg); }
+      50% { transform: translate(-12px, 11px) rotate(-1.4deg); }
+      75% { transform: translate(9px, 8px) rotate(1.4deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    @keyframes pushNotice {
+      from { transform: scale(1); filter: brightness(1); }
+      to { transform: scale(1.1); filter: brightness(2); }
+    }
+
+    @keyframes letterPop {
+      0% { opacity: 0; transform: scale(0.2) rotate(-20deg); }
+      70% { opacity: 1; transform: scale(1.46) rotate(8deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes rainbowBurst {
+      0% { background: #ff0000; }
+      16% { background: #ff9900; }
+      32% { background: #ffff00; }
+      48% { background: #00ff00; }
+      64% { background: #00ffff; }
+      80% { background: #0000ff; }
+      100% { background: #ff00ff; }
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    @keyframes payoutPop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-8deg); }
+      20% { opacity: 1; transform: translate(-50%, -50%) scale(1.25) rotate(4deg); }
+      70% { opacity: 1; transform: translate(-50%, -80%) scale(1.05) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -120%) scale(0.8) rotate(0deg); }
+    }
+
+    @keyframes feverGlow {
+      0% { filter: brightness(1) saturate(1); }
+      50% { filter: brightness(2.8) saturate(3); }
+      100% { filter: brightness(1) saturate(1); }
+    }
+
+    @media (min-width: 600px) {
+      .button-area {
+        grid-template-columns: 1.4fr 1fr;
+        align-items: stretch;
+      }
+
+      .sub-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        min-height: 70px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      h1 {
+        margin-top: 2px;
+        margin-bottom: 8px;
+      }
+
+      #message {
+        min-height: 68px;
+      }
+
+      .panel {
+        line-height: 1.35;
+      }
+
+      button {
+        min-height: 52px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cutin" id="cutin">
+    <div class="cutin-small" id="cutinSmall">……</div>
+    <div class="cutin-main" id="cutinMain"></div>
+  </div>
+
+  <main class="app">
+    <h1>後半へ続くスロット</h1>
+
+    <section class="machine" id="machine">
+      <div class="status">
+        状態：
+        <span id="mode" class="mode-normal">通常</span>
+      </div>
+
+      <div class="reels">
+        <div class="reel" id="reel1">🌸</div>
+        <div class="reel" id="reel2">🍒</div>
+        <div class="reel" id="reel3">🔁</div>
+      </div>
+
+      <div class="panel">
+        所持枚数：<span id="ownedMedals">300</span>枚<br>
+        クレジット：<span id="credit">100</span>G<br>
+        獲得枚数：<span id="medals">0</span>枚<br>
+        上位ATセット数：<span id="setCount">0</span><br>
+        1G：3枚 ／ 8枚役・リプレイ対応
+      </div>
+
+      <div class="button-area">
+        <button id="spinButton">レバーON</button>
+
+        <div class="sub-buttons">
+          <button id="judgeButton" disabled>後半ジャッジ</button>
+          <button id="resetButton">リセット</button>
+        </div>
+      </div>
+
+      <div id="message">通常時。1/100の上位ボーナスを引け。</div>
+    </section>
+
+    <div class="note">
+      クレジットは「所持枚数 ÷ 3」の切り捨て表示です。250枚なら83G回せます。
+    </div>
+  </main>
+
+  <script>
+    const machine = document.getElementById("machine");
+    const modeText = document.getElementById("mode");
+    const ownedMedalsText = document.getElementById("ownedMedals");
+    const creditText = document.getElementById("credit");
+    const medalsText = document.getElementById("medals");
+    const setCountText = document.getElementById("setCount");
+    const message = document.getElementById("message");
+
+    const spinButton = document.getElementById("spinButton");
+    const judgeButton = document.getElementById("judgeButton");
+    const resetButton = document.getElementById("resetButton");
+
+    const cutin = document.getElementById("cutin");
+    const cutinSmall = document.getElementById("cutinSmall");
+    const cutinMain = document.getElementById("cutinMain");
+
+    const reels = [
+      document.getElementById("reel1"),
+      document.getElementById("reel2"),
+      document.getElementById("reel3")
+    ];
+
+    const symbols = ["🌸", "🍒", "🔁", "🍮", "🏫", "👴", "💯", "💰", "🔥", "⭐"];
+
+    let ownedMedals = 300;
+    let totalWonMedals = 0;
+    let mode = "通常";
+    let setCount = 0;
+    let spinning = false;
+
+    const BET = 3;
+
+    const NORMAL_BONUS_RATE = 1 / 16;
+    const UPPER_BONUS_RATE = 1 / 100;
+    const REPLAY_RATE = 1 / 7.3;
+    const EIGHT_PAY_RATE = 1 / 5.5;
+
+    const UPPER_AT_ENTRY_RATE = 0.5;
+    const UPPER_AT_LOOP_RATE = 0.75;
+
+    let audioCtx = null;
+
+    function unlockAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function beep(freq = 440, duration = 0.08, volume = 0.07, type = "square") {
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.frequency.value = freq;
+      osc.type = type;
+      gain.gain.value = volume;
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function noise(duration = 0.2, volume = 0.08) {
+      if (!audioCtx) return;
+
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const source = audioCtx.createBufferSource();
+      const gain = audioCtx.createGain();
+      gain.gain.value = volume;
+
+      source.buffer = buffer;
+      source.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      source.start();
+      source.stop(audioCtx.currentTime + duration);
+    }
+
+    async function puchunSound() {
+      if (!audioCtx) return;
+
+      noise(0.08, 0.18);
+      beep(55, 0.35, 0.16, "sawtooth");
+      await sleep(180);
+
+      beep(42, 0.28, 0.14, "sawtooth");
+      await sleep(380);
+
+      // 急に無音になる「プチュン」間
+      await sleep(360);
+
+      // 頭の悪い復帰音
+      beep(880, 0.07, 0.13);
+      await sleep(70);
+      beep(1320, 0.07, 0.13);
+      await sleep(70);
+      beep(1760, 0.12, 0.13);
+    }
+
+    async function stupidKyuiin() {
+      const notes = [784, 988, 1175, 1568, 1976, 2349];
+
+      for (const n of notes) {
+        beep(n, 0.045, 0.12);
+        await sleep(48);
+      }
+
+      for (let i = 0; i < 5; i++) {
+        beep(1760 + i * 180, 0.035, 0.1);
+        await sleep(38);
+      }
+    }
+
+    function vibrate(pattern) {
+      if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function randSymbol() {
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+
+    function getCreditGames() {
+      return Math.floor(ownedMedals / BET);
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      modeText.textContent = mode;
+
+      modeText.className = "";
+
+      if (mode === "通常") {
+        modeText.classList.add("mode-normal");
+        judgeButton.textContent = "後半ジャッジ";
+      } else if (mode === "ボーナス") {
+        modeText.classList.add("mode-bonus");
+        judgeButton.textContent = "後半ジャッジ";
+      } else if (mode === "上位ボーナス") {
+        modeText.classList.add("mode-upper");
+        judgeButton.textContent = "突入ジャッジ 50%";
+      } else if (mode === "上位AT") {
+        modeText.classList.add("mode-upper");
+        judgeButton.textContent = "継続ジャッジ 75%";
+      }
+    }
+
+    function updateView() {
+      ownedMedalsText.textContent = ownedMedals;
+      creditText.textContent = getCreditGames();
+      medalsText.textContent = totalWonMedals;
+      setCountText.textContent = setCount;
+    }
+
+    function pay(amount, countAsWin = true) {
+      ownedMedals += amount;
+
+      if (countAsWin) {
+        totalWonMedals += amount;
+      }
+
+      updateView();
+      showPayout(amount);
+    }
+
+    function showPayout(amount) {
+      const div = document.createElement("div");
+      div.className = "payout-popup";
+      div.innerHTML = amount === 3 ? `REPLAY` : `+${amount}枚`;
+      machine.appendChild(div);
+
+      setTimeout(() => {
+        div.remove();
+      }, 1300);
+    }
+
+    function effect(type) {
+      machine.classList.remove("shake", "flash", "big-vibrate", "fever");
+      void machine.offsetWidth;
+      machine.classList.add(type);
+
+      setTimeout(() => {
+        machine.classList.remove(type);
+      }, 2200);
+    }
+
+    function winReelEffect() {
+      reels.forEach(r => {
+        r.classList.remove("win");
+        void r.offsetWidth;
+        r.classList.add("win");
+      });
+
+      setTimeout(() => {
+        reels.forEach(r => r.classList.remove("win"));
+      }, 1800);
+    }
+
+    function confetti(amount = 80) {
+      const smallScreen = window.innerWidth < 480;
+      const count = smallScreen ? Math.floor(amount * 0.62) : amount;
+      const pieces = ["🌸", "✨", "🔥", "💰", "🍮", "⭐", "🎉", "💥"];
+
+      for (let i = 0; i < count; i++) {
+        const div = document.createElement("div");
+        div.className = "confetti";
+        div.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+        div.style.left = Math.random() * 100 + "vw";
+        div.style.animationDelay = Math.random() * 0.45 + "s";
+        div.style.fontSize = (16 + Math.random() * 28) + "px";
+        document.body.appendChild(div);
+
+        setTimeout(() => div.remove(), 2400);
+      }
+    }
+
+    async function spinReels(finalSymbols) {
+      spinning = true;
+      spinButton.disabled = true;
+      judgeButton.disabled = true;
+
+      reels.forEach(r => r.classList.add("reel-spinning"));
+
+      for (let t = 0; t < 25; t++) {
+        reels.forEach(r => {
+          r.textContent = randSymbol();
+        });
+
+        if (t % 4 === 0) {
+          beep(260 + t * 9, 0.025, 0.035);
+        }
+
+        await sleep(43);
+      }
+
+      for (let i = 0; i < 3; i++) {
+        await sleep(220);
+        reels[i].textContent = finalSymbols[i];
+        reels[i].classList.remove("reel-spinning");
+        beep(420 + i * 130, 0.08, 0.075);
+        vibrate(25);
+      }
+
+      spinning = false;
+      spinButton.disabled = false;
+    }
+
+    async function showKouhan(isLoop = true) {
+      spinButton.disabled = true;
+      judgeButton.disabled = true;
+
+      message.textContent = "……";
+      vibrate([40, 40, 80]);
+      await sleep(240);
+
+      cutin.classList.add("show");
+      cutin.classList.remove("rainbow-burst");
+      cutinSmall.textContent = "プチュン……";
+      cutinMain.innerHTML = "";
+
+      await puchunSound();
+      vibrate(220);
+
+      cutinSmall.textContent = isLoop ? "継続率 75%" : "上位AT 突入";
+      await sleep(500);
+
+      cutinSmall.textContent = "まだ終わらない";
+      beep(110, 0.12, 0.1, "sawtooth");
+      await sleep(520);
+
+      cutinSmall.textContent = "次回";
+      cutinMain.innerHTML = "";
+
+      const letters = ["後", "半", "へ", "続", "く"];
+
+      for (let i = 0; i < letters.length; i++) {
+        const span = document.createElement("span");
+        span.className = "cutin-letter";
+        span.textContent = letters[i];
+        cutinMain.appendChild(span);
+
+        beep(430 + i * 115, 0.08, 0.12);
+        vibrate(35);
+        await sleep(150);
+      }
+
+      await sleep(340);
+
+      cutinSmall.textContent = "脳汁解放";
+      cutin.classList.add("rainbow-burst");
+      machine.classList.add("big-vibrate", "fever");
+      winReelEffect();
+      confetti(210);
+      vibrate([80, 35, 80, 35, 80, 35, 240]);
+
+      await stupidKyuiin();
+      await sleep(1050);
+
+      cutin.classList.remove("show", "rainbow-burst");
+      machine.classList.remove("big-vibrate", "fever");
+
+      message.innerHTML = `<div class="kouhan">後半へ続く</div>`;
+      effect("flash");
+      await sleep(420);
+    }
+
+    async function normalSpin() {
+      unlockAudio();
+
+      if (spinning) return;
+
+      if (ownedMedals < BET) {
+        message.textContent = "3枚足りない。今日は帰ろう。";
+        vibrate([80, 60, 80]);
+        return;
+      }
+
+      ownedMedals -= BET;
+      setMode("通常");
+      updateView();
+
+      message.textContent = "レバーON……";
+      vibrate(35);
+
+      const r = Math.random();
+
+      if (r < UPPER_BONUS_RATE) {
+        await spinReels(["🔥", "🔥", "🔥"]);
+
+        setMode("上位ボーナス");
+        pay(150);
+
+        message.innerHTML = `
+          <div class="super-huge">上位ボーナス！</div>
+          <div class="gogo">ペカァァァ</div>
+          <span class="push-notice">50%で上位AT</span>
+        `;
+
+        effect("fever");
+        confetti(90);
+        winReelEffect();
+        vibrate([100, 40, 100, 40, 180]);
+        await puchunSound();
+        await stupidKyuiin();
+
+        judgeButton.disabled = false;
+        spinButton.disabled = true;
+        return;
+      }
+
+      if (r < UPPER_BONUS_RATE + NORMAL_BONUS_RATE) {
+        await spinReels(["💯", "💯", "💯"]);
+
+        setMode("ボーナス");
+        pay(50);
+
+        message.innerHTML = `
+          <div class="huge">ボーナス</div>
+          +50枚<br>
+          <span class="gogo">ペカッ</span>
+        `;
+
+        effect("flash");
+        confetti(35);
+        winReelEffect();
+        vibrate([60, 40, 60]);
+        await stupidKyuiin();
+
+        await sleep(500);
+        setMode("通常");
+        updateView();
+        return;
+      }
+
+      if (r < UPPER_BONUS_RATE + NORMAL_BONUS_RATE + REPLAY_RATE) {
+        await spinReels(["🔁", "🔁", "🔁"]);
+
+        pay(BET, false);
+
+        message.innerHTML = `
+          リプレイ<br>
+          3枚返却。もう1回遊べる。
+        `;
+
+        beep(520, 0.07, 0.07);
+        await sleep(70);
+        beep(620, 0.07, 0.07);
+        vibrate(35);
+
+        setMode("通常");
+        updateView();
+        return;
+      }
+
+      if (r < UPPER_BONUS_RATE + NORMAL_BONUS_RATE + REPLAY_RATE + EIGHT_PAY_RATE) {
+        await spinReels(["🍒", "🍒", "⭐"]);
+
+        pay(8);
+
+        message.innerHTML = `
+          8枚払い<br>
+          <span class="push-notice">地味にうれしい</span>
+        `;
+
+        effect("flash");
+        winReelEffect();
+        beep(660, 0.07, 0.08);
+        await sleep(70);
+        beep(880, 0.09, 0.08);
+        vibrate([40, 30, 40]);
+
+        setMode("通常");
+        updateView();
+        return;
+      }
+
+      await spinReels([randSymbol(), randSymbol(), randSymbol()]);
+
+      message.textContent = "はずれ。3枚消えた。";
+      setMode("通常");
+      updateView();
+    }
+
+    async function judge() {
+      unlockAudio();
+
+      if (spinning) return;
+
+      judgeButton.disabled = true;
+      spinButton.disabled = true;
+
+      if (mode === "上位ボーナス") {
+        message.innerHTML = `
+          上位AT突入ジャッジ……
+          <br>
+          <span class="push-notice">50%</span>
+        `;
+
+        effect("shake");
+        beep(220, 0.08, 0.08);
+        vibrate([50, 50, 100]);
+        await sleep(850);
+
+        if (Math.random() < UPPER_AT_ENTRY_RATE) {
+          await showKouhan(false);
+
+          setMode("上位AT");
+          setCount = 1;
+          pay(250);
+
+          message.innerHTML = `
+            <div class="super-huge">上位AT突入！</div>
+            +250枚<br>
+            <span class="push-notice">ここから75%で後半へ続く</span>
+          `;
+
+          judgeButton.disabled = false;
+          spinButton.disabled = true;
+        } else {
+          setMode("通常");
+          updateView();
+
+          message.textContent = "スン……。上位ATならず。";
+          beep(95, 0.24, 0.08, "sawtooth");
+          vibrate([170, 80, 170]);
+
+          spinButton.disabled = false;
+          judgeButton.disabled = true;
+        }
+
+        return;
+      }
+
+      if (mode === "上位AT") {
+        message.innerHTML = `
+          継続ジャッジ……
+          <br>
+          <span class="push-notice">75%</span>
+        `;
+
+        effect("shake");
+        beep(260, 0.08, 0.08);
+        vibrate([50, 40, 50, 40, 120]);
+        await sleep(850);
+
+        if (Math.random() < UPPER_AT_LOOP_RATE) {
+          await showKouhan(true);
+
+          setCount++;
+
+          let payout = 180 + Math.min(setCount * 20, 240);
+
+          if (setCount % 5 === 0) {
+            payout += 777;
+          }
+
+          pay(payout);
+
+          const fiveSetBonus = setCount % 5 === 0
+            ? `<br><span class="push-notice">5セット刻みの狂気 +777枚</span>`
+            : "";
+
+          message.innerHTML = `
+            <div class="super-huge">${setCount}セット目！</div>
+            +${payout}枚<br>
+            <span class="push-notice">まだまだ後半へ続く</span>
+            ${fiveSetBonus}
+          `;
+
+          judgeButton.disabled = false;
+          spinButton.disabled = true;
+        } else {
+          const finalSet = setCount;
+          const finalMedals = totalWonMedals;
+
+          setMode("通常");
+          setCount = 0;
+          updateView();
+
+          message.innerHTML = `
+            終了。<br>
+            上位AT ${finalSet}セット<br>
+            獲得 ${finalMedals}枚
+          `;
+
+          beep(105, 0.26, 0.08, "sawtooth");
+          vibrate([190, 80, 190]);
+
+          spinButton.disabled = false;
+          judgeButton.disabled = true;
+        }
+      }
+    }
+
+    function resetGame() {
+      unlockAudio();
+
+      ownedMedals = 300;
+      totalWonMedals = 0;
+      setCount = 0;
+      spinning = false;
+
+      setMode("通常");
+      updateView();
+
+      reels[0].textContent = "🌸";
+      reels[1].textContent = "🍒";
+      reels[2].textContent = "🔁";
+
+      reels.forEach(r => r.classList.remove("reel-spinning", "win"));
+
+      cutin.classList.remove("show", "rainbow-burst");
+      machine.classList.remove("shake", "flash", "big-vibrate", "fever");
+
+      spinButton.disabled = false;
+      judgeButton.disabled = true;
+
+      message.textContent = "通常時。1/100の上位ボーナスを引け。";
+      beep(440, 0.07, 0.06);
+    }
+
+    spinButton.addEventListener("click", normalSpin);
+    judgeButton.addEventListener("click", judge);
+    resetButton.addEventListener("click", resetGame);
+
+    updateView();
+  </script>
+</body>
+</html>
