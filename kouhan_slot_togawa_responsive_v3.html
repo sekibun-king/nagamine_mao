@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>後半へ続くスロット 戸川物産エディション v3 Responsive</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: max(12px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom));
+      font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+      background: radial-gradient(circle at top, #fff6bc, #ef7d44 45%, #86180f 100%);
+      color: #3a1d12;
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+    .app { width: min(96vw, 720px); margin: 0 auto; text-align: center; }
+    h1 {
+      margin: 8px 0 12px;
+      font-size: clamp(25px, 7vw, 42px);
+      color: #fff7cf;
+      text-shadow: 3px 3px #71120a, 0 0 16px #fff000;
+    }
+    .machine {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(12px, 3.5vw, 24px);
+      border: clamp(5px, 1.5vw, 8px) solid #55100c;
+      border-radius: clamp(18px, 5vw, 30px);
+      background: linear-gradient(#e54335, #8c1712);
+      box-shadow: 0 10px 0 #3a0b08, 0 0 20px rgba(0,0,0,.35);
+    }
+    .status, .panel {
+      position: relative;
+      background: #fff8dd;
+      border: 4px solid #5a120f;
+      border-radius: 16px;
+      padding: 10px;
+      font-weight: 900;
+    }
+    .status { margin-bottom: 12px; font-size: clamp(18px, 4.8vw, 24px); }
+    .panel { margin-top: 14px; font-size: clamp(15px, 3.8vw, 20px); line-height: 1.55; }
+    .mode-normal { color: #333; }
+    .mode-bonus { color: #d10000; }
+    .mode-upper { color: #ff6a00; text-shadow: 0 0 6px #fff000; }
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 2.5vw, 16px);
+      background: #fff8dd;
+      border: 5px solid #5a120f;
+      border-radius: 18px;
+      padding: clamp(10px, 3vw, 22px);
+    }
+    .reel {
+      aspect-ratio: 1 / 1;
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(#fff, #ffeecb);
+      border: clamp(3px, 1vw, 5px) solid #3a1d12;
+      border-radius: clamp(12px, 3vw, 18px);
+      font-size: clamp(40px, 13vw, 76px);
+      box-shadow: inset 0 0 14px rgba(0,0,0,.22), 0 5px 0 rgba(0,0,0,.24);
+    }
+    .button-area {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .sub-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    button {
+      width: 100%;
+      min-height: 58px;
+      border: 0;
+      border-radius: 999px;
+      font-size: clamp(20px, 5.5vw, 30px);
+      font-weight: 900;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    #spinButton { background: linear-gradient(#fff36a, #ffc400); box-shadow: 0 7px 0 #9a6b00, 0 0 18px #fff000; }
+    #judgeButton { background: linear-gradient(#ff6b6b, #e00000); color: white; text-shadow: 2px 2px #5a0000; box-shadow: 0 7px 0 #650000, 0 0 18px #ff0000; }
+    #resetButton { background: linear-gradient(#fff, #d9d9d9); box-shadow: 0 6px 0 #777; font-size: clamp(16px, 4.2vw, 22px); }
+    button:active { transform: translateY(4px); }
+    button:disabled { opacity: .45; filter: grayscale(.6); cursor: not-allowed; transform: none; }
+    #message {
+      min-height: 100px;
+      margin-top: 14px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 5.5vw, 34px);
+      font-weight: 900;
+      color: white;
+      text-shadow: 3px 3px #3a1d12, 0 0 10px #ff0000;
+    }
+    .huge { font-size: clamp(34px, 9vw, 58px); color: #fff000; animation: pulse .25s infinite alternate; }
+    .super { font-size: clamp(42px, 12vw, 78px); color: #fff000; text-shadow: 4px 4px #d00000, 8px 8px #3a1d12, 0 0 18px white; animation: insane .12s infinite alternate; }
+    .gogo {
+      display: inline-block;
+      padding: 6px 18px;
+      margin: 6px 0;
+      border-radius: 999px;
+      background: radial-gradient(circle, white, #00e5ff, #003cff);
+      color: #fff000;
+      text-shadow: 2px 2px #003, 0 0 10px white;
+      box-shadow: 0 0 12px #00e5ff, 0 0 26px #fff000;
+      animation: gogo .14s infinite alternate;
+    }
+    .push { display: inline-block; animation: pulse .5s infinite alternate; }
+    .spin { animation: reelBlur .075s linear infinite; }
+    .win { animation: reelWin .18s linear 12; }
+    .shake { animation: shake .18s linear 12; }
+    .flash { animation: flash .09s linear 22; }
+    .fever { animation: fever .12s linear 22; }
+    .cutin {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: #000;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .cutin.show { display: flex; }
+    .cutinSmall { font-size: clamp(24px, 7vw, 40px); margin-bottom: 18px; text-shadow: 0 0 12px white; }
+    .cutinMain {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5px;
+      font-size: clamp(56px, 17vw, 108px);
+      color: #fff000;
+      text-shadow: 4px 4px #d00000, 8px 8px black, 0 0 18px white;
+    }
+    .letter { opacity: 0; animation: letter .23s forwards; }
+    .rainbow { animation: rainbow .08s linear 24; }
+    .payout {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      font-size: clamp(32px, 10vw, 70px);
+      font-weight: 900;
+      color: #fff000;
+      text-shadow: 4px 4px #d00000, 7px 7px #000, 0 0 20px #fff;
+      pointer-events: none;
+      animation: payout 1.15s ease-out forwards;
+      white-space: nowrap;
+    }
+    .confetti {
+      position: fixed;
+      top: -30px;
+      z-index: 9999;
+      pointer-events: none;
+      animation: fall 1.8s linear forwards;
+    }
+    .note {
+      margin-top: 14px;
+      background: rgba(255,255,255,.72);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .subtitle {
+      font-size: .55em;
+      color: #fffbe6;
+      text-shadow: 2px 2px #71120a, 0 0 12px #fff000;
+    }
+    .wallet {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 0 0 10px;
+    }
+    .walletBox {
+      background: rgba(255,248,221,.92);
+      border: 3px solid #5a120f;
+      border-radius: 14px;
+      padding: 8px;
+      font-weight: 900;
+      line-height: 1.45;
+      box-shadow: 0 4px 0 rgba(0,0,0,.18);
+    }
+    .walletBox.wide { grid-column: 1 / -1; }
+    .map {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+    .map button {
+      min-height: 44px;
+      border-radius: 14px;
+      font-size: clamp(12px, 3.1vw, 16px);
+      background: linear-gradient(#fff8df, #ffd37b);
+      box-shadow: 0 4px 0 #8b4a00;
+      color: #3a1d12;
+      padding: 6px;
+    }
+    .map button.active {
+      background: linear-gradient(#fff36a, #ff9d00);
+      box-shadow: 0 4px 0 #9a3900, 0 0 12px #fff000;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .floor {
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+      padding: clamp(12px, 3.5vw, 22px);
+      border: clamp(5px, 1.5vw, 8px) solid #55100c;
+      border-radius: clamp(18px, 5vw, 30px);
+      background: linear-gradient(#fff5cc, #ffbd63 48%, #bd4d24);
+      box-shadow: 0 10px 0 #3a0b08, 0 0 20px rgba(0,0,0,.35);
+      text-align: left;
+    }
+    .floor h2 {
+      margin: 2px 0 8px;
+      text-align: center;
+      font-size: clamp(23px, 6vw, 38px);
+      color: #fff7cf;
+      text-shadow: 3px 3px #71120a, 0 0 13px #fff000;
+    }
+    .floorLead {
+      background: rgba(255,255,255,.72);
+      border-radius: 12px;
+      padding: 10px;
+      margin: 8px 0 12px;
+      font-weight: 800;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .shopGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .shopCard {
+      background: #fff8dd;
+      border: 4px solid #5a120f;
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 5px 0 rgba(0,0,0,.18);
+      text-align: center;
+    }
+    .shopCard h3 {
+      margin: 0 0 6px;
+      font-size: clamp(18px, 4.5vw, 24px);
+    }
+    .shopCard p {
+      margin: 6px 0 10px;
+      font-size: clamp(13px, 3.4vw, 16px);
+      line-height: 1.45;
+      user-select: text;
+    }
+    .shopCard button, .miniBtn {
+      min-height: 46px;
+      font-size: clamp(15px, 3.8vw, 19px);
+      background: linear-gradient(#fff36a, #ffc400);
+      box-shadow: 0 5px 0 #9a6b00;
+      color: #3a1d12;
+      padding: 8px 12px;
+    }
+    .dangerBtn {
+      background: linear-gradient(#ff6b6b, #e00000) !important;
+      color: white !important;
+      text-shadow: 1px 1px #5a0000;
+      box-shadow: 0 5px 0 #650000 !important;
+    }
+    .inventory {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .invItem {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: rgba(255,255,255,.70);
+      border: 2px solid rgba(90,18,15,.45);
+      border-radius: 12px;
+      padding: 8px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .invItem small {
+      display: block;
+      font-weight: 700;
+      opacity: .82;
+      margin-top: 2px;
+    }
+    .invItem button {
+      width: auto;
+      min-width: 86px;
+      min-height: 38px;
+      font-size: 15px;
+      padding: 7px 12px;
+    }
+    .logBox {
+      margin-top: 12px;
+      min-height: 64px;
+      background: rgba(45,12,8,.82);
+      color: #fff9d2;
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      font-weight: 900;
+      line-height: 1.55;
+      user-select: text;
+    }
+
+    .rentalButtons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .rentalButtons button {
+      min-height: 46px;
+      border-radius: 14px;
+      font-size: clamp(14px, 3.6vw, 18px);
+      background: linear-gradient(#dcff8a, #62d743);
+      box-shadow: 0 5px 0 #277918;
+      color: #19370f;
+      padding: 8px;
+    }
+    .fatigueWrap {
+      margin-top: 8px;
+      background: rgba(255,255,255,.72);
+      border: 2px solid rgba(90,18,15,.55);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 18px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,.22);
+    }
+    .fatigueBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #74e35a, #fff000, #ff8c00, #e00000);
+      transition: width .25s ease;
+    }
+    .fatigueStatus {
+      margin-top: 6px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .undergroundGame {
+      margin-top: 12px;
+      background: rgba(255,248,221,.94);
+      border: 4px solid #5a120f;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 5px 0 rgba(0,0,0,.18);
+    }
+    .ugTitle {
+      margin: 0 0 8px;
+      font-size: clamp(19px, 5vw, 27px);
+      font-weight: 900;
+    }
+    .ugReadout {
+      min-height: 54px;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(45,12,8,.82);
+      color: #fff9d2;
+      font-weight: 900;
+      line-height: 1.45;
+    }
+    .tapButton {
+      min-height: 90px !important;
+      border-radius: 22px !important;
+      font-size: clamp(28px, 8vw, 48px) !important;
+      background: linear-gradient(#ffef5c, #ff4d00) !important;
+      color: white !important;
+      text-shadow: 2px 2px #5a0000;
+      box-shadow: 0 8px 0 #842000, 0 0 18px #ff7b00 !important;
+    }
+    .ugMeter {
+      position: relative;
+      height: 38px;
+      margin: 12px 0;
+      border: 4px solid #5a120f;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #d00000, #ffb300, #00d15f, #ffb300, #d00000);
+      overflow: hidden;
+      box-shadow: inset 0 0 12px rgba(0,0,0,.35);
+    }
+    .ugCenter {
+      position: absolute;
+      left: 47%;
+      top: 0;
+      width: 6%;
+      height: 100%;
+      background: rgba(255,255,255,.72);
+      box-shadow: 0 0 16px #fff;
+    }
+    .ugCursor {
+      position: absolute;
+      left: 0;
+      top: -5px;
+      width: 10px;
+      height: 48px;
+      border-radius: 999px;
+      background: #fff000;
+      box-shadow: 0 0 10px #fff, 0 0 20px #d00000;
+      transform: translateX(-50%);
+    }
+    .diceRow {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 12px 0;
+      font-size: clamp(44px, 13vw, 72px);
+    }
+    .diceBox {
+      width: 1.2em;
+      height: 1.2em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      background: #fff;
+      border: 4px solid #5a120f;
+      box-shadow: inset 0 0 8px rgba(0,0,0,.18), 0 5px 0 rgba(0,0,0,.25);
+    }
+
+    .economyNote {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: .86;
+      text-align: center;
+      user-select: text;
+    }
+    @media (min-width: 600px) {
+      .wallet { grid-template-columns: repeat(4, 1fr); }
+      .walletBox.wide { grid-column: auto; }
+      .shopGrid { grid-template-columns: repeat(2, 1fr); }
+      .inventory { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @keyframes reelBlur { 0%{transform:translateY(0);filter:blur(0)} 50%{transform:translateY(9px) scale(1.04);filter:blur(2px)} 100%{transform:translateY(0);filter:blur(0)} }
+    @keyframes reelWin { 0%,100%{transform:scale(1);filter:brightness(1)} 50%{transform:scale(1.15) rotate(4deg);filter:brightness(2.8)} }
+    @keyframes pulse { from{transform:scale(1);filter:brightness(1)} to{transform:scale(1.1);filter:brightness(2)} }
+    @keyframes insane { from{transform:scale(1) rotate(-1deg)} to{transform:scale(1.16) rotate(1deg);filter:brightness(2.5)} }
+    @keyframes gogo { from{transform:scale(1);filter:brightness(1)} to{transform:scale(1.12);filter:brightness(2.4)} }
+    @keyframes shake { 0%,100%{transform:translate(0,0)} 25%{transform:translate(8px,-5px)} 50%{transform:translate(-8px,5px)} 75%{transform:translate(6px,6px)} }
+    @keyframes flash { 0%,100%{filter:brightness(1)} 50%{filter:brightness(4) saturate(3)} }
+    @keyframes fever { 0%,100%{filter:brightness(1) saturate(1)} 50%{filter:brightness(2.8) saturate(3)} }
+    @keyframes letter { 0%{opacity:0;transform:scale(.2) rotate(-20deg)} 70%{opacity:1;transform:scale(1.45) rotate(8deg)} 100%{opacity:1;transform:scale(1) rotate(0)} }
+    @keyframes rainbow { 0%{background:#f00} 16%{background:#f90} 32%{background:#ff0} 48%{background:#0f0} 64%{background:#0ff} 80%{background:#00f} 100%{background:#f0f} }
+    @keyframes payout { 0%{opacity:0;transform:translate(-50%,-50%) scale(.3)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.25)} 70%{opacity:1;transform:translate(-50%,-80%) scale(1.05)} 100%{opacity:0;transform:translate(-50%,-120%) scale(.8)} }
+    @keyframes fall { from{transform:translateY(-30px) rotate(0);opacity:1} to{transform:translateY(110vh) rotate(720deg);opacity:0} }
+    @media (min-width: 600px) {
+      .button-area { grid-template-columns: 1.4fr 1fr; }
+      .sub-buttons { grid-template-columns: 1fr; }
+      button { min-height: 70px; }
+    }
+
+
+    /* ===== v3 responsive display fit patch =====
+       PCでは横幅を広く使い、スマホでは上部情報とボタンを圧縮する。
+       100dvh/svh を併用して、スマホブラウザのアドレスバー表示差にも追従する。 */
+    html {
+      min-height: 100%;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    body {
+      min-height: 100svh;
+      min-height: 100dvh;
+    }
+    .app {
+      width: min(100%, 1180px);
+    }
+    .machine, .floor, .wallet, .map, .note {
+      max-width: 100%;
+    }
+    .screen.active {
+      animation: screenIn .12s ease-out;
+    }
+    @keyframes screenIn {
+      from { opacity: .72; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* PC・タブレット横：余白を活かす */
+    @media (min-width: 900px) {
+      body {
+        padding-left: max(18px, env(safe-area-inset-left));
+        padding-right: max(18px, env(safe-area-inset-right));
+      }
+      .app { width: min(96vw, 1180px); }
+      h1 { margin: 10px 0 14px; }
+      .wallet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .walletBox.wide { grid-column: auto; }
+      .map {
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        max-width: 960px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .machine {
+        max-width: 920px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .floor {
+        max-width: 1120px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .shopGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .inventory { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .reels {
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .rentalButtons, .button-area {
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .panel {
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #message {
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    /* スマホ縦：画面内に収まりやすいように圧縮 */
+    @media (max-width: 599px) {
+      body {
+        padding: max(6px, env(safe-area-inset-top)) 7px max(10px, env(safe-area-inset-bottom));
+      }
+      .app { width: 100%; }
+      h1 {
+        margin: 3px 0 6px;
+        font-size: clamp(20px, 6.4vw, 30px);
+        line-height: 1.05;
+        text-shadow: 2px 2px #71120a, 0 0 10px #fff000;
+      }
+      .subtitle { font-size: .48em; }
+      .wallet {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+        margin: 0 0 6px;
+      }
+      .walletBox {
+        min-width: 0;
+        padding: 5px 3px;
+        border-width: 2px;
+        border-radius: 10px;
+        line-height: 1.18;
+        font-size: 10.5px;
+        overflow: hidden;
+        box-shadow: 0 2px 0 rgba(0,0,0,.18);
+      }
+      .walletBox span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+      }
+      .walletBox.wide { grid-column: auto; }
+      .map {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+        margin: 6px 0 8px;
+      }
+      .map button {
+        min-height: 35px;
+        border-radius: 10px;
+        font-size: 10.5px;
+        line-height: 1.08;
+        padding: 4px 1px;
+        box-shadow: 0 3px 0 #8b4a00;
+      }
+      .machine, .floor {
+        padding: 8px;
+        border-width: 4px;
+        border-radius: 16px;
+        box-shadow: 0 5px 0 #3a0b08, 0 0 14px rgba(0,0,0,.28);
+      }
+      .status {
+        margin-bottom: 7px;
+        padding: 6px;
+        border-width: 3px;
+        border-radius: 11px;
+        font-size: 15px;
+      }
+      .reels {
+        gap: 6px;
+        border-width: 3px;
+        border-radius: 12px;
+        padding: 7px;
+      }
+      .reel {
+        min-height: 0;
+        border-width: 3px;
+        border-radius: 11px;
+        font-size: clamp(34px, 16vw, 56px);
+        box-shadow: inset 0 0 9px rgba(0,0,0,.20), 0 3px 0 rgba(0,0,0,.22);
+      }
+      .panel {
+        margin-top: 8px;
+        padding: 7px;
+        border-width: 3px;
+        border-radius: 11px;
+        font-size: 12px;
+        line-height: 1.30;
+      }
+      .rentalButtons {
+        gap: 6px;
+        margin-top: 7px;
+      }
+      .rentalButtons button {
+        min-height: 38px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.12;
+        padding: 5px 3px;
+        box-shadow: 0 3px 0 #277918;
+      }
+      .button-area {
+        gap: 6px;
+        margin-top: 7px;
+      }
+      .sub-buttons { gap: 6px; }
+      button {
+        min-height: 46px;
+        font-size: 17px;
+      }
+      #message {
+        min-height: 58px;
+        margin-top: 8px;
+        padding: 4px;
+        font-size: 17px;
+        line-height: 1.18;
+        text-shadow: 2px 2px #3a1d12, 0 0 8px #ff0000;
+      }
+      .huge { font-size: clamp(28px, 8vw, 42px); }
+      .super { font-size: clamp(31px, 9.6vw, 48px); }
+      .gogo {
+        padding: 4px 12px;
+        margin: 3px 0;
+      }
+      .payout {
+        font-size: clamp(27px, 8.8vw, 46px);
+        max-width: 92vw;
+        white-space: normal;
+        line-height: 1.05;
+      }
+      .floor h2 {
+        margin: 0 0 6px;
+        font-size: clamp(20px, 6vw, 30px);
+      }
+      .floorLead {
+        margin: 6px 0 8px;
+        padding: 7px;
+        border-radius: 10px;
+        font-size: 12.5px;
+        line-height: 1.36;
+      }
+      .shopGrid { gap: 7px; }
+      .shopCard {
+        padding: 8px;
+        border-width: 3px;
+        border-radius: 12px;
+        box-shadow: 0 3px 0 rgba(0,0,0,.18);
+      }
+      .shopCard h3 {
+        margin-bottom: 4px;
+        font-size: 16px;
+      }
+      .shopCard p {
+        margin: 4px 0 7px;
+        font-size: 12.2px;
+        line-height: 1.34;
+      }
+      .shopCard button, .miniBtn {
+        min-height: 39px;
+        font-size: 13.5px;
+        border-radius: 12px;
+        padding: 6px 8px;
+        box-shadow: 0 3px 0 #9a6b00;
+      }
+      .inventory { gap: 6px; }
+      .invItem {
+        padding: 6px;
+        grid-template-columns: 1fr auto;
+        gap: 6px;
+        font-size: 12px;
+      }
+      .invItem button {
+        min-width: 62px;
+        min-height: 32px;
+        font-size: 12px;
+        padding: 5px 8px;
+      }
+      .logBox {
+        min-height: 46px;
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 11px;
+        font-size: 12.5px;
+        line-height: 1.38;
+      }
+      .fatigueWrap {
+        height: 14px;
+        margin-top: 6px;
+      }
+      .fatigueStatus { font-size: 12px; }
+      .undergroundGame {
+        margin-top: 8px;
+        padding: 8px;
+        border-width: 3px;
+        border-radius: 12px;
+      }
+      .ugTitle {
+        margin-bottom: 5px;
+        font-size: 17px;
+      }
+      .ugReadout {
+        min-height: 42px;
+        margin: 6px 0;
+        padding: 7px;
+        font-size: 12.5px;
+        line-height: 1.34;
+      }
+      .tapButton {
+        min-height: 72px !important;
+        border-radius: 18px !important;
+        font-size: clamp(24px, 7vw, 36px) !important;
+      }
+      .ugMeter {
+        height: 30px;
+        margin: 8px 0;
+        border-width: 3px;
+      }
+      .ugCursor {
+        width: 8px;
+        height: 38px;
+      }
+      .diceRow {
+        gap: 7px;
+        margin: 8px 0;
+        font-size: clamp(36px, 12vw, 54px);
+      }
+      .diceBox {
+        border-width: 3px;
+        border-radius: 12px;
+      }
+      .note {
+        margin-top: 8px;
+        padding: 7px;
+        font-size: 10.5px;
+        line-height: 1.32;
+      }
+      .cutin {
+        padding: max(12px, env(safe-area-inset-top)) 10px max(12px, env(safe-area-inset-bottom));
+      }
+      .cutinSmall {
+        font-size: clamp(21px, 7vw, 32px);
+        margin-bottom: 12px;
+      }
+      .cutinMain {
+        font-size: clamp(46px, 16vw, 78px);
+      }
+    }
+
+    /* かなり小さいスマホ */
+    @media (max-width: 390px) {
+      .walletBox { font-size: 9.6px; padding: 4px 2px; }
+      .walletBox span { font-size: 11px; }
+      .map button { font-size: 9.5px; min-height: 32px; }
+      .panel { font-size: 11.2px; line-height: 1.24; }
+      button { min-height: 42px; font-size: 15.5px; }
+      #message { min-height: 52px; font-size: 15.5px; }
+      .shopCard p { font-size: 11.5px; }
+      .shopCard button, .miniBtn { font-size: 12.5px; }
+    }
+
+    /* 高さが足りないスマホ・横向きでは、とにかく縦を削る */
+    @media (max-height: 720px) and (max-width: 599px) {
+      h1 { margin: 1px 0 4px; font-size: clamp(18px, 5.4vw, 25px); }
+      .subtitle { display: none; }
+      .wallet { gap: 4px; margin-bottom: 4px; }
+      .walletBox { padding-top: 3px; padding-bottom: 3px; line-height: 1.1; }
+      .map { margin: 4px 0 6px; }
+      .machine, .floor { padding: 7px; }
+      .status { margin-bottom: 5px; padding: 5px; }
+      .panel { margin-top: 6px; padding: 6px; }
+      .rentalButtons, .button-area { margin-top: 6px; }
+      #message { margin-top: 6px; min-height: 48px; }
+      .note { display: none; }
+      .floorLead { display: none; }
+    }
+
+    @media (orientation: landscape) and (max-height: 540px) {
+      body { padding-top: 5px; padding-bottom: 5px; }
+      h1 { display: none; }
+      .wallet {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+        margin-bottom: 4px;
+      }
+      .walletBox {
+        padding: 3px 4px;
+        font-size: 10px;
+        line-height: 1.1;
+      }
+      .walletBox.wide { grid-column: auto; }
+      .map { margin: 4px 0 5px; }
+      .map button { min-height: 30px; }
+      .machine, .floor { padding: 6px; }
+      .status { margin-bottom: 5px; }
+      .reels {
+        max-width: min(58vw, 420px);
+        margin: 0 auto;
+      }
+      .reel { font-size: clamp(28px, 10vw, 46px); }
+      .panel {
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 11px;
+        line-height: 1.22;
+      }
+      .rentalButtons, .button-area, #message {
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #message { min-height: 42px; }
+      .note, .floorLead { display: none; }
+    }
+
+    /* 動きを減らす設定の端末では、派手な揺れだけ弱める */
+    @media (prefers-reduced-motion: reduce) {
+      .shake, .flash, .fever, .win, .spin, .push, .huge, .super, .gogo, .rainbow, .letter, .confetti, .payout {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="cutin" id="cutin">
+    <div class="cutinSmall" id="cutinSmall">……</div>
+    <div class="cutinMain" id="cutinMain"></div>
+  </div>
+
+  <main class="app">
+    <h1>後半へ続くスロット<br><span class="subtitle">戸川物産エディション</span></h1>
+
+    <section class="wallet" aria-label="所持品">
+      <div class="walletBox">メダル<br><span id="walletMedals">249</span>枚</div>
+      <div class="walletBox">現金風ポイント<br><span id="cash">3000</span>円</div>
+      <div class="walletBox">特殊景品<br><span id="walletPrizes">小0 中0 大0</span></div>
+      <div class="walletBox wide">発動中<br><span id="activeEffects">なし</span></div>
+    </section>
+
+    <nav class="map" aria-label="店内移動">
+      <button class="active" data-screen="slot">1F<br>遊技台</button>
+      <button data-screen="counter">1F<br>カウンター</button>
+      <button data-screen="togawa">2F<br>戸川物産</button>
+      <button data-screen="cashshop">売店<br>現金限定</button>
+      <button data-screen="underground">B1<br>地下</button>
+    </nav>
+
+
+    <section class="machine screen active" id="machine" data-screen-panel="slot">
+      <div class="status">状態：<span id="mode" class="mode-normal">通常</span></div>
+
+      <div class="reels">
+        <div class="reel" id="r1">🌸</div>
+        <div class="reel" id="r2">🍇</div>
+        <div class="reel" id="r3">🔁</div>
+      </div>
+
+      <div class="panel">
+        所持枚数：<span id="owned">249</span>枚<br>
+        クレジット：<span id="credit">83</span>G<br>
+        現金風ポイント：<span id="slotCash">3000</span>円<br>
+        特殊景品：<span id="slotPrizes">小0 中0 大0</span><br>
+        獲得枚数：<span id="won">0</span>枚<br>
+        上位ATセット数：<span id="sets">0</span><br>
+        疲労度：<span id="slotFatigue">0</span> ／ <span id="slotFatigueLabel">元気</span><br>
+        1G：3枚 ／ リプレイ・ぶどう8枚・チェリー2枚対応
+      </div>
+
+      <div class="rentalButtons" aria-label="遊技台メダル貸出">
+        <button data-action="rent-medals" data-cost="1000" data-medals="50" data-place="slot">台で50枚貸出<br>1000円</button>
+        <button data-action="rent-medals" data-cost="5000" data-medals="250" data-place="slot">台で250枚貸出<br>5000円</button>
+      </div>
+
+      <div class="button-area">
+        <button id="spin">レバーON</button>
+        <div class="sub-buttons">
+          <button id="judge" disabled>後半ジャッジ</button>
+          <button id="reset">リセット</button>
+        </div>
+      </div>
+
+      <div id="message">通常時。1/100の上位ボーナスを引け。</div>
+    </section>
+
+    <section class="floor screen" data-screen-panel="counter">
+      <h2>1F カウンター</h2>
+      <div class="floorLead">
+        メダルを特殊景品やゲーム内アイテムに交換できます。<br>
+        アイテムは確率を直接いじらず、演出・情報・軽い救済に寄せています。
+      </div>
+      <div class="shopGrid">
+        <div class="shopCard">
+          <h3>小特殊景品</h3>
+          <p>必要メダル：50枚<br>2Fで500円相当の現金風ポイントに交換可能。</p>
+          <button data-action="exchange-prize" data-prize="small">50枚で交換</button>
+        </div>
+        <div class="shopCard">
+          <h3>中特殊景品</h3>
+          <p>必要メダル：250枚<br>2Fで2500円相当の現金風ポイントに交換可能。</p>
+          <button data-action="exchange-prize" data-prize="medium">250枚で交換</button>
+        </div>
+        <div class="shopCard">
+          <h3>大特殊景品</h3>
+          <p>必要メダル：1000枚<br>2Fで10000円相当の現金風ポイントに交換可能。</p>
+          <button data-action="exchange-prize" data-prize="large">1000枚で交換</button>
+        </div>
+        <div class="shopCard">
+          <h3>プチュン予約券</h3>
+          <p>必要メダル：300枚<br>使用後、次のBIG/REG当選時にプチュン演出を追加。確率は変わらない。</p>
+          <button data-action="buy-medal-item" data-item="puchun">300枚で交換</button>
+        </div>
+        <div class="shopCard">
+          <h3>設定示唆札</h3>
+          <p>必要メダル：180枚<br>使用後30Gだけ怪しい示唆が出る。完全な答えは出さない。</p>
+          <button data-action="buy-medal-item" data-item="hint">180枚で交換</button>
+        </div>
+        <div class="shopCard">
+          <h3>爆音チケット</h3>
+          <p>必要メダル：220枚<br>使用後、次の派手な当たりで演出だけ過剰になる。出玉には影響なし。</p>
+          <button data-action="buy-medal-item" data-item="soundAmp">220枚で交換</button>
+        </div>
+      </div>
+      <div class="logBox" id="counterLog">カウンターのおばちゃん「交換するならここだよ」</div>
+    </section>
+
+    <section class="floor screen" data-screen-panel="togawa">
+      <h2>2F 戸川物産</h2>
+      <div class="floorLead">
+        「当店はゲーム内の古物商風施設です。特殊景品を現金風ポイントに交換します。」
+      </div>
+      <div class="shopGrid">
+        <div class="shopCard">
+          <h3>小特殊景品を交換</h3>
+          <p>受取：500円<br>戸川の名刺を使っている場合は、この交換だけ5%上乗せ。</p>
+          <button data-action="sell-prize" data-prize="small">交換する</button>
+        </div>
+        <div class="shopCard">
+          <h3>中特殊景品を交換</h3>
+          <p>受取：2500円<br>上乗せは控えめなのでゲーム性は崩れません。</p>
+          <button data-action="sell-prize" data-prize="medium">交換する</button>
+        </div>
+        <div class="shopCard">
+          <h3>大特殊景品を交換</h3>
+          <p>受取：10000円<br>一気に戻れるが、そこまでのメダルが重い。</p>
+          <button data-action="sell-prize" data-prize="large">交換する</button>
+        </div>
+        <div class="shopCard">
+          <h3>戸川の名刺を使う</h3>
+          <p>所持していれば、次の特殊景品交換1回だけ買取風ポイントが5%増える。</p>
+          <button data-action="use-item" data-item="togawaCard">使用する</button>
+        </div>
+      </div>
+      <div class="logBox" id="togawaLog">戸川「偶然ここで買い取ってるだけだ」</div>
+    </section>
+
+    <section class="floor screen" data-screen-panel="cashshop">
+      <h2>売店 現金限定</h2>
+      <div class="floorLead">
+        現金風ポイントで現金限定アイテムを買えます。<br>
+        メダル貸出は1F遊技台の貸出ボタンから行います。強すぎるアイテムは入れず、期待値を大きく壊さない調整にしています。
+      </div>
+      <div class="shopGrid">
+        <div class="shopCard">
+          <h3>地下メシ</h3>
+          <p>価格：800円<br>使用すると疲労度を35回復。地下で詰まったときの現実的な回復手段。</p>
+          <button data-action="buy-cash-item" data-item="meal">800円で買う</button>
+        </div>
+        <div class="shopCard">
+          <h3>黒服コール</h3>
+          <p>価格：1800円<br>使用後、次の地下ゲーム1回だけ疲労による報酬減衰を半分無視する。</p>
+          <button data-action="buy-cash-item" data-item="blackCall">1800円で買う</button>
+        </div>
+        <div class="shopCard">
+          <h3>差し入れコーヒー</h3>
+          <p>価格：1200円<br>使用後10Gだけ、ハズレ時に12%で1枚だけ戻る。ほぼ気休め。</p>
+          <button data-action="buy-cash-item" data-item="coffee">1200円で買う</button>
+        </div>
+        <div class="shopCard">
+          <h3>戸川の名刺</h3>
+          <p>価格：2500円<br>使用後、次の特殊景品交換1回だけ5%上乗せ。大勝ち用の小ネタ。</p>
+          <button data-action="buy-cash-item" data-item="togawaCard">2500円で買う</button>
+        </div>
+        <div class="shopCard">
+          <h3>地下安全靴</h3>
+          <p>価格：1500円<br>使用後、地下ゲーム5回だけ最低報酬が少し増える。</p>
+          <button data-action="buy-cash-item" data-item="boots">1500円で買う</button>
+        </div>
+        <div class="shopCard">
+          <h3>金ドブ券</h3>
+          <p>価格：777円<br>使用すると爆音と光だけ出る。効果は本当にない。</p>
+          <button class="dangerBtn" data-action="buy-cash-item" data-item="waste">777円で買う</button>
+        </div>
+      </div>
+      <div class="shopCard" style="margin-top:10px;">
+        <h3>所持アイテム</h3>
+        <div class="inventory" id="inventory">なし</div>
+      </div>
+      <div class="logBox" id="shopLog">売店「現金限定だよ。メダルでは買えないよ」</div>
+    </section>
+
+    <section class="floor screen" data-screen-panel="underground">
+      <h2>B1 地下</h2>
+      <div class="floorLead">
+        メダルも現金風ポイントも尽きたときの救済階。<br>
+        ただし連続で稼ぐと疲労で効率が落ちます。遊技台を回すと少し回復します。
+      </div>
+      <div class="shopGrid">
+        <div class="shopCard">
+          <h3>地下労働</h3>
+          <p>8秒連打。連打数で報酬が決まる。疲労が高いと手が重くなる。</p>
+          <button data-action="start-underground" data-game="work">労働開始</button>
+        </div>
+        <div class="shopCard">
+          <h3>闇の目押し</h3>
+          <p>流れるカーソルを中央で止める。疲労が高いほど速くなる。</p>
+          <button data-action="start-underground" data-game="skill">目押し開始</button>
+        </div>
+        <div class="shopCard">
+          <h3>地下チンチロ風</h3>
+          <p>3つのサイコロを振る。ゾロ目・456なら大きいが、123はしょっぱい。</p>
+          <button data-action="start-underground" data-game="dice">サイコロ開始</button>
+        </div>
+        <div class="shopCard">
+          <h3>疲労度</h3>
+          <p>現在：<span id="fatigue">0</span> ／ <span id="fatigueLabel">元気</span><br>高いほど地下報酬が減り、目押しが難しくなる。</p>
+          <div class="fatigueWrap"><div class="fatigueBar" id="fatigueBar"></div></div>
+          <div class="fatigueStatus" id="fatigueStatus">地上で1G回すと少し回復</div>
+          <button data-action="rest-info">説明を見る</button>
+        </div>
+      </div>
+      <div class="undergroundGame" id="undergroundGame">
+        <div class="ugTitle">地下ゲーム待機中</div>
+        <div class="ugReadout">遊ぶゲームを選んでください。報酬は現金風ポイントとして加算されます。</div>
+      </div>
+      <div class="logBox" id="undergroundLog">地下班長「金が欲しいなら、まずボタンを押せ」</div>
+    </section>
+
+
+    <div class="note">
+      動かない場合は、このHTMLをCodePenやGitHub Pagesに貼って開くと確実です。スマホのファイルプレビューではJavaScriptが止まる場合があります。音量注意。BGMは自作のポンポコ風ループです。現金は現実のお金ではなく、ゲーム内の現金風ポイントです。メダル貸出は1F遊技台の貸出ボタンから行えます。
+    </div>
+  </main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const machine = $("machine");
+  const modeEl = $("mode");
+  const ownedEl = $("owned");
+  const creditEl = $("credit");
+  const wonEl = $("won");
+  const setsEl = $("sets");
+  const cashEl = $("cash");
+  const slotCashEl = $("slotCash");
+  const walletMedalsEl = $("walletMedals");
+  const walletPrizesEl = $("walletPrizes");
+  const slotPrizesEl = $("slotPrizes");
+  const activeEffectsEl = $("activeEffects");
+  const inventoryEl = $("inventory");
+  const fatigueEl = $("fatigue");
+  const slotFatigueEl = $("slotFatigue");
+  const fatigueLabelEl = $("fatigueLabel");
+  const slotFatigueLabelEl = $("slotFatigueLabel");
+  const fatigueBarEl = $("fatigueBar");
+  const fatigueStatusEl = $("fatigueStatus");
+  const undergroundGameEl = $("undergroundGame");
+  const counterLog = $("counterLog");
+  const togawaLog = $("togawaLog");
+  const shopLog = $("shopLog");
+  const undergroundLog = $("undergroundLog");
+  const message = $("message");
+  const spinBtn = $("spin");
+  const judgeBtn = $("judge");
+  const resetBtn = $("reset");
+  const cutin = $("cutin");
+  const cutinSmall = $("cutinSmall");
+  const cutinMain = $("cutinMain");
+  const reels = [$("r1"), $("r2"), $("r3")];
+
+  const BET = 3;
+
+  // 上位ボーナスだけはクソゲー仕様で 1/100。
+  // それ以外はジャグラー設定1っぽい数値に寄せています。
+  const UPPER_BONUS_RATE = 1 / 100;
+  const BIG_BONUS_RATE = 1 / 273.1;
+  const REG_BONUS_RATE = 1 / 439.8;
+  const REPLAY_RATE = 1 / 7.3;
+  const GRAPE_RATE = 1 / 6.02;
+  const CHERRY_RATE = 1 / 36.36;
+
+  const UPPER_AT_ENTRY_RATE = 0.5;
+  const UPPER_AT_LOOP_RATE = 0.75;
+
+  const symbols = ["🌸", "🍒", "🔁", "🍇", "🍮", "🏫", "👴", "💯", "💰", "🔥", "⭐"];
+
+  const prizeDefs = {
+    small: { label: "小", medals: 50, cash: 500 },
+    medium: { label: "中", medals: 250, cash: 2500 },
+    large: { label: "大", medals: 1000, cash: 10000 }
+  };
+
+  const itemDefs = {
+    puchun: { label: "プチュン予約券", costType: "medals", cost: 300, desc: "次のBIG/REGに暗転演出を追加。確率は変化なし。" },
+    hint: { label: "設定示唆札", costType: "medals", cost: 180, desc: "30Gだけ怪しい示唆。完全告知ではない。" },
+    soundAmp: { label: "爆音チケット", costType: "medals", cost: 220, desc: "次の派手な当たりを演出だけ過剰にする。" },
+    coffee: { label: "差し入れコーヒー", costType: "cash", cost: 1200, desc: "10Gだけ、ハズレ時12%で1枚返却。" },
+    togawaCard: { label: "戸川の名刺", costType: "cash", cost: 2500, desc: "次の特殊景品交換1回だけ5%上乗せ。" },
+    boots: { label: "地下安全靴", costType: "cash", cost: 1500, desc: "地下ゲーム5回だけ最低報酬を増やし、疲労増加を少し抑える。" },
+    meal: { label: "地下メシ", costType: "cash", cost: 800, desc: "疲労度を35回復する。" },
+    blackCall: { label: "黒服コール", costType: "cash", cost: 1800, desc: "次の地下ゲーム1回だけ疲労による報酬減衰を半分無視する。" },
+    waste: { label: "金ドブ券", costType: "cash", cost: 777, desc: "爆音と光だけ。効果なし。" }
+  };
+
+  let owned = 249;
+  let cash = 3000;
+  let totalWon = 0;
+  let sets = 0;
+  let prizes = { small: 0, medium: 0, large: 0 };
+  let items = { puchun: 0, hint: 0, soundAmp: 0, coffee: 0, togawaCard: 0, boots: 0, meal: 0, blackCall: 0, waste: 0 };
+  let effects = { puchun: 0, hint: 0, soundAmp: 0, coffee: 0, togawaCard: 0, boots: 0, blackCall: 0 };
+  let undergroundFatigue = 0;
+  let undergroundBusy = false;
+  let undergroundTimer = null;
+  let skillTimer = null;
+  let skillPos = 0;
+  let skillDir = 1;
+  let mode = "通常";
+  let busy = false;
+  let audio = null;
+  let bgmTimer = null;
+  let bgmStep = 0;
+  let bgmMode = "通常";
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const rnd = () => symbols[Math.floor(Math.random() * symbols.length)];
+  const credit = () => Math.floor(owned / BET);
+
+  function unlockAudio() {
+    try {
+      const AudioClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioClass) return;
+      if (!audio) audio = new AudioClass();
+      if (audio.state === "suspended") audio.resume();
+    } catch (e) {
+      audio = null;
+    }
+  }
+
+  function masterOut(volume = 0.040) {
+    if (!audio) return null;
+
+    const input = audio.createGain();
+    const hp = audio.createBiquadFilter();
+    const comp = audio.createDynamicsCompressor();
+    const finalGain = audio.createGain();
+
+    // 通常時の音割れ対策。低音とピークをかなり抑える。
+    hp.type = "highpass";
+    hp.frequency.value = 42;
+    hp.Q.value = 0.7;
+
+    comp.threshold.value = -36;
+    comp.knee.value = 28;
+    comp.ratio.value = 18;
+    comp.attack.value = 0.002;
+    comp.release.value = 0.18;
+
+    input.gain.value = volume;
+    finalGain.gain.value = 0.48;
+
+    input.connect(hp);
+    hp.connect(comp);
+    comp.connect(finalGain);
+    finalGain.connect(audio.destination);
+
+    return input;
+  }
+
+  function beep(freq, duration = 0.08, volume = 0.026, type = "square", endFreq = null, delay = 0) {
+    try {
+      if (!audio) return;
+
+      const now = audio.currentTime + delay;
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      const out = masterOut(volume);
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(Math.max(20, freq), now);
+
+      if (endFreq !== null) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFreq), now + duration);
+      }
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.72, now + 0.010);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(out);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.03);
+    } catch (e) {}
+  }
+
+  function chord(freqs, duration = 0.14, volume = 0.024, type = "square") {
+    // 同時発音のピークを避けるため、微妙にズラす。
+    freqs.forEach((f, i) => {
+      beep(f, duration, volume, type, null, i * 0.018);
+    });
+  }
+
+  function noise(duration = 0.08, volume = 0.026, filterFreq = 2200) {
+    try {
+      if (!audio) return;
+
+      const now = audio.currentTime;
+      const n = Math.floor(audio.sampleRate * duration);
+      const buffer = audio.createBuffer(1, n, audio.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < n; i++) {
+        const fade = 1 - i / n;
+        data[i] = (Math.random() * 2 - 1) * fade * 0.45;
+      }
+
+      const src = audio.createBufferSource();
+      const filter = audio.createBiquadFilter();
+      const gain = audio.createGain();
+      const out = masterOut(volume);
+
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(filterFreq, now);
+      filter.Q.value = 1.8;
+
+      gain.gain.setValueAtTime(0.50, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      src.buffer = buffer;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(out);
+
+      src.start(now);
+      src.stop(now + duration);
+    } catch (e) {}
+  }
+
+  function vib(pattern) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    } catch (e) {}
+  }
+
+  function kick(volume = 0.040) {
+    try {
+      if (!audio) return;
+
+      const now = audio.currentTime;
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      const out = masterOut(volume);
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(105, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.20);
+
+      gain.gain.setValueAtTime(0.70, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.23);
+
+      osc.connect(gain);
+      gain.connect(out);
+
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } catch (e) {}
+  }
+
+  function laser(start = 1300, end = 140, duration = 0.34, volume = 0.030) {
+    beep(start, duration, volume, "sawtooth", end);
+  }
+
+  function stopBonusBgm() {
+    if (bgmTimer) {
+      clearInterval(bgmTimer);
+      bgmTimer = null;
+    }
+  }
+
+  function startBonusBgm(kind = "上位AT") {
+    if (!audio) return;
+
+    if (bgmTimer && bgmMode === kind) return;
+
+    stopBonusBgm();
+    bgmMode = kind;
+    bgmStep = 0;
+
+    // 「踊るポンポコリン」そのものではなく、自作のポンポコ風ループ。
+    // 明るいお祭り感だけ出す。
+    const melody = [
+      523, 659, 784, 659,
+      587, 659, 784, 988,
+      784, 659, 587, 523,
+      659, 784, 988, 784
+    ];
+
+    bgmTimer = setInterval(() => {
+      if (!audio || mode === "通常") {
+        stopBonusBgm();
+        return;
+      }
+
+      const i = bgmStep % melody.length;
+      const base = melody[i];
+
+      // ポン・ポコの打楽器感
+      if (i % 2 === 0) kick(kind === "上位AT" ? 0.020 : 0.016);
+      if (i % 4 === 2) noise(0.025, 0.012, 950);
+
+      // 上位AT中は少し高音を足して浮かせる
+      beep(base, 0.075, kind === "上位AT" ? 0.014 : 0.011, "square");
+      if (kind === "上位AT" && i % 4 === 3) {
+        beep(base * 2, 0.055, 0.007, "triangle");
+      }
+
+      bgmStep++;
+    }, 145);
+  }
+
+  async function warningTicks(count = 4) {
+    for (let i = 0; i < count; i++) {
+      beep(220 + i * 35, 0.040, 0.026, "square");
+      beep(110 + i * 12, 0.050, 0.018, "sawtooth");
+      if (i % 2 === 0) noise(0.030, 0.018, 1800 + i * 300);
+      vib(22);
+      await sleep(105);
+    }
+  }
+
+  async function puchun() {
+    stopBonusBgm();
+
+    // ブツッ → 低音落下 → 無音 → 警告音 → 復帰
+    noise(0.040, 0.050, 3300);
+    await sleep(55);
+
+    laser(155, 34, 0.35, 0.045);
+    kick(0.050);
+    vib([80, 40, 140]);
+    await sleep(390);
+
+    // 暗転の無音。ここを作ると音割れせずに気持ち悪い。
+    await sleep(560);
+
+    beep(41, 0.15, 0.030, "sawtooth", 30);
+    await sleep(185);
+    beep(52, 0.13, 0.028, "sawtooth", 37);
+    await sleep(230);
+
+    await warningTicks(3);
+
+    chord([523, 659, 784], 0.10, 0.020, "square");
+    await sleep(105);
+    chord([784, 988, 1175], 0.11, 0.021, "square");
+    await sleep(105);
+    chord([1047, 1319, 1568], 0.17, 0.022, "square");
+  }
+
+  async function kyuiin() {
+    const run = [740, 880, 1046, 1244, 1480, 1760, 2093];
+
+    for (const n of run) {
+      beep(n, 0.034, 0.024, "square", n * 1.06);
+      await sleep(42);
+    }
+
+    noise(0.030, 0.020, 2800);
+    await sleep(45);
+    chord([1568, 1976, 2637], 0.16, 0.022, "square");
+  }
+
+  async function driveRiser() {
+    const steps = [
+      [330, 415, 494],
+      [392, 494, 587],
+      [523, 659, 784],
+      [659, 831, 988],
+      [784, 988, 1175],
+      [1047, 1319, 1568],
+      [1319, 1661, 1976],
+      [1568, 1976, 2349],
+      [1976, 2349, 2637],
+      [2349, 2637, 3136]
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      chord(steps[i], 0.085, 0.021 + i * 0.0009, "square");
+      if (i % 2 === 0) kick(0.022);
+      if (i % 3 === 1) noise(0.022, 0.012, 2500 + i * 100);
+      await sleep(78);
+    }
+  }
+
+  async function driveChops() {
+    // 頭悪い刻み。音量ではなく密度とリズムで煽る。
+    const base = [988, 1175, 1319, 1568, 1760, 1976];
+
+    for (let i = 0; i < 24; i++) {
+      const speed = i < 8 ? 58 : i < 16 ? 43 : 31;
+      const f = base[i % base.length] * (i < 12 ? 1 : 1.18);
+
+      beep(f, 0.026, 0.021, "square", f * 1.045);
+      beep(f / 2, 0.030, 0.010, "sawtooth", f / 2.2);
+
+      if (i % 3 === 0) noise(0.020, 0.012, 2400 + i * 85);
+      if (i % 4 === 0) kick(0.020);
+
+      await sleep(speed);
+    }
+  }
+
+  async function idiotAnthem() {
+    // 「100倍頭悪い」担当。短い音楽フレーズを連打する。
+    const phrase = [
+      [1047, 1319, 1568],
+      [1175, 1480, 1760],
+      [1319, 1661, 1976],
+      [1568, 1976, 2349],
+      [1760, 2217, 2637],
+      [2093, 2637, 3136]
+    ];
+
+    for (let lap = 0; lap < 2; lap++) {
+      for (let i = 0; i < phrase.length; i++) {
+        chord(phrase[i], 0.085, 0.023, "square");
+        beep(phrase[i][0] / 2, 0.070, 0.012, "sawtooth");
+        if (i % 2 === 0) kick(0.024);
+        if (i % 3 === 2) noise(0.026, 0.014, 3000 + i * 120);
+        await sleep(82 - lap * 12);
+      }
+    }
+  }
+
+  async function driveFinalHit() {
+    kick(0.055);
+    chord([1047, 1319, 1568], 0.12, 0.025, "square");
+    await sleep(115);
+
+    kick(0.052);
+    chord([1319, 1661, 1976], 0.12, 0.025, "square");
+    await sleep(115);
+
+    noise(0.045, 0.025, 3600);
+    chord([1568, 1976, 2349, 3136], 0.30, 0.024, "square");
+    beep(2349, 0.34, 0.018, "triangle", 3136);
+    vib([55, 35, 55, 35, 180]);
+
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => kick(0.030), i * 105);
+      setTimeout(() => noise(0.030, 0.018, 3000 + i * 180), i * 105 + 34);
+    }
+
+    await sleep(430);
+  }
+
+  async function brainMeltFinale() {
+    // 音割れしない範囲で、密度だけバカみたいに上げる。
+    stopBonusBgm();
+
+    kick(0.055);
+    laser(760, 180, 0.24, 0.025);
+    await sleep(140);
+
+    await driveRiser();
+
+    noise(0.035, 0.020, 2800);
+    await sleep(45);
+
+    await driveChops();
+    await idiotAnthem();
+    await driveFinalHit();
+  }
+
+
+  function prizeText() {
+    return "小" + prizes.small + " 中" + prizes.medium + " 大" + prizes.large;
+  }
+
+  function effectText() {
+    const list = [];
+    if (effects.puchun > 0) list.push("プチュン予約中");
+    if (effects.hint > 0) list.push("示唆札" + effects.hint + "G");
+    if (effects.soundAmp > 0) list.push("爆音予約中");
+    if (effects.coffee > 0) list.push("コーヒー" + effects.coffee + "G");
+    if (effects.togawaCard > 0) list.push("戸川名刺" + effects.togawaCard + "回");
+    if (effects.boots > 0) list.push("安全靴" + effects.boots + "回");
+    if (effects.blackCall > 0) list.push("黒服コール" + effects.blackCall + "回");
+    return list.length ? list.join(" ／ ") : "なし";
+  }
+
+  function isStuck() {
+    return owned < BET && cash < 1000 && prizes.small + prizes.medium + prizes.large === 0;
+  }
+
+  function fatigueLabel() {
+    if (undergroundFatigue < 20) return "元気";
+    if (undergroundFatigue < 45) return "少し疲れ";
+    if (undergroundFatigue < 70) return "かなり疲労";
+    if (undergroundFatigue < 90) return "限界間近";
+    return "地下の亡者";
+  }
+
+  function fatigueMultiplier(ignoreHalf = false) {
+    const f = Math.max(0, Math.min(100, undergroundFatigue));
+    const effective = ignoreHalf ? f * 0.5 : f;
+    if (effective < 20) return 1.00;
+    if (effective < 45) return 0.86;
+    if (effective < 70) return 0.68;
+    if (effective < 90) return 0.52;
+    return 0.40;
+  }
+
+  function addFatigue(amount) {
+    let gain = amount;
+    if (effects.boots > 0) gain *= 0.72;
+    undergroundFatigue = Math.max(0, Math.min(100, undergroundFatigue + gain));
+  }
+
+  function recoverFatigue(amount) {
+    undergroundFatigue = Math.max(0, undergroundFatigue - amount);
+  }
+
+  function fatigueComment() {
+    const m = fatigueMultiplier(false);
+    if (undergroundFatigue < 20) return "地下報酬100%。まだ人間。";
+    if (undergroundFatigue < 45) return "地下報酬約86%。手が少し重い。";
+    if (undergroundFatigue < 70) return "地下報酬約68%。目押しも速く感じる。";
+    if (undergroundFatigue < 90) return "地下報酬約52%。かなり効率が悪い。";
+    return "地下報酬約40%。一度地上に戻るべき。";
+  }
+
+  function applyUndergroundReward(raw, fatigueGain, label, detail = "") {
+    const usedBlackCall = effects.blackCall > 0;
+    const rate = fatigueMultiplier(usedBlackCall);
+    if (usedBlackCall) effects.blackCall--;
+
+    let minReward = effects.boots > 0 ? 300 : 100;
+    if (effects.boots > 0) effects.boots--;
+
+    const amount = Math.max(minReward, Math.floor(raw * rate / 50) * 50);
+    cash += amount;
+    addFatigue(fatigueGain);
+    update();
+
+    const blackText = usedBlackCall ? "<br>黒服コールで疲労補正を半分無視。" : "";
+    const bootText = effects.boots > 0 ? "<br>安全靴 残り" + effects.boots + "回。" : "";
+    logTo(undergroundLog, label + "で" + amount + "円を獲得。" + detail + "<br>疲労度+" + Math.round(fatigueGain) + "。" + blackText + bootText + "<br>" + fatigueComment());
+    popup("+" + amount + "円");
+
+    if (amount >= 3000) {
+      effect("fever");
+      confetti(75);
+      chord([784, 988, 1175], 0.15, 0.020, "square");
+    } else if (amount >= 1200) {
+      effect("flash");
+      chord([523, 659, 784], 0.11, 0.016, "square");
+    } else {
+      beep(420, 0.06, 0.016, "square");
+    }
+  }
+
+  function renderInventory() {
+    if (!inventoryEl) return;
+    const ownedItems = Object.keys(itemDefs).filter((key) => items[key] > 0);
+    if (ownedItems.length === 0) {
+      inventoryEl.textContent = "なし";
+      return;
+    }
+    inventoryEl.innerHTML = ownedItems.map((key) => {
+      const it = itemDefs[key];
+      return '<div class="invItem"><div>' + it.label + ' × ' + items[key] + '<small>' + it.desc + '</small></div><button data-action="use-item" data-item="' + key + '">使う</button></div>';
+    }).join("");
+  }
+
+  function logTo(el, html) {
+    if (el) el.innerHTML = html;
+  }
+
+  function switchScreen(name) {
+    document.querySelectorAll("[data-screen-panel]").forEach((panel) => {
+      panel.classList.toggle("active", panel.dataset.screenPanel === name);
+    });
+    document.querySelectorAll(".map button[data-screen]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.screen === name);
+    });
+  }
+
+  function spendMedals(cost) {
+    if (busy) return false;
+    if (owned < cost) return false;
+    owned -= cost;
+    update();
+    return true;
+  }
+
+  function spendCash(cost) {
+    if (busy) return false;
+    if (cash < cost) return false;
+    cash -= cost;
+    update();
+    return true;
+  }
+
+  function exchangePrize(type) {
+    const def = prizeDefs[type];
+    if (!def) return;
+    unlockAudio();
+    if (!spendMedals(def.medals)) {
+      logTo(counterLog, "メダルが足りない。" + def.medals + "枚必要です。");
+      beep(95, 0.15, 0.018, "sawtooth");
+      return;
+    }
+    prizes[type]++;
+    update();
+    logTo(counterLog, def.label + "特殊景品を1個交換しました。2Fの戸川物産で現金風ポイントにできます。");
+    chord([523, 659, 784], 0.10, 0.014, "square");
+  }
+
+  function buyMedalItem(key) {
+    const it = itemDefs[key];
+    if (!it) return;
+    unlockAudio();
+    if (!spendMedals(it.cost)) {
+      logTo(counterLog, "メダルが足りない。" + it.cost + "枚必要です。");
+      beep(95, 0.15, 0.018, "sawtooth");
+      return;
+    }
+    items[key]++;
+    update();
+    logTo(counterLog, it.label + "を交換しました。売店の所持アイテム欄から使えます。");
+    beep(720, 0.06, 0.018, "square");
+  }
+
+  function sellPrize(type) {
+    const def = prizeDefs[type];
+    if (!def) return;
+    unlockAudio();
+    if (busy) return;
+    if (prizes[type] <= 0) {
+      logTo(togawaLog, "その特殊景品は持っていません。");
+      beep(95, 0.15, 0.018, "sawtooth");
+      return;
+    }
+    prizes[type]--;
+    let amount = def.cash;
+    let bonus = 0;
+    if (effects.togawaCard > 0) {
+      bonus = Math.floor(amount * 0.05);
+      amount += bonus;
+      effects.togawaCard--;
+    }
+    cash += amount;
+    update();
+    logTo(togawaLog, "戸川「" + def.label + "ね。" + amount + "円で」" + (bonus ? "<br>名刺効果で+" + bonus + "円。" : ""));
+    popup("+" + amount + "円");
+    chord([392, 523, 659], 0.11, 0.016, "square");
+  }
+
+  function rentMedals(cost, medals, place = "slot") {
+    unlockAudio();
+    if (busy || undergroundBusy) return;
+    if (!spendCash(cost)) {
+      const msg = "現金風ポイントが足りません。足りなければ地下へ。";
+      logTo(shopLog, msg);
+      message.innerHTML = "貸出不可。" + cost + "円必要です。<br>現金風ポイントが足りない場合は地下へ。";
+      beep(95, 0.15, 0.018, "sawtooth");
+      if (isStuck()) switchScreen("underground");
+      return;
+    }
+    owned += medals;
+    update();
+    const text = cost + "円でメダル" + medals + "枚を台から貸し出しました。";
+    message.innerHTML = text + "<br>そのままレバーONできます。";
+    logTo(shopLog, text);
+    popup("+" + medals + "枚");
+    chord([523, 659, 784], 0.10, 0.016, "square");
+    if (place === "slot") switchScreen("slot");
+  }
+
+  function buyCashItem(key) {
+    const it = itemDefs[key];
+    if (!it) return;
+    unlockAudio();
+    if (!spendCash(it.cost)) {
+      logTo(shopLog, "現金風ポイントが足りません。地下で稼ぐか、特殊景品を交換してください。");
+      beep(95, 0.15, 0.018, "sawtooth");
+      if (isStuck()) switchScreen("underground");
+      return;
+    }
+    items[key]++;
+    update();
+    logTo(shopLog, it.label + "を買いました。所持アイテム欄から使えます。");
+    beep(740, 0.06, 0.018, "square");
+  }
+
+  async function useItem(key) {
+    const it = itemDefs[key];
+    if (!it) return;
+    unlockAudio();
+    if (busy) return;
+    if (items[key] <= 0) {
+      logTo(shopLog, "そのアイテムは持っていません。");
+      logTo(togawaLog, "そのアイテムは持っていません。");
+      beep(95, 0.15, 0.018, "sawtooth");
+      return;
+    }
+    items[key]--;
+
+    if (key === "puchun") {
+      effects.puchun = 1;
+      logTo(shopLog, "次のBIG/REGでプチュン演出が入ります。出現率は変わりません。");
+    } else if (key === "hint") {
+      effects.hint += 30;
+      logTo(shopLog, "30Gのあいだ、怪しい設定示唆が出ます。信用しすぎないでください。");
+    } else if (key === "soundAmp") {
+      effects.soundAmp = 1;
+      logTo(shopLog, "次の派手な当たりで演出だけ壊れます。出玉は増えません。");
+    } else if (key === "coffee") {
+      effects.coffee += 10;
+      logTo(shopLog, "10Gだけ、ハズレ時に12%で1枚だけ戻ります。");
+    } else if (key === "togawaCard") {
+      effects.togawaCard += 1;
+      logTo(shopLog, "次の特殊景品交換1回だけ5%上乗せされます。");
+      logTo(togawaLog, "戸川「……名刺を持ってるなら話は早い」");
+    } else if (key === "boots") {
+      effects.boots += 5;
+      logTo(shopLog, "地下ゲーム5回だけ最低報酬が増え、疲労の増え方も少し抑えます。");
+    } else if (key === "meal") {
+      const before = undergroundFatigue;
+      recoverFatigue(35);
+      logTo(shopLog, "地下メシを食べた。疲労度が" + Math.round(before - undergroundFatigue) + "回復しました。");
+      logTo(undergroundLog, "地下メシで少し人間に戻った。<br>" + fatigueComment());
+      chord([330, 440, 550], 0.11, 0.016, "triangle");
+    } else if (key === "blackCall") {
+      effects.blackCall += 1;
+      logTo(shopLog, "次の地下ゲーム1回だけ、疲労による報酬減衰を半分無視します。");
+      logTo(undergroundLog, "黒服「今回だけは少し手を貸す」");
+    } else if (key === "waste") {
+      logTo(shopLog, "金ドブ券を使った。何も起きない。だが音は鳴った。");
+      effect("fever");
+      confetti(60);
+      await idiotAnthem();
+    }
+    update();
+  }
+
+  function hintLineFromRoll(r) {
+    if (effects.hint <= 0) return "";
+    effects.hint--;
+    const upperZone = UPPER_BONUS_RATE;
+    const bonusZone = UPPER_BONUS_RATE + BIG_BONUS_RATE + REG_BONUS_RATE;
+    const smallRoleZone = bonusZone + REPLAY_RATE + GRAPE_RATE + CHERRY_RATE;
+    let line = "";
+    if (r < upperZone) line = "示唆札：空気が虹色に歪んでいる。";
+    else if (r < bonusZone) line = "示唆札：店長の首が縦に動いた。";
+    else if (r < smallRoleZone) line = "示唆札：小役の気配だけはある。";
+    else if (r < smallRoleZone + 0.08) line = "示唆札：惜しそうに見えるだけ。";
+    else line = "示唆札：今日は空気が黄色い。";
+    return line + "<br>";
+  }
+
+  function beginPaidSpinPerks() {
+    const perks = { coffee: effects.coffee > 0 };
+    if (effects.coffee > 0) effects.coffee--;
+
+    // 地下疲労は台を回すことで回復する。コーヒー中は回復量が少し増える。
+    recoverFatigue(perks.coffee ? 5 : 3);
+    update();
+    return perks;
+  }
+
+  function coffeeRefund(perks) {
+    if (!perks.coffee || Math.random() >= 0.12) return false;
+    owned += 1;
+    update();
+    popup("コーヒー +1枚");
+    beep(620, 0.045, 0.014, "triangle");
+    return true;
+  }
+
+  async function maybeReservedPuchun(label) {
+    if (effects.puchun <= 0) return;
+    effects.puchun = 0;
+    update();
+    message.innerHTML += '<br><span class="push">予約券発動：' + label + 'でもプチュン</span>';
+    await sleep(320);
+    await puchun();
+  }
+
+  async function maybeSoundAmp(label) {
+    if (effects.soundAmp <= 0) return;
+    effects.soundAmp = 0;
+    update();
+    message.innerHTML += '<br><span class="push">爆音チケット発動：演出だけ壊れます</span>';
+    await sleep(260);
+    await brainMeltFinale();
+    startBonusBgm(label);
+  }
+
+  function clearUndergroundTimers() {
+    if (undergroundTimer) {
+      clearInterval(undergroundTimer);
+      undergroundTimer = null;
+    }
+    if (skillTimer) {
+      clearInterval(skillTimer);
+      skillTimer = null;
+    }
+  }
+
+  function setUndergroundHtml(html) {
+    if (undergroundGameEl) undergroundGameEl.innerHTML = html;
+  }
+
+  function undergroundDisabled() {
+    if (busy || undergroundBusy) {
+      logTo(undergroundLog, "いまは操作中です。");
+      return true;
+    }
+    return false;
+  }
+
+  function startUndergroundGame(kind) {
+    unlockAudio();
+    if (undergroundDisabled()) return;
+    switchScreen("underground");
+    clearUndergroundTimers();
+
+    if (kind === "work") startWorkGame();
+    if (kind === "skill") startSkillGame();
+    if (kind === "dice") startDiceGame();
+  }
+
+  function startWorkGame() {
+    undergroundBusy = true;
+    let taps = 0;
+    let remain = 8.0;
+    const start = Date.now();
+    setUndergroundHtml(
+      '<div class="ugTitle">地下労働：8秒連打</div>' +
+      '<div class="ugReadout" id="workReadout">残り8.0秒 ／ 連打0回<br>' + fatigueComment() + '</div>' +
+      '<button class="tapButton" data-action="work-tap">働け！</button>'
+    );
+    logTo(undergroundLog, "地下班長「8秒だけ手を動かせ。疲れてるほど稼ぎは落ちる」");
+    vib([40, 30, 40]);
+    beep(330, 0.08, 0.018, "square");
+
+    undergroundTimer = setInterval(() => {
+      remain = Math.max(0, 8 - (Date.now() - start) / 1000);
+      const readout = document.getElementById("workReadout");
+      if (readout) readout.innerHTML = "残り" + remain.toFixed(1) + "秒 ／ 連打" + taps + "回<br>" + fatigueComment();
+      if (remain <= 0) {
+        clearUndergroundTimers();
+        undergroundBusy = false;
+        const raw = 250 + taps * 42 + (taps >= 65 ? 900 : taps >= 45 ? 450 : taps >= 30 ? 180 : 0);
+        const gain = 13 + Math.min(17, taps * 0.18);
+        applyUndergroundReward(raw, gain, "地下労働", "<br>連打" + taps + "回。" + (taps >= 65 ? "黒服が引くほど働いた。" : taps >= 45 ? "かなり働いた。" : "まあ働いた。"));
+        setUndergroundHtml(
+          '<div class="ugTitle">地下労働終了</div>' +
+          '<div class="ugReadout">連打' + taps + '回。もう一度やると疲労がさらに増えます。</div>' +
+          '<button data-action="start-underground" data-game="work">もう一度働く</button>'
+        );
+      }
+    }, 80);
+
+    undergroundGameEl.dataset.workTaps = "0";
+    undergroundGameEl._workTap = () => {
+      if (!undergroundBusy) return;
+      taps++;
+      undergroundGameEl.dataset.workTaps = String(taps);
+      if (taps % 8 === 0) beep(240 + Math.min(taps * 5, 380), 0.025, 0.010, "square");
+      if (taps % 15 === 0) vib(18);
+    };
+  }
+
+  function startSkillGame() {
+    undergroundBusy = true;
+    skillPos = 0;
+    skillDir = 1;
+    const speed = 2.2 + undergroundFatigue * 0.035;
+    setUndergroundHtml(
+      '<div class="ugTitle">闇の目押し：中央でSTOP</div>' +
+      '<div class="ugReadout" id="skillReadout">黄色いバーを中央の白帯で止めろ。<br>' + fatigueComment() + '</div>' +
+      '<div class="ugMeter"><div class="ugCenter"></div><div class="ugCursor" id="skillCursor"></div></div>' +
+      '<button class="tapButton" data-action="skill-stop">STOP</button>'
+    );
+    logTo(undergroundLog, "黒服「疲れてるほどバーが速く見えるぞ」");
+    beep(520, 0.07, 0.018, "triangle");
+
+    skillTimer = setInterval(() => {
+      skillPos += skillDir * speed;
+      if (skillPos >= 100) { skillPos = 100; skillDir = -1; }
+      if (skillPos <= 0) { skillPos = 0; skillDir = 1; }
+      const cursor = document.getElementById("skillCursor");
+      if (cursor) cursor.style.left = skillPos + "%";
+    }, 24);
+  }
+
+  function stopSkillGame() {
+    if (!undergroundBusy || !skillTimer) return;
+    clearUndergroundTimers();
+    undergroundBusy = false;
+    const dist = Math.abs(skillPos - 50);
+    let raw = 0;
+    let rank = "";
+    if (dist <= 3) { raw = 5200; rank = "神停止"; }
+    else if (dist <= 8) { raw = 2600; rank = "ビタ気味"; }
+    else if (dist <= 17) { raw = 1200; rank = "まあまあ"; }
+    else if (dist <= 30) { raw = 550; rank = "ズレ"; }
+    else { raw = 180; rank = "大ズレ"; }
+    const gain = dist <= 8 ? 16 : dist <= 17 ? 13 : 10;
+    applyUndergroundReward(raw, gain, "闇の目押し", "<br>停止位置" + skillPos.toFixed(1) + "%、中央から" + dist.toFixed(1) + "。判定：" + rank + "。");
+    setUndergroundHtml(
+      '<div class="ugTitle">闇の目押し結果：' + rank + '</div>' +
+      '<div class="ugReadout">中央との差 ' + dist.toFixed(1) + '。疲労が高いほど次はさらに厳しい。</div>' +
+      '<button data-action="start-underground" data-game="skill">もう一度目押し</button>'
+    );
+  }
+
+  function diceChar(n) {
+    return ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"][n] || "?";
+  }
+
+  function startDiceGame() {
+    if (undergroundDisabled()) return;
+    undergroundBusy = true;
+    setUndergroundHtml(
+      '<div class="ugTitle">地下チンチロ風</div>' +
+      '<div class="ugReadout" id="diceReadout">サイコロを振っています……<br>' + fatigueComment() + '</div>' +
+      '<div class="diceRow" id="diceRow"><span class="diceBox">?</span><span class="diceBox">?</span><span class="diceBox">?</span></div>'
+    );
+    logTo(undergroundLog, "地下班長「ゾロ目か456なら熱い。123はしょっぱい」");
+
+    let ticks = 0;
+    undergroundTimer = setInterval(() => {
+      ticks++;
+      const row = document.getElementById("diceRow");
+      if (row) {
+        row.innerHTML = [1,2,3].map(() => '<span class="diceBox">' + diceChar(1 + Math.floor(Math.random() * 6)) + '</span>').join('');
+      }
+      beep(260 + ticks * 18, 0.025, 0.008, "square");
+      if (ticks >= 18) {
+        clearUndergroundTimers();
+        undergroundBusy = false;
+        const dice = [1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)].sort((a,b) => a-b);
+        const key = dice.join("");
+        let raw = 0;
+        let rank = "";
+        if (dice[0] === dice[1] && dice[1] === dice[2]) {
+          raw = 3200 + dice[0] * 350;
+          rank = "ゾロ目";
+        } else if (key === "456") {
+          raw = 5200;
+          rank = "456";
+        } else if (key === "123") {
+          raw = 120;
+          rank = "123";
+        } else if (dice[0] === dice[1] || dice[1] === dice[2] || dice[0] === dice[2]) {
+          const counts = {};
+          dice.forEach((n) => counts[n] = (counts[n] || 0) + 1);
+          const single = dice.find((n) => counts[n] === 1) || dice[0];
+          raw = 500 + single * 250;
+          rank = "目あり";
+        } else {
+          raw = 450;
+          rank = "目なし";
+        }
+        const row = document.getElementById("diceRow");
+        if (row) row.innerHTML = dice.map((n) => '<span class="diceBox">' + diceChar(n) + '</span>').join('');
+        const detail = "<br>出目：" + dice.map(diceChar).join(" ") + " ／ " + rank + "。";
+        applyUndergroundReward(raw, rank === "456" || rank === "ゾロ目" ? 20 : 12, "地下チンチロ風", detail);
+        setUndergroundHtml(
+          '<div class="ugTitle">チンチロ結果：' + rank + '</div>' +
+          '<div class="diceRow">' + dice.map((n) => '<span class="diceBox">' + diceChar(n) + '</span>').join('') + '</div>' +
+          '<div class="ugReadout">' + detail.replace('<br>', '') + '<br>' + fatigueComment() + '</div>' +
+          '<button data-action="start-underground" data-game="dice">もう一度振る</button>'
+        );
+      }
+    }, 70);
+  }
+
+  function update() {
+    ownedEl.textContent = owned;
+    creditEl.textContent = credit();
+    wonEl.textContent = totalWon;
+    setsEl.textContent = sets;
+    if (cashEl) cashEl.textContent = cash;
+    if (slotCashEl) slotCashEl.textContent = cash;
+    if (walletMedalsEl) walletMedalsEl.textContent = owned;
+    if (walletPrizesEl) walletPrizesEl.textContent = prizeText();
+    if (slotPrizesEl) slotPrizesEl.textContent = prizeText();
+    if (activeEffectsEl) activeEffectsEl.textContent = effectText();
+    const fText = Math.round(undergroundFatigue).toString();
+    const fLabel = fatigueLabel();
+    if (fatigueEl) fatigueEl.textContent = fText;
+    if (slotFatigueEl) slotFatigueEl.textContent = fText;
+    if (fatigueLabelEl) fatigueLabelEl.textContent = fLabel;
+    if (slotFatigueLabelEl) slotFatigueLabelEl.textContent = fLabel;
+    if (fatigueBarEl) fatigueBarEl.style.width = Math.max(0, Math.min(100, undergroundFatigue)) + "%";
+    if (fatigueStatusEl) fatigueStatusEl.textContent = fatigueComment();
+    renderInventory();
+  }
+
+  function setMode(m) {
+    mode = m;
+    modeEl.textContent = m;
+    modeEl.className = "";
+
+    if (m === "通常") {
+      modeEl.classList.add("mode-normal");
+      judgeBtn.textContent = "後半ジャッジ";
+      stopBonusBgm();
+    } else if (m === "ボーナス") {
+      modeEl.classList.add("mode-bonus");
+      judgeBtn.textContent = "後半ジャッジ";
+      startBonusBgm("ボーナス");
+    } else if (m === "上位ボーナス") {
+      modeEl.classList.add("mode-upper");
+      judgeBtn.textContent = "突入ジャッジ 50%";
+      startBonusBgm("上位ボーナス");
+    } else {
+      modeEl.classList.add("mode-upper");
+      judgeBtn.textContent = "継続ジャッジ 75%";
+      startBonusBgm("上位AT");
+    }
+  }
+
+  function effect(cls) {
+    machine.classList.remove("shake", "flash", "fever");
+    void machine.offsetWidth;
+    machine.classList.add(cls);
+    setTimeout(() => machine.classList.remove(cls), 2200);
+  }
+
+  function reelWin() {
+    reels.forEach((r) => {
+      r.classList.remove("win");
+      void r.offsetWidth;
+      r.classList.add("win");
+    });
+    setTimeout(() => reels.forEach((r) => r.classList.remove("win")), 1700);
+  }
+
+  function confetti(n = 100) {
+    const pieces = ["🌸", "✨", "🔥", "💰", "🍮", "⭐", "🎉", "💥"];
+    const count = window.innerWidth < 480 ? Math.floor(n * 0.62) : n;
+    for (let i = 0; i < count; i++) {
+      const d = document.createElement("div");
+      d.className = "confetti";
+      d.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+      d.style.left = Math.random() * 100 + "vw";
+      d.style.animationDelay = Math.random() * 0.45 + "s";
+      d.style.fontSize = (16 + Math.random() * 28) + "px";
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 2400);
+    }
+  }
+
+  function popup(text) {
+    const d = document.createElement("div");
+    d.className = "payout";
+    d.textContent = text;
+    machine.appendChild(d);
+    setTimeout(() => d.remove(), 1300);
+  }
+
+  function pay(amount, countAsWin = true) {
+    owned += amount;
+    if (countAsWin) totalWon += amount;
+    update();
+    popup(amount === BET && !countAsWin ? "REPLAY" : "+" + amount + "枚");
+  }
+
+  async function spinReels(finalSymbols) {
+    reels.forEach((r) => r.classList.add("spin"));
+    for (let t = 0; t < 24; t++) {
+      reels.forEach((r) => r.textContent = rnd());
+      if (t % 6 === 0) beep(260 + t * 7, 0.018, 0.006);
+      await sleep(43);
+    }
+    for (let i = 0; i < 3; i++) {
+      await sleep(215);
+      reels[i].textContent = finalSymbols[i];
+      reels[i].classList.remove("spin");
+      beep(420 + i * 130, 0.055, 0.016);
+      vib(25);
+    }
+  }
+
+  async function kouhan(isLoop) {
+    message.textContent = "……";
+    vib([40, 40, 80]);
+    await sleep(240);
+
+    cutin.classList.add("show");
+    cutin.classList.remove("rainbow");
+    cutinSmall.textContent = "プチュン……";
+    cutinMain.innerHTML = "";
+
+    await puchun();
+    vib(220);
+
+    cutinSmall.textContent = isLoop ? "継続率 75%" : "上位AT 突入";
+    await sleep(500);
+    cutinSmall.textContent = "まだ終わらない";
+    beep(110, 0.12, 0.1, "sawtooth");
+    await sleep(520);
+    cutinSmall.textContent = "次回";
+    cutinMain.innerHTML = "";
+
+    for (const ch of ["後", "半", "へ", "続", "く"]) {
+      const s = document.createElement("span");
+      s.className = "letter";
+      s.textContent = ch;
+      cutinMain.appendChild(s);
+      beep(430 + cutinMain.children.length * 115, 0.08, 0.12);
+      vib(35);
+      await sleep(150);
+    }
+
+    await sleep(340);
+    cutinSmall.textContent = "ドライブ突入";
+    cutin.classList.add("rainbow");
+    machine.classList.add("fever", "shake");
+    reelWin();
+    confetti(210);
+    vib([80, 35, 80, 35, 80, 35, 240]);
+    await brainMeltFinale();
+    await sleep(1000);
+
+    cutin.classList.remove("show", "rainbow");
+    machine.classList.remove("fever", "shake");
+    message.innerHTML = '<div class="super">後半へ続く</div>';
+    effect("flash");
+    await sleep(420);
+  }
+
+  async function normalSpin() {
+    unlockAudio();
+    if (busy) return;
+    if (owned < BET) {
+      if (isStuck()) {
+        message.innerHTML = "3枚足りない。現金風ポイントもない。<br>地下へ行けばまだ戻れます。";
+        switchScreen("underground");
+      } else if (cash >= 1000) {
+        message.innerHTML = "3枚足りない。<br>遊技台の貸出ボタンでメダルを借りられます。";
+        switchScreen("slot");
+      } else {
+        message.textContent = "3枚足りない。特殊景品があるなら2Fへ、なければ地下へ。";
+      }
+      vib([80, 60, 80]);
+      return;
+    }
+
+    busy = true;
+    spinBtn.disabled = true;
+    judgeBtn.disabled = true;
+
+    owned -= BET;
+    const spinPerks = beginPaidSpinPerks();
+    setMode("通常");
+    update();
+    message.innerHTML = "レバーON……";
+    vib(35);
+
+    const r = Math.random();
+    const hintLine = hintLineFromRoll(r);
+    if (hintLine) message.innerHTML = hintLine + "レバーON……";
+
+    try {
+      if (r < UPPER_BONUS_RATE) {
+        await spinReels(["🔥", "🔥", "🔥"]);
+        setMode("上位ボーナス");
+        pay(150);
+        message.innerHTML = '<div class="super">上位ボーナス！</div><div class="gogo">ペカァァァ</div><span class="push">50%で上位AT</span>';
+        effect("fever");
+        reelWin();
+        confetti(90);
+        vib([100, 40, 100, 40, 180]);
+        await puchun();
+        await brainMeltFinale();
+        await maybeSoundAmp("上位ボーナス");
+        startBonusBgm("上位ボーナス");
+        judgeBtn.disabled = false;
+        spinBtn.disabled = true;
+        busy = false;
+        return;
+      }
+
+      if (r < UPPER_BONUS_RATE + BIG_BONUS_RATE) {
+        await spinReels(["💯", "💯", "💯"]);
+        setMode("ボーナス");
+        pay(252);
+        message.innerHTML = '<div class="huge">BIG</div>+252枚<br><span class="gogo">ペカッ</span>';
+        effect("flash");
+        reelWin();
+        confetti(45);
+        await maybeReservedPuchun("BIG");
+        await maybeSoundAmp("ボーナス");
+        await kyuiin();
+        await sleep(900);
+        setMode("通常");
+      } else if (r < UPPER_BONUS_RATE + BIG_BONUS_RATE + REG_BONUS_RATE) {
+        await spinReels(["👴", "👴", "👴"]);
+        setMode("ボーナス");
+        pay(96);
+        message.innerHTML = '<div class="huge">REG</div>+96枚<br><span class="gogo">ペカッ</span>';
+        effect("flash");
+        reelWin();
+        confetti(28);
+        await maybeReservedPuchun("REG");
+        await maybeSoundAmp("ボーナス");
+        await kyuiin();
+        await sleep(750);
+        setMode("通常");
+      } else if (r < UPPER_BONUS_RATE + BIG_BONUS_RATE + REG_BONUS_RATE + REPLAY_RATE) {
+        await spinReels(["🔁", "🔁", "🔁"]);
+        pay(BET, false);
+        message.innerHTML = "リプレイ<br>3枚返却。もう1回遊べる。";
+        beep(520, 0.045, 0.018);
+        await sleep(60);
+        beep(620, 0.045, 0.018);
+      } else if (r < UPPER_BONUS_RATE + BIG_BONUS_RATE + REG_BONUS_RATE + REPLAY_RATE + GRAPE_RATE) {
+        await spinReels(["🍇", "🍇", "🍇"]);
+        pay(8);
+        message.innerHTML = 'ぶどう 8枚払い<br><span class="push">ジャグラーっぽい</span>';
+        effect("flash");
+        reelWin();
+        beep(660, 0.050, 0.020);
+        await sleep(60);
+        beep(880, 0.060, 0.020);
+      } else if (r < UPPER_BONUS_RATE + BIG_BONUS_RATE + REG_BONUS_RATE + REPLAY_RATE + GRAPE_RATE + CHERRY_RATE) {
+        await spinReels(["🍒", "⭐", "⭐"]);
+        pay(2);
+        message.innerHTML = 'チェリー 2枚払い<br><span class="push">実質 -1枚</span>';
+        beep(520, 0.040, 0.016);
+        await sleep(55);
+        beep(720, 0.045, 0.016);
+      } else {
+        await spinReels([rnd(), rnd(), rnd()]);
+        if (coffeeRefund(spinPerks)) {
+          message.innerHTML = "はずれ。3枚消えた。<br>コーヒーで1枚だけ戻った。";
+        } else {
+          message.textContent = "はずれ。3枚消えた。";
+        }
+      }
+    } catch (e) {
+      message.textContent = "エラーで止まったので復帰しました。もう一度押してください。";
+      console.error(e);
+    }
+
+    setMode("通常");
+    update();
+    spinBtn.disabled = false;
+    judgeBtn.disabled = true;
+    busy = false;
+  }
+
+  async function judge() {
+    unlockAudio();
+    if (busy) return;
+
+    busy = true;
+    spinBtn.disabled = true;
+    judgeBtn.disabled = true;
+
+    try {
+      if (mode === "上位ボーナス") {
+        message.innerHTML = '上位AT突入ジャッジ……<br><span class="push">50%</span>';
+        effect("shake");
+        beep(220, 0.055, 0.020);
+        vib([50, 50, 100]);
+        await sleep(850);
+
+        if (Math.random() < UPPER_AT_ENTRY_RATE) {
+          await kouhan(false);
+          setMode("上位AT");
+          sets = 1;
+          pay(250);
+          message.innerHTML = '<div class="super">上位AT突入！</div>+250枚<br><span class="push">ここから75%で後半へ続く</span>';
+          judgeBtn.disabled = false;
+          spinBtn.disabled = true;
+        } else {
+          setMode("通常");
+          message.textContent = "スン……。上位ATならず。";
+          beep(95, 0.20, 0.024, "sawtooth");
+          vib([170, 80, 170]);
+          spinBtn.disabled = false;
+        }
+        update();
+        busy = false;
+        return;
+      }
+
+      if (mode === "上位AT") {
+        message.innerHTML = '継続ジャッジ……<br><span class="push">75%</span>';
+        effect("shake");
+        beep(260, 0.055, 0.020);
+        vib([50, 40, 50, 40, 120]);
+        await sleep(850);
+
+        if (Math.random() < UPPER_AT_LOOP_RATE) {
+          await kouhan(true);
+          sets++;
+          let payout = 180 + Math.min(sets * 20, 240);
+          if (sets % 5 === 0) payout += 777;
+          pay(payout);
+          message.innerHTML =
+            '<div class="super">' + sets + 'セット目！</div>+' + payout + '枚<br><span class="push">まだまだ後半へ続く</span>' +
+            (sets % 5 === 0 ? '<br><span class="push">5セット刻みの狂気 +777枚</span>' : "");
+          judgeBtn.disabled = false;
+          spinBtn.disabled = true;
+        } else {
+          const finalSet = sets;
+          const finalWon = totalWon;
+          sets = 0;
+          setMode("通常");
+          update();
+          message.innerHTML = "終了。<br>上位AT " + finalSet + "セット<br>獲得 " + finalWon + "枚";
+          beep(105, 0.22, 0.024, "sawtooth");
+          vib([190, 80, 190]);
+          spinBtn.disabled = false;
+          judgeBtn.disabled = true;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      message.textContent = "ジャッジ中にエラーが出たので復帰しました。";
+      spinBtn.disabled = false;
+      judgeBtn.disabled = true;
+    }
+
+    update();
+    busy = false;
+  }
+
+  function reset() {
+    unlockAudio();
+    owned = 249;
+    cash = 3000;
+    totalWon = 0;
+    sets = 0;
+    prizes = { small: 0, medium: 0, large: 0 };
+    items = { puchun: 0, hint: 0, soundAmp: 0, coffee: 0, togawaCard: 0, boots: 0, meal: 0, blackCall: 0, waste: 0 };
+    effects = { puchun: 0, hint: 0, soundAmp: 0, coffee: 0, togawaCard: 0, boots: 0, blackCall: 0 };
+    undergroundFatigue = 0;
+    busy = false;
+    stopBonusBgm();
+    setMode("通常");
+    reels[0].textContent = "🌸";
+    reels[1].textContent = "🍇";
+    reels[2].textContent = "🔁";
+    reels.forEach((r) => r.classList.remove("spin", "win"));
+    cutin.classList.remove("show", "rainbow");
+    machine.classList.remove("shake", "flash", "fever");
+    message.textContent = "通常時。1/100の上位ボーナスを引け。";
+    spinBtn.disabled = false;
+    judgeBtn.disabled = true;
+    update();
+  }
+
+  spinBtn.addEventListener("click", normalSpin);
+  spinBtn.addEventListener("touchend", (e) => { e.preventDefault(); normalSpin(); }, { passive: false });
+
+  judgeBtn.addEventListener("click", judge);
+  judgeBtn.addEventListener("touchend", (e) => { e.preventDefault(); judge(); }, { passive: false });
+
+  resetBtn.addEventListener("click", reset);
+  resetBtn.addEventListener("touchend", (e) => { e.preventDefault(); reset(); }, { passive: false });
+
+
+  document.querySelectorAll(".map button[data-screen]").forEach((btn) => {
+    btn.addEventListener("click", () => switchScreen(btn.dataset.screen));
+  });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    const action = btn.dataset.action;
+    if (action === "exchange-prize") exchangePrize(btn.dataset.prize);
+    if (action === "sell-prize") sellPrize(btn.dataset.prize);
+    if (action === "buy-medal-item") buyMedalItem(btn.dataset.item);
+    if (action === "buy-cash-item") buyCashItem(btn.dataset.item);
+    if (action === "rent-medals") rentMedals(Number(btn.dataset.cost), Number(btn.dataset.medals), btn.dataset.place || "slot");
+    if (action === "use-item") useItem(btn.dataset.item);
+    if (action === "start-underground") startUndergroundGame(btn.dataset.game);
+    if (action === "work-tap" && undergroundGameEl && undergroundGameEl._workTap) undergroundGameEl._workTap();
+    if (action === "skill-stop") stopSkillGame();
+    if (action === "rest-info") {
+      logTo(undergroundLog, "疲労度は0〜100。地下ゲームで増え、1Fで1G回すごとに3回復します。<br>コーヒー中は1Gで5回復。地下メシは即35回復。黒服コールは次の地下ゲームだけ疲労補正を半分無視します。");
+    }
+  });
+
+  setMode("通常");
+  update();
+})();
+</script>
+</body>
+</html>
