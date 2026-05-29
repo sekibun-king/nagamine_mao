@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>後半へ続くスロット 戸川物産エディション v3 Responsive</title>
+  <title>後半へ続くスロット 戸川物産エディション v4 Admin</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
     body {
@@ -868,6 +868,89 @@
       .note, .floorLead { display: none; }
     }
 
+
+
+    .adminScreen {
+      background: linear-gradient(135deg, rgba(20, 16, 28, .96), rgba(74, 22, 14, .96));
+      color: #fff7cf;
+      border-color: #fff000;
+      box-shadow: 0 8px 0 #2a0704, 0 0 24px rgba(255,240,0,.28);
+    }
+    .adminScreen h2, .adminScreen h3 { color: #fff000; text-shadow: 2px 2px #500, 0 0 12px #fff; }
+    .adminScreen .floorLead, .adminScreen .shopCard, .adminScreen .logBox {
+      background: rgba(255,248,221,.94);
+      color: #3a1d12;
+    }
+    .adminGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .adminCodeRow {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .adminCodeRow input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 3px solid #5a120f;
+      padding: 8px 12px;
+      font-size: 18px;
+      font-weight: 900;
+      user-select: text;
+      -webkit-user-select: text;
+      background: #fffef3;
+      color: #3a1d12;
+    }
+    .adminControls[hidden], .adminLocked[hidden] { display: none !important; }
+    .adminControls button, .adminLocked button {
+      background: linear-gradient(#fff000, #ff8a00);
+      color: #3a1d12;
+      box-shadow: 0 5px 0 #7a3400, 0 0 12px rgba(255,240,0,.55);
+      font-size: clamp(15px, 3.7vw, 21px);
+      min-height: 56px;
+      padding: 8px;
+    }
+    .adminControls button.dangerBtn {
+      background: linear-gradient(#ff6b6b, #e00000);
+      color: #fff;
+      text-shadow: 1px 1px #500;
+      box-shadow: 0 5px 0 #650000, 0 0 16px rgba(255,0,0,.45);
+    }
+    .adminStatus {
+      margin: 10px 0;
+      padding: 10px;
+      border: 3px dashed #fff000;
+      border-radius: 14px;
+      background: rgba(0,0,0,.75);
+      color: #fff7cf;
+      font-weight: 900;
+      line-height: 1.55;
+    }
+    .adminHint {
+      display: block;
+      margin-top: 7px;
+      font-size: 12px;
+      line-height: 1.45;
+      opacity: .82;
+    }
+    .adminBadge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #000;
+      color: #fff000;
+      box-shadow: 0 0 10px #fff000;
+      margin-left: 4px;
+    }
+
+    @media (max-width: 520px) {
+      .adminGrid { grid-template-columns: 1fr; }
+      .adminCodeRow { grid-template-columns: 1fr; }
+    }
     /* 動きを減らす設定の端末では、派手な揺れだけ弱める */
     @media (prefers-reduced-motion: reduce) {
       .shake, .flash, .fever, .win, .spin, .push, .huge, .super, .gogo, .rainbow, .letter, .confetti, .payout {
@@ -901,6 +984,7 @@
       <button data-screen="togawa">2F<br>戸川物産</button>
       <button data-screen="cashshop">売店<br>現金限定</button>
       <button data-screen="underground">B1<br>地下</button>
+      <button data-screen="admin">管理者<br>権限</button>
     </nav>
 
 
@@ -1094,8 +1178,45 @@
     </section>
 
 
+
+
+    <section class="floor screen adminScreen" data-screen-panel="admin">
+      <h2>管理者室 <span class="adminBadge">ADMIN</span></h2>
+      <div class="floorLead">
+        ここはデバッグ・撮影・演出確認用です。通常アイテムとは別枠なので、ゲームバランスを気にせず強制できます。<br>
+        スマホではタイトルを7回タップしても開放できます。
+      </div>
+
+      <div class="shopCard adminLocked" id="adminLocked">
+        <h3>管理者ログイン</h3>
+        <p>コードを入力すると管理者コマンドを開放します。</p>
+        <div class="adminCodeRow">
+          <input id="adminCode" type="password" autocomplete="off" inputmode="latin" placeholder="管理者コード" />
+          <button data-action="admin-login">ログイン</button>
+        </div>
+        <small class="adminHint">初期コード：togawa ／ admin ／ 7777</small>
+      </div>
+
+      <div class="adminControls" id="adminControls" hidden>
+        <div class="adminStatus" id="adminStatus">管理者権限：OFF</div>
+        <div class="adminGrid">
+          <button data-action="admin-force-fire" data-count="1">次Gだけ🔥🔥🔥確定</button>
+          <button data-action="admin-force-fire" data-count="5">🔥確定ストック +5</button>
+          <button class="dangerBtn" data-action="admin-toggle-fire-loop">毎G🔥🔥🔥 切替</button>
+          <button data-action="admin-clear-fire">🔥確定を解除</button>
+          <button data-action="admin-give-medals" data-amount="1000">メダル +1000枚</button>
+          <button data-action="admin-give-cash" data-amount="50000">現金風 +50000円</button>
+          <button data-action="admin-give-items">アイテム全部 +3</button>
+          <button data-action="admin-clear-fatigue">疲労度 0</button>
+          <button data-action="admin-enter-upper">上位ATへ直接移行</button>
+          <button class="dangerBtn" data-action="admin-full-reset">管理者状態も含めてリセット</button>
+        </div>
+      </div>
+      <div class="logBox" id="adminLog">管理者室「権限があれば、確率はただの飾りです」</div>
+    </section>
+
     <div class="note">
-      動かない場合は、このHTMLをCodePenやGitHub Pagesに貼って開くと確実です。スマホのファイルプレビューではJavaScriptが止まる場合があります。音量注意。BGMは自作のポンポコ風ループです。現金は現実のお金ではなく、ゲーム内の現金風ポイントです。メダル貸出は1F遊技台の貸出ボタンから行えます。
+      動かない場合は、このHTMLをCodePenやGitHub Pagesに貼って開くと確実です。スマホのファイルプレビューではJavaScriptが止まる場合があります。音量注意。BGMは自作のポンポコ風ループです。現金は現実のお金ではなく、ゲーム内の現金風ポイントです。メダル貸出は1F遊技台の貸出ボタンから行えます。管理者権限は管理者室でコード入力、またはタイトル7回タップで開放できます。
     </div>
   </main>
 
@@ -1127,6 +1248,12 @@
   const togawaLog = $("togawaLog");
   const shopLog = $("shopLog");
   const undergroundLog = $("undergroundLog");
+  const adminLockedEl = $("adminLocked");
+  const adminControlsEl = $("adminControls");
+  const adminCodeInput = $("adminCode");
+  const adminStatusEl = $("adminStatus");
+  const adminLog = $("adminLog");
+  const titleEl = document.querySelector("h1");
   const message = $("message");
   const spinBtn = $("spin");
   const judgeBtn = $("judge");
@@ -1189,6 +1316,10 @@
   let bgmTimer = null;
   let bgmStep = 0;
   let bgmMode = "通常";
+  let adminUnlocked = false;
+  let adminFireStock = 0;
+  let adminAlwaysFire = false;
+  let adminTapCount = 0;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const rnd = () => symbols[Math.floor(Math.random() * symbols.length)];
@@ -1556,6 +1687,8 @@
     if (effects.togawaCard > 0) list.push("戸川名刺" + effects.togawaCard + "回");
     if (effects.boots > 0) list.push("安全靴" + effects.boots + "回");
     if (effects.blackCall > 0) list.push("黒服コール" + effects.blackCall + "回");
+    if (adminUnlocked && adminFireStock > 0) list.push("管理者🔥" + adminFireStock + "G");
+    if (adminUnlocked && adminAlwaysFire) list.push("管理者毎G🔥");
     return list.length ? list.join(" ／ ") : "なし";
   }
 
@@ -2050,6 +2183,148 @@
     }, 70);
   }
 
+
+
+  function updateAdminPanel() {
+    if (!adminLockedEl || !adminControlsEl || !adminStatusEl) return;
+    adminLockedEl.hidden = adminUnlocked;
+    adminControlsEl.hidden = !adminUnlocked;
+    const loopText = adminAlwaysFire ? "ON：毎G🔥🔥🔥" : "OFF";
+    adminStatusEl.innerHTML =
+      "管理者権限：" + (adminUnlocked ? "ON" : "OFF") +
+      "<br>🔥確定ストック：" + adminFireStock + "G" +
+      "<br>毎G🔥：" + loopText;
+  }
+
+  function unlockAdmin(reason = "ログイン") {
+    adminUnlocked = true;
+    update();
+    updateAdminPanel();
+    switchScreen("admin");
+    logTo(adminLog, "管理者権限を開放しました。理由：" + reason + "<br>次G🔥確定などのコマンドを使えます。");
+    chord([777, 999, 1333], 0.12, 0.020, "square");
+    vib([50, 40, 120]);
+  }
+
+  function adminLogin() {
+    unlockAudio();
+    const code = ((adminCodeInput && adminCodeInput.value) || "").trim().toLowerCase();
+    if (["togawa", "admin", "7777"].includes(code)) {
+      unlockAdmin("コード認証");
+    } else {
+      logTo(adminLog, "コードが違います。初期コードは togawa / admin / 7777 です。");
+      beep(95, 0.16, 0.020, "sawtooth");
+    }
+  }
+
+  function requireAdmin() {
+    if (adminUnlocked) return true;
+    logTo(adminLog, "先に管理者ログインしてください。");
+    switchScreen("admin");
+    beep(95, 0.16, 0.020, "sawtooth");
+    return false;
+  }
+
+  function consumeAdminFireFlag() {
+    if (!adminUnlocked) return false;
+    if (adminAlwaysFire) return true;
+    if (adminFireStock > 0) {
+      adminFireStock--;
+      updateAdminPanel();
+      return true;
+    }
+    return false;
+  }
+
+  function adminForceFire(count) {
+    if (!requireAdmin()) return;
+    adminFireStock += Math.max(1, count || 1);
+    update();
+    switchScreen("slot");
+    message.innerHTML = "管理者権限：🔥🔥🔥確定フラグを" + count + "G分セットしました。<br>次のレバーONで必ず揃います。";
+    logTo(adminLog, "🔥確定ストックを追加しました。現在：" + adminFireStock + "G");
+    chord([1047, 1319, 1568], 0.13, 0.020, "square");
+  }
+
+  function adminToggleFireLoop() {
+    if (!requireAdmin()) return;
+    adminAlwaysFire = !adminAlwaysFire;
+    update();
+    switchScreen("slot");
+    message.innerHTML = adminAlwaysFire
+      ? "管理者権限：毎G🔥🔥🔥をONにしました。<br>通常ゲームの抽選を無視して、毎回上位ボーナスになります。"
+      : "管理者権限：毎G🔥🔥🔥をOFFにしました。";
+    logTo(adminLog, "毎G🔥：" + (adminAlwaysFire ? "ON" : "OFF"));
+    effect("flash");
+  }
+
+  function adminClearFire() {
+    if (!requireAdmin()) return;
+    adminFireStock = 0;
+    adminAlwaysFire = false;
+    update();
+    logTo(adminLog, "🔥確定ストックと毎G🔥を解除しました。");
+    message.textContent = "管理者権限：🔥確定を解除しました。";
+  }
+
+  function adminGiveMedals(amount) {
+    if (!requireAdmin()) return;
+    owned += amount;
+    update();
+    popup("管理者 +" + amount + "枚");
+    logTo(adminLog, "メダルを" + amount + "枚付与しました。");
+  }
+
+  function adminGiveCash(amount) {
+    if (!requireAdmin()) return;
+    cash += amount;
+    update();
+    popup("管理者 +" + amount + "円");
+    logTo(adminLog, "現金風ポイントを" + amount + "円付与しました。");
+  }
+
+  function adminGiveItems() {
+    if (!requireAdmin()) return;
+    Object.keys(items).forEach((key) => { items[key] += 3; });
+    update();
+    logTo(adminLog, "全アイテムを3個ずつ付与しました。");
+    switchScreen("cashshop");
+  }
+
+  function adminClearFatigue() {
+    if (!requireAdmin()) return;
+    undergroundFatigue = 0;
+    update();
+    logTo(adminLog, "疲労度を0にしました。");
+    message.textContent = "管理者権限：疲労度を0にしました。";
+  }
+
+  function adminEnterUpper() {
+    if (!requireAdmin() || busy) return;
+    sets = Math.max(1, sets || 1);
+    setMode("上位AT");
+    update();
+    switchScreen("slot");
+    judgeBtn.disabled = false;
+    spinBtn.disabled = true;
+    message.innerHTML = '<div class="super">管理者直行</div>上位ATへ直接移行しました。<br><span class="push">継続ジャッジ可能</span>';
+    effect("fever");
+    reelWin();
+    confetti(80);
+  }
+
+  function adminFullReset() {
+    if (!requireAdmin()) return;
+    adminUnlocked = false;
+    adminFireStock = 0;
+    adminAlwaysFire = false;
+    if (adminCodeInput) adminCodeInput.value = "";
+    reset();
+    updateAdminPanel();
+    switchScreen("admin");
+    logTo(adminLog, "通常状態に戻しました。管理者権限もOFFです。");
+  }
+
   function update() {
     ownedEl.textContent = owned;
     creditEl.textContent = credit();
@@ -2070,6 +2345,7 @@
     if (fatigueBarEl) fatigueBarEl.style.width = Math.max(0, Math.min(100, undergroundFatigue)) + "%";
     if (fatigueStatusEl) fatigueStatusEl.textContent = fatigueComment();
     renderInventory();
+    updateAdminPanel();
   }
 
   function setMode(m) {
@@ -2234,13 +2510,17 @@
     message.innerHTML = "レバーON……";
     vib(35);
 
-    const r = Math.random();
-    const hintLine = hintLineFromRoll(r);
+    const forcedByAdmin = consumeAdminFireFlag();
+    const r = forcedByAdmin ? 0 : Math.random();
+    const hintLine = forcedByAdmin ? "管理者権限：次G🔥🔥🔥確定。<br>" : hintLineFromRoll(r);
     if (hintLine) message.innerHTML = hintLine + "レバーON……";
 
     try {
       if (r < UPPER_BONUS_RATE) {
         await spinReels(["🔥", "🔥", "🔥"]);
+        if (forcedByAdmin) {
+          logTo(adminLog, "管理者権限で🔥🔥🔥を成立させました。残りストック：" + adminFireStock + "G");
+        }
         setMode("上位ボーナス");
         pay(150);
         message.innerHTML = '<div class="super">上位ボーナス！</div><div class="gogo">ペカァァァ</div><span class="push">50%で上位AT</span>';
@@ -2457,8 +2737,36 @@
     if (action === "start-underground") startUndergroundGame(btn.dataset.game);
     if (action === "work-tap" && undergroundGameEl && undergroundGameEl._workTap) undergroundGameEl._workTap();
     if (action === "skill-stop") stopSkillGame();
+    if (action === "admin-login") adminLogin();
+    if (action === "admin-force-fire") adminForceFire(Number(btn.dataset.count || 1));
+    if (action === "admin-toggle-fire-loop") adminToggleFireLoop();
+    if (action === "admin-clear-fire") adminClearFire();
+    if (action === "admin-give-medals") adminGiveMedals(Number(btn.dataset.amount || 0));
+    if (action === "admin-give-cash") adminGiveCash(Number(btn.dataset.amount || 0));
+    if (action === "admin-give-items") adminGiveItems();
+    if (action === "admin-clear-fatigue") adminClearFatigue();
+    if (action === "admin-enter-upper") adminEnterUpper();
+    if (action === "admin-full-reset") adminFullReset();
     if (action === "rest-info") {
       logTo(undergroundLog, "疲労度は0〜100。地下ゲームで増え、1Fで1G回すごとに3回復します。<br>コーヒー中は1Gで5回復。地下メシは即35回復。黒服コールは次の地下ゲームだけ疲労補正を半分無視します。");
+    }
+  });
+
+
+
+  if (titleEl) {
+    titleEl.addEventListener("click", () => {
+      adminTapCount++;
+      if (!adminUnlocked && adminTapCount >= 7) unlockAdmin("タイトル7回タップ");
+      if (adminTapCount > 12) adminTapCount = 0;
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
+      e.preventDefault();
+      if (!adminUnlocked) unlockAdmin("Ctrl+Shift+A");
+      else switchScreen("admin");
     }
   });
 
