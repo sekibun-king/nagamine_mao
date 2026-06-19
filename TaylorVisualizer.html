@@ -219,6 +219,7 @@
       .canvas-wrap{height:285px}
     }
   </style>
+<link rel="stylesheet" href="./assets:/worldclass.css">
 </head>
 <body>
   <header>
@@ -232,8 +233,9 @@
         <label for="funcInput">関数 f(x)</label>
         <input id="funcInput" value="sin(x)" autocomplete="off">
         <div class="hint">
-          例：sin(x), cos(x), exp(x), log(1+x), sqrt(1+x), 1/(1-x)<br>
-          使える記号：+, -, *, /, ^, sin, cos, tan, exp, log, sqrt, abs, pi, e
+          例：sin(x), cos(x), exp(x), log(1+x), sqrt(1+x), root(1+x,5), 1/(1-x)<br>
+          使える記号：+, -, *, /, ^, sin, cos, tan, exp, log, sqrt, cbrt, root, nthroot, pow, abs, pi, e<br>
+          5乗根は root(1+x,5) または (1+x)^(1/5) と入力できます。
         </div>
       </div>
 
@@ -297,6 +299,7 @@
         <button class="example-button" data-f="sin(x)" data-a="0" data-m="10" data-n="9" data-z="1.2" data-min="-8" data-max="8">sin(x)</button>
         <button class="example-button" data-f="exp(x)" data-a="0" data-m="10" data-n="8" data-z="1.0" data-min="-4" data-max="4">exp(x)</button>
         <button class="example-button" data-f="log(1+x)" data-a="0" data-m="10" data-n="8" data-z="0.45" data-min="-0.95" data-max="3">log(1+x)</button>
+        <button class="example-button" data-f="root(1+x,5)" data-a="0" data-m="8" data-n="6" data-z="0.6" data-min="-1.5" data-max="3">5乗根</button>
         <button class="example-button" data-f="1/(1-x)" data-a="0" data-m="10" data-n="8" data-z="0.45" data-min="-3" data-max="0.95">1/(1-x)</button>
       </div>
 
@@ -378,36 +381,172 @@
       return String(Number(x.toPrecision(7)));
     }
 
-    function compileFunction(text){
+    function normalizeFunctionText(text){
+      const supMap={"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
       let s=String(text).trim();
+      s=s.replace(/π/g,"pi");
+      s=s.replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)\s*√\s*\(/g,(_,d)=>`rootPrefix(${d.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,m=>supMap[m])},`);
+      s=s.replace(/(\d+)\s*√\s*\(/g,(_,d)=>`rootPrefix(${d},`);
+      s=s.replace(/∛\s*\(/g,"rootPrefix(3,");
+      s=s.replace(/∜\s*\(/g,"rootPrefix(4,");
+      s=s.replace(/√\s*\(/g,"sqrt(");
+      s=s.replace(/\^/g,"**");
+      s=s.replace(/([A-Za-z_][A-Za-z0-9_]*|\([^()]*\))\s*\*\*\s*\(\s*1\s*\/\s*(\d+)\s*\)/g,"root($1,$2)");
+      return s;
+    }
+
+    function realNthRoot(value,degree){
+      const x=Number(value), n=Number(degree), rn=Math.round(n);
+      if(!Number.isFinite(x)||!Number.isFinite(n)||rn<=0||Math.abs(n-rn)>1e-12) return NaN;
+      if(x<0){
+        if(rn%2===1) return -Math.pow(-x,1/rn);
+        return NaN;
+      }
+      return Math.pow(x,1/rn);
+    }
+
+    function smartPow(base,exponent){
+      const b=Number(base), p=Number(exponent);
+      if(!Number.isFinite(b)||!Number.isFinite(p)) return NaN;
+      if(b<0){
+        const inv=1/p, n=Math.round(inv);
+        if(Number.isFinite(inv)&&n>0&&Math.abs(inv-n)<1e-10&&n%2===1) return realNthRoot(b,n);
+      }
+      return Math.pow(b,p);
+    }
+
+    function compileFunction(text){
+      let s=normalizeFunctionText(text);
       if(!s) throw new Error("関数を入力してください。");
-      s=s.replace(/π/g,"pi").replace(/\^/g,"**");
       if(/[^0-9A-Za-z_+\-*/().,\s*]/.test(s)) throw new Error("使えない文字が含まれています。");
       const body=`
         const sin=Math.sin, cos=Math.cos, tan=Math.tan,
               asin=Math.asin, acos=Math.acos, atan=Math.atan,
               sinh=Math.sinh, cosh=Math.cosh, tanh=Math.tanh,
               exp=Math.exp, log=Math.log, ln=Math.log,
-              sqrt=Math.sqrt, abs=Math.abs,
+              abs=Math.abs,
               floor=Math.floor, ceil=Math.ceil, round=Math.round,
               pi=Math.PI, e=Math.E;
+        const root=(value,degree)=>realNthRoot(value,degree);
+        const nthroot=root, rt=root;
+        const rootPrefix=(degree,value)=>realNthRoot(value,degree);
+        const sqrt=value=>realNthRoot(value,2);
+        const cbrt=value=>realNthRoot(value,3);
+        const pow=(base,exponent)=>smartPow(base,exponent);
         return (${s});
       `;
       let raw;
       try{
-        raw=new Function("x",body);
-        const y=raw(0.123);
+        raw=new Function("x","realNthRoot","smartPow",body);
+        const y=raw(0.123,realNthRoot,smartPow);
         if(typeof y!=="number" && !(y instanceof Number)) throw new Error();
       }catch(_){
-        throw new Error("関数の式を解釈できません。例：sin(x), exp(x), log(1+x)");
+        throw new Error("関数の式を解釈できません。例：sin(x), exp(x), log(1+x), root(1+x,5)");
       }
       return x=>{
         try{
-          const y=Number(raw(x));
+          const y=Number(raw(x,realNthRoot,smartPow));
           if(!Number.isFinite(y) || Math.abs(y)>1e10) return null;
           return y;
         }catch(_){return null;}
       };
+    }
+
+    function splitTopLevelArgs(s){
+      const args=[];
+      let depth=0, start=0;
+      for(let i=0;i<s.length;i++){
+        const ch=s[i];
+        if(ch==="(") depth++;
+        else if(ch===")") depth--;
+        else if(ch===","&&depth===0){args.push(s.slice(start,i));start=i+1;}
+      }
+      args.push(s.slice(start));
+      return args.map(x=>x.trim()).filter(x=>x.length);
+    }
+
+    function parseLinearInX(expr){
+      let s=String(expr).replace(/\s+/g,"").replace(/\*x/g,"x");
+      if(s.startsWith("(")&&s.endsWith(")")) s=s.slice(1,-1);
+      if(!/^[0-9.+\-xX*]+$/.test(s)) return null;
+      s=s.replace(/-/g,"+-");
+      let constant=0, slope=0;
+      for(const raw of s.split("+")){
+        const term=raw.trim();
+        if(!term) continue;
+        if(/[xX]/.test(term)){
+          let coeff=term.replace(/[xX]/g,"").replace(/\*/g,"");
+          if(coeff===""||coeff==="+") coeff="1";
+          if(coeff==="-") coeff="-1";
+          const n=Number(coeff);
+          if(!Number.isFinite(n)) return null;
+          slope+=n;
+        }else{
+          const n=Number(term);
+          if(!Number.isFinite(n)) return null;
+          constant+=n;
+        }
+      }
+      return {constant,slope};
+    }
+
+    function binomialCoeff(alpha,k){
+      let r=1;
+      for(let j=0;j<k;j++) r*=alpha-j;
+      return r/factorial(k);
+    }
+
+    function rootLinearTaylorCoeffs(linear,degree,a,maxOrder){
+      const n=Math.round(Number(degree));
+      if(!Number.isFinite(n)||n<=0) return null;
+      const alpha=1/n;
+      const base=linear.constant+linear.slope*a;
+      const b=linear.slope;
+      if(Math.abs(base)<1e-14) return null;
+      const coeffs=[];
+      if(base>0){
+        const baseRoot=Math.pow(base,alpha);
+        for(let k=0;k<=maxOrder;k++) coeffs.push(baseRoot*binomialCoeff(alpha,k)*Math.pow(b/base,k));
+        return coeffs;
+      }
+      if(n%2===1){
+        const pos=-base;
+        const baseRoot=-Math.pow(pos,alpha);
+        for(let k=0;k<=maxOrder;k++) coeffs.push(baseRoot*binomialCoeff(alpha,k)*Math.pow(-b/pos,k));
+        return coeffs;
+      }
+      return null;
+    }
+
+    function tryDirectTaylorCoeffs(expr,a,maxOrder){
+      const s=normalizeFunctionText(expr).replace(/\s+/g,"");
+      let m=s.match(/^(?:root|nthroot|rt)\((.*)\)$/);
+      if(m){
+        const args=splitTopLevelArgs(m[1]);
+        if(args.length===2){
+          const linear=parseLinearInX(args[0]);
+          if(linear) return rootLinearTaylorCoeffs(linear,args[1],a,maxOrder);
+        }
+      }
+      m=s.match(/^rootPrefix\((.*)\)$/);
+      if(m){
+        const args=splitTopLevelArgs(m[1]);
+        if(args.length===2){
+          const linear=parseLinearInX(args[1]);
+          if(linear) return rootLinearTaylorCoeffs(linear,args[0],a,maxOrder);
+        }
+      }
+      m=s.match(/^sqrt\((.*)\)$/);
+      if(m){
+        const linear=parseLinearInX(m[1]);
+        if(linear) return rootLinearTaylorCoeffs(linear,2,a,maxOrder);
+      }
+      m=s.match(/^cbrt\((.*)\)$/);
+      if(m){
+        const linear=parseLinearInX(m[1]);
+        if(linear) return rootLinearTaylorCoeffs(linear,3,a,maxOrder);
+      }
+      return null;
     }
 
     function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
@@ -467,11 +606,17 @@
       if(!Number.isFinite(a)) throw new Error("中心 a を数値で入力してください。");
       if(!Number.isInteger(maxOrder)||maxOrder<0||maxOrder>12) throw new Error("最大次数は 0 以上 12 以下にしてください。");
       const f=compileFunction(expr);
-      const derivs=[], coeffs=[];
-      for(let k=0;k<=maxOrder;k++){
-        const d=derivativeApprox(f,a,k,maxOrder);
-        derivs.push(d);
-        coeffs.push(d/factorial(k));
+      let coeffs=tryDirectTaylorCoeffs(expr,a,maxOrder);
+      let derivs=[];
+      if(coeffs){
+        derivs=coeffs.map((c,k)=>c*factorial(k));
+      }else{
+        coeffs=[];
+        for(let k=0;k<=maxOrder;k++){
+          const d=derivativeApprox(f,a,k,maxOrder);
+          derivs.push(d);
+          coeffs.push(d/factorial(k));
+        }
       }
       state.f=f; state.expr=expr; state.a=a; state.maxOrder=maxOrder; state.derivs=derivs; state.coeffs=coeffs;
       $("orderRange").max=String(maxOrder);
