@@ -107,6 +107,122 @@ footer{margin-top:26px;background:#fff;border-top:1px solid var(--line)}
   text-align:right;
 }
 
+
+/* ===== MOBILE UX PATCH: albums.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  .container{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:8px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .logo{
+    width:100%;
+  }
+
+  .actions{
+    width:100%;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:2px;
+  }
+
+  .actions::-webkit-scrollbar{
+    display:none;
+  }
+
+  .actions .btn{
+    flex:0 0 auto;
+    min-height:36px;
+  }
+
+  footer .footer-links{
+    line-height:1.9;
+  }
+}
+
+@media (max-width:780px){
+  main.container{
+    margin-top:12px;
+  }
+
+  .tabs{
+    gap:6px;
+  }
+
+  .tools{
+    width:100%;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+    padding-bottom:2px;
+  }
+
+  .tools::-webkit-scrollbar{
+    display:none;
+  }
+
+  .tools .btn{
+    flex:0 0 auto;
+  }
+
+  .search{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+  }
+
+  .search input{
+    grid-column:1 / -1;
+    width:100%;
+    min-width:0;
+  }
+
+  .search select{
+    min-width:0;
+    width:100%;
+  }
+
+  .search button{
+    width:100%;
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px;
+  }
+
+  .meta{
+    padding:8px;
+  }
+
+  .ops{
+    margin:6px 8px 10px;
+  }
+}
+
+@media (max-width:430px){
+  .grid{
+    grid-template-columns:1fr !important;
+  }
+}
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head>

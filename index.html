@@ -609,6 +609,89 @@
   text-align:right;
 }
 
+
+/* ===== MOBILE UX PATCH: index.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  .container{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:8px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .logo{
+    width:100%;
+  }
+
+  .actions{
+    width:100%;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:2px;
+  }
+
+  .actions::-webkit-scrollbar{
+    display:none;
+  }
+
+  .actions .btn{
+    flex:0 0 auto;
+    min-height:36px;
+  }
+
+  footer .footer-links{
+    line-height:1.9;
+  }
+}
+
+@media (max-width:780px){
+  .search{
+    order:2;
+    width:100%;
+    min-width:0;
+  }
+
+  .search input{
+    min-width:0;
+    width:100%;
+  }
+
+  .actions{
+    order:3;
+  }
+
+  .top-carousel{
+    height:210px;
+  }
+
+  .top-carousel-slide{
+    flex-basis:90%;
+  }
+
+  .hero-inner{
+    padding-top:2px;
+  }
+
+  .j-section{
+    padding:14px;
+  }
+}
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head>

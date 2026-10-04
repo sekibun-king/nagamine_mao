@@ -377,6 +377,127 @@ footer{
   text-align:right;
 }
 
+
+/* ===== MOBILE UX PATCH: lecture.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  .container{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:8px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .logo{
+    width:100%;
+  }
+
+  .actions{
+    width:100%;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:2px;
+  }
+
+  .actions::-webkit-scrollbar{
+    display:none;
+  }
+
+  .actions .btn{
+    flex:0 0 auto;
+    min-height:36px;
+  }
+
+  footer .footer-links{
+    line-height:1.9;
+  }
+}
+
+@media (max-width:780px){
+  .search{
+    order:2;
+    width:100%;
+    min-width:0;
+    flex-wrap:wrap;
+  }
+
+  .search input{
+    min-width:100%;
+    width:100%;
+  }
+
+  .search .btn-search,
+  .search .btn-clear{
+    flex:1 1 calc(50% - 4px);
+  }
+
+  .actions{
+    order:3;
+  }
+
+  main.container{
+    margin-top:12px;
+  }
+
+  .hero{
+    padding:13px;
+  }
+
+  .filters{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+  }
+
+  .filters select{
+    width:100%;
+    min-width:0;
+  }
+
+  .filters .count{
+    grid-column:1 / -1;
+    margin-left:0;
+    text-align:right;
+  }
+
+  .layout{
+    display:block;
+  }
+
+  .grid{
+    grid-template-columns:1fr !important;
+    gap:10px;
+  }
+
+  .aside{
+    position:static;
+    margin-top:14px;
+  }
+
+  .meta-row{
+    grid-template-columns:76px minmax(0,1fr);
+  }
+
+  .link-row .link-btn{
+    flex:1 1 auto;
+    min-height:38px;
+  }
+}
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head>

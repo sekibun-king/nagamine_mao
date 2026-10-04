@@ -18,11 +18,7 @@
   --soft:#fff5f7;
 }
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
+html,body{margin:0}
 body{
   background:var(--bg);
   color:var(--ink);
@@ -269,41 +265,66 @@ footer{
 
 /* mobile */
 @media (max-width:768px){
-  body{
-    font-size:13px;
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+  }
+
+  table.list{
+    min-width:760px;
+  }
+
+  table.list th,
+  table.list td{
+    padding:7px 9px;
+  }
+  .logo{width:100%}
+  .actions{
+    width:100%;
+    margin-left:0;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+    padding-bottom:2px;
+  }
+  .actions::-webkit-scrollbar{display:none}
+  .actions .btn{flex:0 0 auto}
+.search-row input{min-width:100%}
+}
+
+/* ===== MOBILE UX PATCH: history.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
   }
 
   .container{
-    padding:0 10px;
+    padding-left:12px;
+    padding-right:12px;
   }
 
   .header-inner{
     flex-wrap:wrap;
     align-items:stretch;
-    gap:7px;
-    padding:7px 0;
+    gap:8px;
+    padding-top:8px;
+    padding-bottom:8px;
   }
 
   .logo{
     width:100%;
-    gap:7px;
-    font-size:.95rem;
-    font-weight:800;
-  }
-
-  .logo-mark{
-    width:20px;
-    height:20px;
-    border-radius:5px;
   }
 
   .actions{
     width:100%;
-    margin-left:0;
-    gap:6px;
-    flex-wrap:nowrap;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
     overflow-x:auto;
+    overflow-y:hidden;
     scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
     padding-bottom:2px;
   }
 
@@ -313,127 +334,137 @@ footer{
 
   .actions .btn{
     flex:0 0 auto;
-    min-height:30px;
-    padding:0 9px;
-    font-size:.82rem;
-    border-radius:7px;
+    min-height:36px;
   }
 
+  footer .footer-links{
+    line-height:1.9;
+  }
+}
+
+@media (max-width:780px){
   main.container{
-    margin:12px auto 20px;
+    margin-top:12px;
   }
 
   .page-head{
-    margin-bottom:9px;
-    gap:8px;
-  }
-
-  .page-head h1{
-    font-size:1.05rem;
-  }
-
-  .last-update{
-    font-size:.76rem;
+    gap:6px;
+    margin-bottom:10px;
   }
 
   .search-row{
-    gap:6px;
+    gap:7px;
     margin-bottom:14px;
   }
 
   .search-row input{
     min-width:100%;
-    height:36px;
-    padding:0 11px;
-    font-size:.86rem;
+    width:100%;
   }
 
   .search-row button{
-    height:34px;
-    padding:0 11px;
-    font-size:.82rem;
+    flex:1 1 calc(50% - 4px);
   }
 
-  section+section{
-    margin-top:20px;
-  }
-
-  h2{
-    font-size:.96rem;
-    margin-bottom:6px;
-  }
-
+  /* スマホでは表をカード化。掲載誌・会議・場所もすべて残す */
   .table-wrap{
-    border-radius:8px;
+    overflow:visible;
+    border:0;
+    background:transparent;
   }
 
   table.list{
-    min-width:680px;
-    font-size:.78rem;
+    min-width:0 !important;
+    width:100%;
   }
 
-  table.list th,
-  table.list td{
-    padding:5px 7px;
-    line-height:1.5;
-    font-size:.78rem !important;
+  table.list thead{
+    display:none;
+  }
+
+  table.list tbody{
+    display:grid;
+    gap:9px;
+  }
+
+  table.list tbody tr{
+    display:block;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:9px;
+    overflow:hidden;
+  }
+
+  table.list tbody td{
+    display:grid;
+    grid-template-columns:82px minmax(0,1fr);
+    gap:8px;
+    width:auto !important;
+    padding:6px 10px;
+    border-bottom:1px solid #f1f1f1;
+    white-space:normal !important;
+    font-size:.86rem !important;
+    line-height:1.55;
+    overflow-wrap:anywhere;
     -webkit-text-size-adjust:100%;
     text-size-adjust:100%;
   }
 
-  /* 学歴・職歴・研究費など列数の少ない表でも
-     スマホの自動文字拡大を発生させない */
-  #tbody-edu td,
-  #tbody-car td,
-  #tbody-grant td{
-    font-size:.78rem !important;
-    line-height:1.5;
+  table.list tbody td:last-child{
+    border-bottom:0;
   }
 
-  td.col-date{
-    width:108px;
+  table.list tbody td::before{
+    color:var(--muted);
+    font-weight:700;
   }
 
-  td.col-role{
-    width:90px;
-  }
+  #tbody-edu td:nth-child(1)::before{content:"期間";}
+  #tbody-edu td:nth-child(2)::before{content:"学校";}
 
-  td.col-venue{
-    width:145px;
-  }
+  #tbody-car td:nth-child(1)::before{content:"期間";}
+  #tbody-car td:nth-child(2)::before{content:"職歴";}
 
-  td.col-loc{
-    width:130px;
-  }
+  #tbody-papers td:nth-child(1)::before{content:"No.";}
+  #tbody-papers td:nth-child(2)::before{content:"日付";}
+  #tbody-papers td:nth-child(3)::before{content:"タイトル";}
+  #tbody-papers td:nth-child(4)::before{content:"掲載誌";}
 
-  td.col-title{
-    width:300px;
-  }
+  #tbody-talks td:nth-child(1)::before{content:"No.";}
+  #tbody-talks td:nth-child(2)::before{content:"日付";}
+  #tbody-talks td:nth-child(3)::before{content:"タイトル";}
+  #tbody-talks td:nth-child(4)::before{content:"会議";}
+  #tbody-talks td:nth-child(5)::before{content:"場所";}
 
-  .paper-status{
-    min-height:18px;
-    padding:0 6px;
-    font-size:.68rem;
-  }
+  #tbody-academic td:nth-child(1)::before{content:"No.";}
+  #tbody-academic td:nth-child(2)::before{content:"期間";}
+  #tbody-academic td:nth-child(3)::before{content:"タイトル";}
+  #tbody-academic td:nth-child(4)::before{content:"役割";}
+  #tbody-academic td:nth-child(5)::before{content:"主催";}
+  #tbody-academic td:nth-child(6)::before{content:"場所";}
 
-  .paper-source-link{
-    font-size:.7rem;
-  }
+  #tbody-other td:nth-child(1)::before{content:"No.";}
+  #tbody-other td:nth-child(2)::before{content:"日付";}
+  #tbody-other td:nth-child(3)::before{content:"タイトル";}
+  #tbody-other td:nth-child(4)::before{content:"役割";}
+  #tbody-other td:nth-child(5)::before{content:"主催";}
+  #tbody-other td:nth-child(6)::before{content:"場所";}
 
-  .page-status{
-    padding:8px 10px;
-    font-size:.82rem;
-  }
+  #tbody-awards td:nth-child(1)::before{content:"No.";}
+  #tbody-awards td:nth-child(2)::before{content:"日付";}
+  #tbody-awards td:nth-child(3)::before{content:"賞名";}
+  #tbody-awards td:nth-child(4)::before{content:"授与元";}
+  #tbody-awards td:nth-child(5)::before{content:"場所";}
 
-  .footer-links{
-    padding:9px 0;
-    gap:7px;
-    font-size:.78rem;
-  }
+  #tbody-grant td:nth-child(1)::before{content:"期間";}
+  #tbody-grant td:nth-child(2)::before{content:"研究課題";}
+  #tbody-grant td:nth-child(3)::before{content:"採択元";}
 
-  .copyright{
-    padding:9px 0;
-    font-size:.75rem;
+  /* ユーザーが指摘した3か所だけ明示指定。その他のサイズは元のまま */
+  #tbody-edu td:nth-child(2),
+  #tbody-car td:nth-child(2),
+  #tbody-grant td:nth-child(2){
+    font-size:.86rem !important;
   }
 }
 </style>

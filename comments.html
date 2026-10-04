@@ -300,6 +300,102 @@ footer{
   text-align:right;
 }
 
+
+/* ===== MOBILE UX PATCH: comments.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  .container{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:8px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .logo{
+    width:100%;
+  }
+
+  .actions{
+    width:100%;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:2px;
+  }
+
+  .actions::-webkit-scrollbar{
+    display:none;
+  }
+
+  .actions .btn{
+    flex:0 0 auto;
+    min-height:36px;
+  }
+
+  footer .footer-links{
+    line-height:1.9;
+  }
+}
+
+@media (max-width:780px){
+  main.container{
+    margin-top:12px;
+  }
+
+  .page-head{
+    align-items:flex-start;
+  }
+
+  .search-row{
+    gap:7px;
+  }
+
+  .search-row input{
+    min-width:100%;
+    width:100%;
+  }
+
+  .search-row select{
+    width:100%;
+  }
+
+  .search-row button{
+    flex:1 1 calc(50% - 4px);
+  }
+
+  .paper-card{
+    border-radius:9px;
+  }
+
+  .paper-head,
+  .paper-body{
+    padding:13px;
+  }
+
+  .paper-meta{
+    gap:5px 10px;
+  }
+
+  .paper-links a{
+    flex:1 1 auto;
+    justify-content:center;
+    min-height:38px;
+  }
+}
 </style>
 </head>
 

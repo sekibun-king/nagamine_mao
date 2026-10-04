@@ -226,6 +226,62 @@
   text-align:right;
 }
 
+
+/* ===== MOBILE UX PATCH: TaylorVisualizer.html ===== */
+@media (max-width:780px){
+  html,body{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  header{
+    padding:18px 12px 10px;
+  }
+
+  main{
+    width:calc(100% - 20px);
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .panel{
+    position:static;
+    padding:14px;
+  }
+
+  .row{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .examples{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .plots{
+    padding:9px;
+    gap:10px;
+  }
+
+  .canvas-wrap{
+    height:280px;
+  }
+
+  .readout{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width:430px){
+  .row,
+  .examples,
+  .readout{
+    grid-template-columns:1fr;
+  }
+
+  .canvas-wrap{
+    height:245px;
+  }
+}
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head>
