@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>研究費 詳細</title>
+<style>
+:root{--brand:#e60033;--ink:#222;--muted:#666;--line:#e8e8e8;--bg:#f6f7f8;--card:#fff;--shadow:0 8px 24px rgba(0,0,0,.06)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif}
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 14px}
+header.site{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
+.header-inner{display:flex;align-items:center;gap:12px;padding:10px 0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--brand)}
+.logo-mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#ff4a6e,var(--brand))}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn {
+  height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  display:inline-flex;     /* 追加 */
+  align-items:center;      /* 追加：縦方向中央揃え */
+  justify-content:center;  /* （任意：横方向も真ん中にしたい場合） */
+}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+main.container{margin:16px auto}
+.hero{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:10px;overflow:hidden;padding:12px}
+.title{font-weight:900;font-size:1.2rem}
+.sub{color:#666}
+.ops{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.specs{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.specs h3{margin:0 0 8px;font-size:1rem}
+.specgrid{display:grid;grid-template-columns:160px 1fr;gap:8px;align-items:flex-start}
+.speck{color:#777}
+.specv{white-space:pre-wrap}
+.note{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.note h4{margin:0 0 6px;font-size:1rem}
+footer{margin-top:26px;background:#fff;border-top:1px solid var(--line)}
+.footer-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0}
+.footer-links .sep{color:#bbb}
+.copyright{border-top:1px solid var(--line);color:#777;padding:12px 0;font-size:.88rem}
+.small{font-size:.9rem;color:#777}
+.usage{margin-top:12px}
+.usage h4{margin:0 0 6px}
+.uline{display:grid;grid-template-columns:140px 1fr 1fr;gap:8px;padding:8px;border:1px solid var(--line);border-radius:6px;background:#fff;margin-bottom:6px}
+
+.page-last-update{
+  margin:16px 0 0;
+  color:var(--muted,#666);
+  font-size:.85rem;
+  text-align:right;
+}
+
+</style>
+<link rel="stylesheet" href="./assets:/worldclass.css">
+</head>
+<body>
+<header class="site">
+  <div class="container header-inner">
+    <a class="logo" href="index.html"><span class="logo-mark"></span><span>長峰実央</span></a>
+    <div class="actions" style="margin-left:auto">
+      <a class="btn" href="history.html">履歴</a>
+      <a class="btn" href="units_sheet.html">取得単位</a>
+      <a class="btn" href="lecture.html">講義情報</a>
+      <a class="btn" href="comments.html">論文のコメント</a>
+      <a class="btn" href="album.html">アルバム</a>
+      <a class="btn primary" href="links.html">リンク集</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div id="breadcrumb" class="small"><a href="index.html">ホーム</a> › <a href="history.html">履歴</a> › 研究費 詳細</div>
+  <section class="hero">
+    <div class="title" id="title">研究費名</div>
+    <div class="sub" id="sub">——</div>
+    <div class="ops">
+      <button class="btn" id="btn-edit">編集</button>
+      <a class="btn" href="history.html">一覧へ戻る</a>
+    </div>
+
+    <div class="specs">
+      <h3>スペック</h3>
+      <div class="specgrid" id="specgrid"></div>
+      <div class="ops" style="margin-top:6px">
+        <button class="btn" id="btn-addspec">＋ スペック行を追加</button>
+      </div>
+    </div>
+
+    <div class="usage">
+      <h4>利用履歴</h4>
+      <div id="usage-lines"></div>
+      <div class="ops" style="margin-top:6px">
+        <button class="btn" id="btn-addusage">＋ 利用履歴を追加</button>
+      </div>
+    </div>
+
+    <div class="note" id="note-box" style="display:none">
+      <h4>メモ</h4>
+      <div id="note"></div>
+    </div>
+  </section>
+  <div class="page-last-update">Last update: <span id="last-update">—</span></div>
+</main>
+
+<footer>
+  <div class="container footer-links" id="footer-links"></div>
+  <div class="container copyright">© 2025 Mao Nagamine</div>
+</footer>
+
+<script>
+// ===== 共通フッター =====
+const FOOTER_LINKS=[
+  {label:'ホーム',href:'index.html'},
+  {label:'履歴',href:'history.html'},
+  {label:'取得単位',href:'units_sheet.html'},
+  {label:'コメント',href:'comments.html'},
+  {label:'アルバム', href:'albums.html'},
+  {label:'お問い合わせ',href:'mailto:nagamine.mao.d9@elms.hokudai.ac.jp'},
+  {label:'リンク集', href:'links.html'}
+];
+function renderFooter(){
+  const nav=document.getElementById('footer-links');
+  if(!nav) return;
+  nav.innerHTML = FOOTER_LINKS.map((x,i)=>`
+    <a href="${x.href}" ${x.target?`target="${x.target}" rel="noopener"`:''}>${x.label}</a>
+    ${i<FOOTER_LINKS.length-1?'<span class="sep">/</span>':''}
+  `).join('');
+}
+document.addEventListener('DOMContentLoaded', renderFooter);
+
+// ===== データ読み込み =====
+const LS='hist_items_v7';
+const load=()=>JSON.parse(localStorage.getItem(LS)||'[]');
+function qs(k){return new URLSearchParams(location.search).get(k)||'';}
+const id = qs('id');
+
+// スペック行の描画
+function setSpec(k, v){
+  const grid = document.getElementById('specgrid');
+  const dk = document.createElement('div'); dk.className = 'speck'; dk.textContent = k;
+  const dv = document.createElement('div'); dv.className = 'specv'; dv.innerHTML = v || '—';
+  grid.append(dk, dv);
+}
+
+// 利用履歴行の描画（編集・削除ボタン付き）
+function setUsage(u, i){
+  const box=document.getElementById('usage-lines');
+  const div=document.createElement('div');
+  div.className='uline';
+  const amt = (u.amount!=null && u.amount!=='') ? '¥'+Number(u.amount).toLocaleString('ja-JP') : '';
+  div.innerHTML=`
+    <div>${u.date||''}</div>
+    <div>${u.purpose||''}</div>
+    <div>${amt}</div>
+    <div class="uops">
+      <button class="btn sm" data-i="${i}" data-act="edit">編集</button>
+      <button class="btn sm" data-i="${i}" data-act="del">削除</button>
+    </div>`;
+  box.appendChild(div);
+}
+
+
+function render(){
+  const arr=load();
+  const it=arr.find(x=>x.id===id);
+  if(!it){
+    document.querySelector('main').innerHTML='<section class="hero" style="padding:16px">データが見つかりません。<p><a class="btn" href="history.html">← 履歴へ戻る</a></p></section>';
+    return;
+  }
+  // 見出し
+  document.getElementById('title').textContent = it.title||'';
+  document.getElementById('sub').textContent = [it.date||'', it.venue||'', it.loc?('＠'+it.loc):''].filter(Boolean).join(' ｜ ')||'—';
+
+  // スペック（基本）
+  const grid=document.getElementById('specgrid'); grid.innerHTML='';
+  setSpec('カテゴリ','研究費');
+  setSpec('年度/期間', it.date||'');
+  setSpec('採択元', it.venue||'');
+  setSpec('場所', it.loc||'');
+  setSpec('リンク', it.url?`<a href="${it.url}" target="_blank" rel="noopener">${it.url}</a>`:'');
+
+  // 追加スペック（自由）
+ const specs = Array.isArray(it.specs) ? it.specs : [];
+specs.forEach((line, i) => setExtraSpec(line, i));
+
+  // メモ
+  const noteBox=document.getElementById('note-box');
+  if(it.note){ document.getElementById('note').textContent=it.note; noteBox.style.display='block'; }
+  else { noteBox.style.display='none'; }
+
+
+// 利用履歴：日付の早い順（昇順）
+const usageArr = Array.isArray(it.usage) ? it.usage : [];
+const order = usageArr
+  .map((u, idx) => ({ u, idx })) // ← 元配列の index を保持
+  .sort((a, b) => toDateVal(a.u.date) - toDateVal(b.u.date));
+
+const ubox = document.getElementById('usage-lines');
+ubox.innerHTML = '';
+order.forEach(({ u, idx }) => setUsage(u, idx)); // ← data-i に「元 index」を渡す
+
+
+
+function setExtraSpec(line, i){
+  const grid = document.getElementById('specgrid');
+  const dk = document.createElement('div'); dk.className = 'speck'; dk.textContent = `追加${i+1}`;
+  const dv = document.createElement('div'); dv.className = 'specv';
+  dv.innerHTML = `
+    ${line || '—'}
+    <span class="uops" style="margin-left:8px">
+      <button class="btn sm" data-act="edit-spec" data-i="${i}">編集</button>
+      <button class="btn sm" data-act="del-spec"  data-i="${i}">削除</button>
+    </span>`;
+  grid.append(dk, dv);
+}
+
+function editSpec(i){
+  const arr = load();
+  const it  = arr.find(x=>x.id===id);
+  if(!it) return;
+  const a = Array.isArray(it.specs) ? it.specs : (it.specs = []);
+  const now = a[i] || '';
+  const v = prompt('スペック行を編集', now);
+  if(v===null) return;
+  a[i] = v;
+  localStorage.setItem(LS, JSON.stringify(arr));
+  render();
+}
+
+function delSpec(i){
+  if(!confirm('このスペック行を削除しますか？')) return;
+  const arr = load();
+  const it  = arr.find(x=>x.id===id);
+  if(!it || !Array.isArray(it.specs)) return;
+  it.specs.splice(i, 1);
+  localStorage.setItem(LS, JSON.stringify(arr));
+  render();
+}
+// 追加スペックのボタンクリック（イベント委譲）— render()内で一度だけ
+const specgridEl = document.getElementById('specgrid');
+if (specgridEl && !specgridEl.dataset.bound) {
+  specgridEl.dataset.bound = '1';
+  specgridEl.addEventListener('click', (e)=>{
+    const b = e.target.closest('button[data-act]');
+    if(!b) return;
+    const i = Number(b.dataset.i);
+    if (b.dataset.act === 'edit-spec') editSpec(i);
+    else if (b.dataset.act === 'del-spec') delSpec(i);
+  });
+}
+
+
+function toDateVal(s){
+  if(!s) return 0;
+  s = String(s).trim();
+  // 範囲 "YYYY(-MM(-DD)) ～ ..." は左側だけ使う
+  s = s.split('〜')[0].split('～')[0].trim();
+
+  // YYYY / YYYY-MM / YYYY-MM-DD に強め
+  const m = s.match(/^(\d{4})(?:[-\/.](\d{1,2})(?:[-\/.](\d{1,2}))?)?$/);
+  if(m){
+    const y = +m[1], mo = m[2]? Math.max(1,Math.min(12,+m[2]))-1 : 0;
+    const d = m[3]? Math.max(1,Math.min(31,+m[3])) : 1;
+    const t = new Date(y, mo, d).getTime();
+    return isNaN(t) ? 0 : t;
+  }
+  // そのほかの書式は Date.parse に委譲
+  const t = Date.parse(s);
+  return isNaN(t) ? 0 : t;
+}
+
+
+
+
+  // 編集
+  document.getElementById('btn-edit').onclick=()=>{
+    const title=prompt('研究費名/課題名', it.title||''); if(title===null) return;
+    const date=prompt('年度/期間', it.date||''); if(date===null) return;
+    const venue=prompt('採択元', it.venue||''); if(venue===null) return;
+    const loc=prompt('場所（任意）', it.loc||''); if(loc===null) return;
+    const url=prompt('リンクURL（任意）', it.url||''); if(url===null) return;
+    const note=prompt('メモ（任意）', it.note||''); if(note===null) return;
+    Object.assign(it,{title,date,venue,loc,url,note});
+    localStorage.setItem(LS, JSON.stringify(arr));
+    render();
+  };
+
+  // 追加スペック
+  document.getElementById('btn-addspec').onclick=()=>{
+    const v=prompt('スペック行（例：代表：長峰実央 / 直接経費：90万円 等）'); if(v===null) return;
+    const a=Array.isArray(it.specs)?it.specs:(it.specs=[]);
+    a.push(v); localStorage.setItem(LS, JSON.stringify(arr)); render();
+  };
+
+  // 利用履歴追加
+  document.getElementById('btn-addusage').onclick=()=>{
+    const date=prompt('日付'); if(date===null) return;
+    const purpose=prompt('用途'); if(purpose===null) return;
+    const amount=prompt('金額（数値、円）',''); if(amount===null) return;
+    const a=Array.isArray(it.usage)?it.usage:(it.usage=[]);
+    a.push({date,purpose,amount:amount?Number(amount):0});
+    localStorage.setItem(LS, JSON.stringify(arr)); render();
+  };
+
+  // 利用履歴：編集／削除（イベント委譲）
+document.getElementById('usage-lines').onclick = (e)=>{
+  const btn = e.target.closest('button[data-act]');
+  if(!btn) return;
+  const i = Number(btn.dataset.i);
+  if (btn.dataset.act === 'edit') editUsage(i);
+  else if (btn.dataset.act === 'del') delUsage(i);
+};
+
+}
+document.addEventListener('DOMContentLoaded', render);
+
+function editUsage(i){
+  const arr = load();
+  const it  = arr.find(x=>x.id===id);
+  if(!it || !Array.isArray(it.usage) || !it.usage[i]) return;
+
+  const u = it.usage[i];
+  const date    = prompt('日付', u.date||'');         if(date===null) return;
+  const purpose = prompt('用途', u.purpose||'');      if(purpose===null) return;
+  const amount  = prompt('金額（数値、円）', u.amount ?? ''); if(amount===null) return;
+
+  u.date = date;
+  u.purpose = purpose;
+  u.amount = amount ? Number(amount) : 0;
+
+  localStorage.setItem(LS, JSON.stringify(arr));
+  render();
+}
+
+function delUsage(i){
+  if(!confirm('この利用履歴を削除しますか？')) return;
+  const arr = load();
+  const it  = arr.find(x=>x.id===id);
+  if(!it || !Array.isArray(it.usage)) return;
+
+  it.usage.splice(i, 1);
+  localStorage.setItem(LS, JSON.stringify(arr));
+  render();
+}
+
+</script>
+
+<script>
+/* ===== Last update: GitHub の各HTML最終commit日を自動表示 ===== */
+const PAGE_FILE_FOR_UPDATE = "grant_detail.html";
+
+async function setPageLastUpdate(){
+  const box = document.getElementById("last-update");
+  if(!box) return;
+
+  const cacheKey = `page_last_update:${PAGE_FILE_FOR_UPDATE}`;
+
+  try{
+    const cached = sessionStorage.getItem(cacheKey);
+    if(cached){
+      box.textContent = cached;
+      return;
+    }
+
+    const api =
+      `https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=${encodeURIComponent(PAGE_FILE_FOR_UPDATE)}&per_page=1`;
+
+    const res = await fetch(api, {
+      headers: { "Accept":"application/vnd.github+json" }
+    });
+
+    if(!res.ok) throw new Error("GitHub API error");
+
+    const data = await res.json();
+    const iso = data?.[0]?.commit?.committer?.date;
+    if(!iso) throw new Error("No commit date");
+
+    const d = new Date(iso);
+    const value =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+    box.textContent = value;
+    sessionStorage.setItem(cacheKey, value);
+  }catch(_){
+    const d = new Date(document.lastModified);
+    box.textContent = Number.isNaN(d.getTime())
+      ? "—"
+      : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", setPageLastUpdate);
+</script>
+
+</body>
+</html>

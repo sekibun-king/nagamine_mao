@@ -292,6 +292,14 @@ footer{
   .search-row input{min-width:100%}
   .search-row select{flex:1}
 }
+
+.page-last-update{
+  margin:16px 0 0;
+  color:var(--muted,#666);
+  font-size:.85rem;
+  text-align:right;
+}
+
 </style>
 </head>
 
@@ -334,6 +342,7 @@ footer{
 
   <div id="state" class="state">論文情報を読み込んでいます…</div>
   <div id="paper-list" class="paper-list" hidden></div>
+  <div class="page-last-update">Last update: <span id="last-update">—</span></div>
 </main>
 
 <footer>
@@ -554,6 +563,59 @@ document.addEventListener("DOMContentLoaded", ()=>{
   renderFooter();
   loadPapers();
 });
+</script>
+
+
+<script>
+/* ===== Last update: GitHub の各HTML最終commit日を自動表示 ===== */
+const PAGE_FILE_FOR_UPDATE = "comments.html";
+
+async function setPageLastUpdate(){
+  const box = document.getElementById("last-update");
+  if(!box) return;
+
+  const cacheKey = `page_last_update:${PAGE_FILE_FOR_UPDATE}`;
+
+  try{
+    const cached = sessionStorage.getItem(cacheKey);
+    if(cached){
+      box.textContent = cached;
+      return;
+    }
+
+    const api =
+      `https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=${encodeURIComponent(PAGE_FILE_FOR_UPDATE)}&per_page=1`;
+
+    const res = await fetch(api, {
+      headers: { "Accept":"application/vnd.github+json" }
+    });
+
+    if(!res.ok) throw new Error("GitHub API error");
+
+    const data = await res.json();
+    const iso = data?.[0]?.commit?.committer?.date;
+    if(!iso) throw new Error("No commit date");
+
+    const d = new Date(iso);
+    const value =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+    box.textContent = value;
+    sessionStorage.setItem(cacheKey, value);
+
+  }catch(_){
+    const d = new Date(document.lastModified);
+    if(Number.isNaN(d.getTime())){
+      box.textContent = "—";
+      return;
+    }
+
+    box.textContent =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", setPageLastUpdate);
 </script>
 
 </body>

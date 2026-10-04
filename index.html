@@ -601,7 +601,16 @@
     font-size:.75rem;
   }
 }
-  </style>
+  
+.page-last-update{
+  margin:16px 0 0;
+  color:var(--muted,#666);
+  font-size:.85rem;
+  text-align:right;
+}
+
+</style>
+<link rel="stylesheet" href="./assets:/worldclass.css">
 </head>
 <body>
 
@@ -620,10 +629,9 @@
 
     <div class="actions">
       <a class="btn" href="history.html">履歴</a>
+      <a class="btn" href="comments.html">論文コメント</a>
       <a class="btn" href="units.html">取得単位</a>
       <a class="btn" href="lecture.html">講義情報</a>
-      <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
-      <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
       <a class="btn" href="links.html">リンク集</a>
     </div>
   </div>
@@ -634,14 +642,30 @@
 <section class="hero">
   <div class="container hero-inner">
     <div>
-      <h1>長峰 実央 / Mao Nagamine</h1>
+      <div class="research-kicker" aria-label="Research keywords">
+        <span>Research Portfolio</span>
+        <span>Mathematics</span>
+        <span>Hokkaido University</span>
+      </div>
+      <h1>Mao Nagamine</h1>
       <p class="lead">
-        北海道大学 大学院理学院 数学専攻 博士後期課程
+        長峰 実央｜北海道大学 大学院理学院 数学専攻 博士後期課程
       </p>
       <p class="lead">
-        このページから、研究業績・活動記録・写真・外部リンクなど各ページへ移動できます。
+        A-超幾何系を中心に、代数・幾何・解析が交差する領域を研究しています。
+        研究業績、講演、活動記録、研究費、連絡先をこのポータルに集約しています。
       </p>
-      <p class="j-small">Last update: 2026-3-30</p>
+      <p class="j-small">Last update: <span id="last-update">—</span></p>
+      <div class="research-stats" aria-label="Research snapshot">
+        <div class="research-stat"><strong>Research Area</strong><span>A-超幾何系・GKZ 系</span></div>
+        <div class="research-stat"><strong>Affiliation</strong><span>Hokkaido University</span></div>
+        <div class="research-stat"><strong>Location</strong><span>Sapporo, Japan</span></div>
+      </div>
+      <div class="research-links" aria-label="Primary links">
+        <a class="research-link" href="history.html">研究業績を見る</a>
+        <a class="research-link secondary" href="comments.html">論文コメント</a>
+        <a class="research-link secondary" href="links.html">連絡先・リンク</a>
+      </div>
     </div>
   </div>
 </section>
@@ -692,8 +716,8 @@
           <a href="units.html">これまでに取得した単位の一覧</a>
         </li>
         <li>
-          <strong> <a href="TaylorVisualizer.html">テイラー展開</a></strong>：
-          <a href="TaylorVisualizer.html">テイラー展開を視覚的に理解できるソフト</a>
+          <strong> <a href="comments.html">論文コメント</a></strong>：
+          <a href="comments.html">論文ごとのメモ、読解コメント、関連情報の整理</a>
         </li>
         <li>
           <strong> <a href="links.html">リンク集</a></strong>：
@@ -745,7 +769,7 @@
     <span class="sep">|</span>
     <a href="https://www2.sci.hokudai.ac.jp/dept/math/">北大数学科HP</a>
   </div>
-  <div class="container copyright">© 2025 Mao Nagamine</div>
+  <div class="container copyright">© 2025–<span class="copyright-year"></span> Mao Nagamine</div>
 </footer>
 
 <script>
@@ -971,5 +995,67 @@
     if(input) input.value = q;
   });
 </script>
+
+<script>
+/* ===== Last update: GitHub の各HTML最終commit日を自動表示 ===== */
+const PAGE_FILE_FOR_UPDATE = "index.html";
+
+async function setPageLastUpdate(){
+  const box = document.getElementById("last-update");
+  if(!box) return;
+
+  const cacheKey = `page_last_update:${PAGE_FILE_FOR_UPDATE}`;
+
+  try{
+    const cached = sessionStorage.getItem(cacheKey);
+    if(cached){
+      box.textContent = cached;
+      return;
+    }
+
+    const api =
+      `https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=${encodeURIComponent(PAGE_FILE_FOR_UPDATE)}&per_page=1`;
+
+    const res = await fetch(api, {
+      headers: { "Accept":"application/vnd.github+json" }
+    });
+
+    if(!res.ok) throw new Error("GitHub API error");
+
+    const data = await res.json();
+    const iso = data?.[0]?.commit?.committer?.date;
+    if(!iso) throw new Error("No commit date");
+
+    const d = new Date(iso);
+    const value =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+    box.textContent = value;
+    sessionStorage.setItem(cacheKey, value);
+
+  }catch(_){
+    const d = new Date(document.lastModified);
+    if(Number.isNaN(d.getTime())){
+      box.textContent = "—";
+      return;
+    }
+
+    box.textContent =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", setPageLastUpdate);
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll(".copyright-year").forEach(el=>{
+    el.textContent = new Date().getFullYear();
+  });
+});
+</script>
+
 </body>
 </html>

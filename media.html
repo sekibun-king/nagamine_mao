@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>メディア・取材</title>
+<style>
+:root{
+  --brand:#e60033;--ink:#222;--muted:#666;
+  --line:#e8e8e8;--bg:#f6f7f8;--card:#fff;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:14px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
+}
+a{color:inherit;text-decoration:none}
+
+.container{max-width:1200px;margin:0 auto;padding:0 14px}
+
+/* ヘッダー（他ページと合わせて） */
+header.site{
+  position:sticky;top:0;z-index:60;
+  background:#fff;border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-weight:900;color:var(--brand);
+}
+.logo-mark{
+  width:24px;height:24px;border-radius:6px;
+  background:linear-gradient(135deg,#ff4a6e,var(--brand));
+}
+.actions{display:flex;gap:8px}
+.btn {
+  height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  display:inline-flex;     /* 追加 */
+  align-items:center;      /* 追加：縦方向中央揃え */
+  justify-content:center;  /* （任意：横方向も真ん中にしたい場合） */
+}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.sm{height:26px;padding:0 8px;font-size:.8rem}
+
+/* メイン */
+main.container{margin:16px auto 24px}
+h1{
+  margin:0 0 6px;
+  font-size:1.2rem;
+  font-weight:900;
+}
+.section-note{color:var(--muted);font-size:.85rem;margin-bottom:8px}
+
+/* ツールバー */
+.tools-row{
+  margin:4px 0 8px;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+}
+
+/* 検索 */
+.filters{
+  margin:6px 0 10px;
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+}
+.filters input{
+  flex:1;min-width:180px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  padding:0 12px;
+}
+.filters select{
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  padding:0 8px;
+  font-size:.85rem;
+}
+.filters button{
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  padding:0 12px;
+  font-size:.85rem;
+}
+.filters .btn-search{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+
+/* 一覧テーブル */
+.table-wrap{
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+table.list{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.86rem;
+}
+table.list th,
+table.list td{
+  padding:6px 8px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+table.list th{
+  background:#fafafa;
+  white-space:nowrap;
+  color:var(--muted);
+  font-weight:600;
+}
+table.list tr:last-child td{border-bottom:none}
+table.list tbody tr:hover{background:#fff8fb}
+
+td.col-date{white-space:nowrap;width:110px}
+td.col-kind{white-space:nowrap;width:90px}
+td.col-venue{white-space:nowrap;width:160px}
+td.col-actions{white-space:nowrap;width:160px}
+.title-cell{font-weight:600}
+.small{font-size:.8rem;color:var(--muted)}
+.empty-msg{margin-top:6px;color:var(--muted);font-size:.85rem}
+
+/* 編集パネル（簡易） */
+.panel{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;
+  align-items:flex-start;justify-content:center;
+  padding:40px 14px;
+}
+.panel .inner{
+  width:min(640px,100%);
+  max-height:100%;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;
+}
+.panel header{
+  padding:10px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:8px;
+}
+.panel header .title{font-weight:900}
+.panel header .btn{margin-left:auto}
+.panel .body{
+  padding:10px 14px;
+  overflow:auto;
+}
+.panel .row{
+  display:flex;gap:10px;align-items:flex-start;
+  margin-bottom:6px;
+}
+.panel .row label{
+  width:90px;
+  font-size:.85rem;
+  color:var(--muted);
+}
+.panel .row input,
+.panel .row textarea,
+.panel .row select{
+  flex:1;
+  font:inherit;
+  border-radius:6px;
+  border:1px solid var(--line);
+  padding:4px 8px;
+}
+.panel .row textarea{min-height:80px}
+.panel .foot{
+  display:flex;gap:8px;justify-content:flex-end;
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+}
+
+/* フッター */
+.footer-links{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0;
+}
+.footer-links a{
+  color:#444;text-decoration:none;
+  padding:4px 6px;border-radius:8px;
+}
+.footer-links a:hover{background:rgba(0,0,0,.05)}
+.footer-links .sep{color:#bbb}
+footer{
+  margin-top:26px;
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+.copyright{
+  border-top:1px solid var(--line);
+  color:#777;padding:12px 0;
+  font-size:.88rem;
+}
+
+/* スマホ */
+@media (max-width:768px){
+  td.col-venue{display:none}
+  .header-inner{flex-wrap:wrap}
+}
+
+.page-last-update{
+  margin:16px 0 0;
+  color:var(--muted,#666);
+  font-size:.85rem;
+  text-align:right;
+}
+
+</style>
+<link rel="stylesheet" href="./assets:/worldclass.css">
+</head>
+<body>
+<header class="site">
+  <div class="container header-inner">
+    <a class="logo" href="index.html">
+      <span class="logo-mark"></span><span>長峰実央</span>
+    </a>
+    <div class="actions" style="margin-left:auto">
+      <a class="btn" href="history.html">履歴</a>
+      <a class="btn" href="units_sheet.html">取得単位</a>
+      <a class="btn" href="comments.html">論文のコメント</a>
+      <a class="btn" href="albums.html">アルバム</a>
+      <a class="btn primary" href="media.html">メディア</a>
+      <a class="btn" href="links.html">リンク集</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <h1>メディア・取材</h1>
+  <div class="section-note">取材記事・動画・外部サイト掲載などを一覧で管理します。</div>
+
+  <div class="tools-row">
+    <button class="btn sm" id="btn-add">＋ メディア追加</button>
+    <button class="btn sm" id="btn-export">エクスポート</button>
+    <label class="btn sm">
+      インポート
+      <input id="btn-import" type="file" accept="application/json" hidden>
+    </label>
+  </div>
+
+  <div class="filters">
+    <input id="q" placeholder="検索（タイトル／媒体名／メモ）">
+    <select id="f-kind">
+      <option value="">種類（すべて）</option>
+      <option>記事</option>
+      <option>動画</option>
+      <option>取材</option>
+      <option>ラジオ</option>
+      <option>その他</option>
+    </select>
+    <button class="btn-search" onclick="applyFilters()">検索</button>
+    <button class="btn" onclick="resetFilters()">クリア</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="list">
+      <thead>
+        <tr>
+          <th class="col-date">日付</th>
+          <th class="col-kind">種類</th>
+          <th>タイトル</th>
+          <th class="col-venue">媒体</th>
+          <th class="col-actions">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-media"></tbody>
+    </table>
+  </div>
+  <div id="empty" class="empty-msg"></div>
+  <div class="page-last-update">Last update: <span id="last-update">—</span></div>
+</main>
+
+<footer>
+  <div class="container footer-links" id="footer-links"></div>
+  <div class="container copyright">© 2025–<span class="copyright-year"></span> Mao Nagamine</div>
+</footer>
+
+<!-- 編集パネル -->
+<div id="panel" class="panel" aria-hidden="true">
+  <div class="inner" role="dialog" aria-modal="true" aria-labelledby="p-title">
+    <header>
+      <div id="p-title" class="title">メディア編集</div>
+      <button class="btn sm" id="p-close">閉じる</button>
+    </header>
+    <div class="body">
+      <div class="row"><label>タイトル</label><input id="f-title"></div>
+      <div class="row"><label>日付</label><input id="f-date" placeholder="YYYY-MM-DD / 年度など"></div>
+      <div class="row"><label>種類</label>
+        <select id="f-kind">
+          <option>記事</option>
+          <option>動画</option>
+          <option>取材</option>
+          <option>ラジオ</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="row"><label>媒体</label><input id="f-venue" placeholder="○○新聞 / ○○TV / YouTube など"></div>
+      <div class="row"><label>URL</label><input id="f-url" placeholder="外部リンク（任意）"></div>
+      <div class="row"><label>メモ</label><textarea id="f-note" placeholder="内容や補足など"></textarea></div>
+    </div>
+    <div class="foot">
+      <button class="btn" id="p-del" style="margin-right:auto">削除</button>
+      <button class="btn primary" id="p-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== フッター ===== */
+const FOOTER_LINKS=[
+  {label:'ホーム',href:'index.html'},
+  {label:'履歴',href:'history.html'},
+  {label:'取得単位',href:'units_sheet.html'},
+  {label:'論文のコメント',href:'comments.html'},
+  {label:'メディア',href:'media.html'},
+  {label:'アルバム',href:'albums.html'},
+  {label:'リンク集',href:'links.html'},
+  {label:'お問い合わせ',href:'mailto:nagamine.mao.d9@elms.hokudai.ac.jp'}
+];
+function renderFooter(){
+  const nav=document.getElementById('footer-links'); if(!nav) return;
+  nav.innerHTML = FOOTER_LINKS.map((x,i)=>`
+    <a href="${x.href}" ${x.target?`target="${x.target}" rel="noopener"`:''}>${x.label}</a>
+    ${i<FOOTER_LINKS.length-1?'<span class="sep">/</span>':''}
+  `).join('');
+}
+
+/* ===== データ ===== */
+const LS = 'media_items_v1';
+const load = ()=>{try{return JSON.parse(localStorage.getItem(LS)||'[]')}catch(_){return[]}};
+const save = arr => localStorage.setItem(LS, JSON.stringify(arr));
+const uid  = ()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
+const esc  = s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===== フィルタ ===== */
+function applyFilters(){
+  const q=(document.getElementById('q')?.value||'').trim();
+  const kind=document.getElementById('f-kind')?.value||'';
+  sessionStorage.setItem('media_q', q);
+  sessionStorage.setItem('media_kind', kind);
+  render();
+}
+function resetFilters(){
+  sessionStorage.removeItem('media_q');
+  sessionStorage.removeItem('media_kind');
+  if(document.getElementById('q')) document.getElementById('q').value='';
+  if(document.getElementById('f-kind')) document.getElementById('f-kind').value='';
+  render();
+}
+
+/* ===== 行 HTML ===== */
+function rowHTML(x){
+  const link = x.url
+    ? `<div class="small"><a href="${esc(x.url)}" target="_blank" rel="noopener">外部リンク</a></div>`
+    : '';
+  const note = x.note ? `<div class="small">${esc(x.note)}</div>` : '';
+  return `<tr>
+    <td class="col-date">${esc(x.date||'')}</td>
+    <td class="col-kind">${esc(x.kind||'')}</td>
+    <td>
+      <div class="title-cell">${esc(x.title||'(無題)')}</div>
+      ${note}
+      ${link}
+    </td>
+    <td class="col-venue">${esc(x.venue||'')}</td>
+    <td class="col-actions">
+      <button class="btn sm" onclick="editMedia('${x.id}')">編集</button>
+      <button class="btn sm" onclick="delMedia('${x.id}')">削除</button>
+    </td>
+  </tr>`;
+}
+
+/* ===== レンダリング ===== */
+function render(){
+  const arr=load();
+  const qSaved = sessionStorage.getItem('media_q')||'';
+  const kindSaved = sessionStorage.getItem('media_kind')||'';
+
+  if(document.getElementById('q')) document.getElementById('q').value = qSaved;
+  if(document.getElementById('f-kind')) document.getElementById('f-kind').value = kindSaved;
+
+  const q = qSaved.toLowerCase();
+  const kind = kindSaved;
+
+  let list = arr.filter(x=>{
+    if(q){
+      const hay = [
+        x.title,x.venue,x.note,x.date,x.kind
+      ].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    if(kind && x.kind!==kind) return false;
+    return true;
+  });
+
+  // 新しい順（date → updated）
+  list.sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.updated||'').localeCompare(a.updated||''));
+
+  const tbody=document.getElementById('tbody-media');
+  const empty=document.getElementById('empty');
+  tbody.innerHTML = list.map(rowHTML).join('');
+  empty.textContent =
+    list.length ? '' :
+    (arr.length
+      ? '検索条件に一致するメディアがありません。'
+      : 'まだメディアが登録されていません。「＋ メディア追加」から登録してください。');
+}
+
+/* ===== 編集パネル ===== */
+let editingId = null;
+
+function openPanel(obj){
+  const p=document.getElementById('panel');
+  p.style.display='flex';
+  p.setAttribute('aria-hidden','false');
+
+  const fTitle=document.getElementById('f-title');
+  const fDate=document.getElementById('f-date');
+  const fKind=document.getElementById('f-kind');
+  const fVenue=document.getElementById('f-venue');
+  const fUrl=document.getElementById('f-url');
+  const fNote=document.getElementById('f-note');
+
+  const m = obj || {};
+  fTitle.value = m.title || '';
+  fDate.value  = m.date || '';
+  fKind.value  = m.kind || '記事';
+  fVenue.value = m.venue || '';
+  fUrl.value   = m.url || '';
+  fNote.value  = m.note || '';
+}
+
+function closePanel(){
+  const p=document.getElementById('panel');
+  p.style.display='none';
+  p.setAttribute('aria-hidden','true');
+  editingId=null;
+}
+
+document.getElementById('p-close').onclick = closePanel;
+
+document.getElementById('p-save').onclick = ()=>{
+  const now=new Date().toISOString();
+  const title=document.getElementById('f-title').value;
+  const date =document.getElementById('f-date').value;
+  const kind =document.getElementById('f-kind').value;
+  const venue=document.getElementById('f-venue').value;
+  const url  =document.getElementById('f-url').value;
+  const note =document.getElementById('f-note').value;
+
+  const arr=load();
+  if(editingId){
+    const i=arr.findIndex(x=>x.id===editingId);
+    if(i>=0){
+      arr[i]={...arr[i],title,date,kind,venue,url,note,updated:now};
+    }
+  }else{
+    arr.unshift({id:uid(),title,date,kind,venue,url,note,created:now,updated:now});
+  }
+  save(arr);
+  closePanel();
+  render();
+};
+
+document.getElementById('p-del').onclick = ()=>{
+  if(!editingId) return;
+  if(!confirm('このメディアを削除しますか？')) return;
+  const arr=load().filter(x=>x.id!==editingId);
+  save(arr);
+  closePanel();
+  render();
+};
+
+/* ===== 行操作 ===== */
+function editMedia(id){
+  const arr=load();
+  const m=arr.find(x=>x.id===id);
+  if(!m) return;
+  editingId=id;
+  openPanel(m);
+}
+function delMedia(id){
+  if(!confirm('このメディアを削除しますか？')) return;
+  const arr=load().filter(x=>x.id!==id);
+  save(arr);
+  render();
+}
+
+/* ===== エクスポート / インポート ===== */
+document.getElementById('btn-export').onclick = ()=>{
+  const blob=new Blob([JSON.stringify(load(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='media_items.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById('btn-import').onchange = async e=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  const text=await f.text();
+  const obj=JSON.parse(text);
+  const arr = Array.isArray(obj) ? obj : (Array.isArray(obj.items)?obj.items:null);
+  if(!arr){ alert('配列形式のJSONではありません'); return; }
+  save(arr);
+  render();
+};
+
+/* ===== 初期化 ===== */
+document.getElementById('btn-add').onclick = ()=>{
+  editingId=null;
+  openPanel(null);
+};
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderFooter();
+  render();
+});
+</script>
+
+<script>
+/* ===== Last update: GitHub の各HTML最終commit日を自動表示 ===== */
+const PAGE_FILE_FOR_UPDATE = "media.html";
+
+async function setPageLastUpdate(){
+  const box = document.getElementById("last-update");
+  if(!box) return;
+
+  const cacheKey = `page_last_update:${PAGE_FILE_FOR_UPDATE}`;
+
+  try{
+    const cached = sessionStorage.getItem(cacheKey);
+    if(cached){
+      box.textContent = cached;
+      return;
+    }
+
+    const api =
+      `https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=${encodeURIComponent(PAGE_FILE_FOR_UPDATE)}&per_page=1`;
+
+    const res = await fetch(api, {
+      headers: { "Accept":"application/vnd.github+json" }
+    });
+
+    if(!res.ok) throw new Error("GitHub API error");
+
+    const data = await res.json();
+    const iso = data?.[0]?.commit?.committer?.date;
+    if(!iso) throw new Error("No commit date");
+
+    const d = new Date(iso);
+    const value =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+    box.textContent = value;
+    sessionStorage.setItem(cacheKey, value);
+
+  }catch(_){
+    const d = new Date(document.lastModified);
+    if(Number.isNaN(d.getTime())){
+      box.textContent = "—";
+      return;
+    }
+
+    box.textContent =
+      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", setPageLastUpdate);
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll(".copyright-year").forEach(el=>{
+    el.textContent = new Date().getFullYear();
+  });
+});
+</script>
+
+</body>
+</html>
