@@ -1,0 +1,197 @@
+/* ===== FANZA直系寄せ：白×薄グレー枠×赤、186pxカード、角丸ゼロ、斜めリボン、価格行、星#FFC800、右サイドランキング ===== */
+:root{
+  --brand:#e60033; --brand-d:#cc002d;
+  --ink:#222; --muted:#666; --line:#e8e8e8; --bg:#f6f7f8; --card:#fff;
+  --gap:12px; --shadow:0 4px 14px rgba(0,0,0,.06); --star:#FFC800;
+  --w-kind: 320px;  
+}
+*{box-sizing:border-box} html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.65 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif}
+a{color:inherit;text-decoration:none} img{display:block;max-width:100%;height:auto}
+.container{max-width:1200px;margin:0 auto;padding:0 14px}
+
+/* Header */
+header.site{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+.header-inner{display:flex;align-items:center;gap:12px;padding:10px 0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--brand)}
+.logo-mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#ff4a6e,var(--brand))}
+.search{flex:1;display:flex;align-items:center;gap:8px}
+.search input{flex:1;height:40px;border:1px solid var(--line);border-radius:999px;padding:0 44px 0 14px;outline:none;background:#fff}
+.search .go{margin-left:-42px;width:36px;height:36px;border-radius:50%;border:0;background:var(--brand);cursor:pointer}
+.actions{display:flex;gap:8px}
+.btn{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* Category chips */
+nav.primary{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.navwrap{display:flex;gap:8px;overflow:auto;scrollbar-width:none;padding:8px 0}
+.navwrap::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff}
+.chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* Hero */
+.hero{margin:16px 0}
+.slides{position:relative;height:280px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .35s ease}
+.slide.active{opacity:1}
+.slide .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.slide .content{position:absolute;inset:0;display:grid;align-items:center}
+.panel{max-width:540px;margin-left:28px;background:rgba(255,255,255,.92);border:1px solid var(--line);backdrop-filter:saturate(1.1) blur(4px);border-radius:10px;padding:14px}
+.panel h2{margin:.2em 0 .3em;font-size:1.28rem}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.78rem;padding:.2rem .5rem;border:1px solid var(--line);border-radius:999px;background:#fff;color:#444}
+.dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#c9c9c9}
+.dot.active{background:#444}
+
+/* ==== メイン2カラム（左：コンテンツ／右：ランキング固定） */
+.layout{display:grid;grid-template-columns:1fr 300px;gap:16px}
+@media (max-width: 1000px){.layout{grid-template-columns:1fr}}
+.aside{position:sticky;top:86px;height:fit-content}
+.box{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px;box-shadow:var(--shadow)}
+
+/* Sections */
+section{margin:24px 0}
+section h3{margin:0 0 10px;font-size:1.05rem}
+
+/* ===== Cards：186px固定、角丸ゼロ、3:4、斜めリボン、価格行、星 ===== */
+.rail{display:flex;gap:var(--gap);overflow:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+.rail::-webkit-scrollbar{height:10px}
+.card{
+  scroll-snap-align:start;width:186px;background:var(--card);
+  border:1px solid var(--line);border-radius:0;overflow:hidden;box-shadow:var(--shadow);
+  transition:transform .12s ease, border-color .12s ease
+}
+.card:hover{transform:translateY(-2px);border-color:#ddd}
+.thumb{position:relative;aspect-ratio:3/4;background:#fafafa}
+.thumb img{width:100%;height:100%;object-fit:cover;transform:scale(1);transition:transform .18s ease}
+.card:hover .thumb img{transform:scale(1.03)}
+
+/* 斜めリボン（左上） */
+.ribbon{
+  position:absolute;top:10px;left:-38px;width:150px;text-align:center;
+  transform:rotate(-20deg);background:var(--brand);color:#fff;
+  font-weight:800;font-size:.74rem;padding:5px 0;letter-spacing:.5px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15)
+}
+
+/* タイトル2行省略（標準line-clampも併記） */
+.meta{padding:9px}
+.title{
+  font-weight:700;line-height:1.35;overflow:hidden;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+  line-clamp:2;  /* 将来用 */
+  min-height:2.6em;
+}
+.sub{color:var(--muted);font-size:.86rem;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 価格行（今・旧・OFF%） */
+.price{display:flex;align-items:baseline;gap:6px;margin-top:6px}
+.now{color:var(--brand);font-weight:800}
+.old{text-decoration:line-through;color:#999;font-size:.9rem}
+.off{color:#d22;font-size:.9rem}
+
+/* 星（#FFC800／ハーフ対応） */
+.rating{margin-top:4px;font-size:.92rem}
+.rating .star{color:var(--star)}
+.rating .empty{color:#ddd}
+.rating .half{position:relative;display:inline-block;color:#ddd}
+.rating .half::before{content:'★';position:absolute;inset:0;width:50%;overflow:hidden;color:var(--star)}
+.rev{color:#999;font-size:.85rem;margin-left:6px}
+
+/* 操作ボタン */
+.actions-row{display:flex;gap:6px;margin-top:6px}
+.mini{flex:1;text-align:center;padding:6px 8px;font-size:.9rem;border:1px solid var(--line);background:#fff;cursor:pointer}
+.mini.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* Grid（一覧） */
+.grid{display:grid;grid-template-columns:repeat(6,186px);gap:var(--gap)}
+@media (max-width:1180px){.grid{grid-template-columns:repeat(5,186px)}}
+@media (max-width:980px){.grid{grid-template-columns:repeat(4,186px)}}
+@media (max-width:770px){.grid{grid-template-columns:repeat(3,186px)}}
+@media (max-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+
+/* Ranking（右サイド：赤丸順位＋価格右寄せ） */
+.ranking{display:grid;gap:10px}
+.rankitem{
+  display:grid;grid-template-columns:42px 1fr 88px;gap:10px;align-items:center;
+  background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px;box-shadow:var(--shadow)
+}
+.ranknum{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800}
+.rankmeta .title{font-weight:700}
+.rankprice{color:var(--brand);font-weight:800;text-align:right}
+
+/* Tables（units.html） */
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:var(--shadow)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;background:#fff}
+th,td{padding:10px;border-bottom:1px solid var(--line)}
+thead th{position:sticky;top:0;background:#fafafa;text-align:left}
+tbody tr:hover{background:#fcfcfc}
+
+/* Timeline（history.html） */
+.timeline{display:grid;gap:10px}
+.tl-item{
+  display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:start;
+  background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px;box-shadow:var(--shadow)
+}
+.tl-date{color:#444;font-weight:700}
+@media (max-width:880px){.tl-item{grid-template-columns:1fr}}
+
+/* Footer */
+footer{margin-top:26px;background:#fff;border-top:1px solid var(--line)}
+.footgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:18px 0}
+.footgrid a{display:block;color:#555;margin:6px 0;font-size:.94rem}
+@media (max-width:900px){.footgrid{grid-template-columns:1fr 1fr}}
+.copyright{border-top:1px solid var(--line);color:#777;padding:12px 0;font-size:.88rem}
+
+/* レールでは186px固定、グリッドでは幅100%で整列 */
+.rail .card { width:186px; }
+.grid .card { width:100%; }
+
+/* カードの縦レイアウト安定（ボタンを最下段に） */
+.card{ display:flex; flex-direction:column; }
+.meta{ display:flex; flex-direction:column; }
+.actions-row{ margin-top:auto; }
+
+/* 画像が無くても崩れない3:4プレースホルダ */
+.thumb{ position:relative; aspect-ratio:3/4; background:#f4f4f4; }
+.thumb img{ position:relative; z-index:1; width:100%; height:100%; object-fit:cover; }
+.thumb::before{ content:""; position:absolute; inset:0; background:linear-gradient(135deg,#f0f0f0,#e6e6e6); }
+
+/* タイトル2行、省略表記の互換（line-clamp 併記） */
+.title{
+  overflow:hidden;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+  line-clamp:2; min-height:2.6em;
+}
+
+/* ランキングの長文対策 */
+.rankmeta .title{
+  overflow:hidden;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+  line-clamp:2;
+}
+
+
+
+
+/* --- Footer Links 共通化 --- */
+.footer-links a,
+.footer-links a:link,
+.footer-links a:visited,
+.footer-links a:hover,
+.footer-links a:active {
+  color:#222;
+  text-decoration:none;
+}
+.footer-links a:hover {
+  background:rgba(0,0,0,.05);
+}
+.footer-links .sep { color:#bbb; }
+
+
+
+
+
+
+[id]{ scroll-margin-top: 90px; } /* ヘッダー分ずらす */
