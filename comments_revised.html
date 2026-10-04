@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>論文コメント — 長峰実央</title>
+<meta name="description" content="長峰実央の論文について、概要・補足コメント・関連リンクを掲載しています。">
+
+<style>
+:root{
+  --brand:#e60033;
+  --brand-d:#cc002d;
+  --ink:#222;
+  --muted:#666;
+  --line:#e8e8e8;
+  --bg:#f6f7f8;
+  --card:#fff;
+  --soft:#fff5f7;
+  --shadow:0 4px 14px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:14px/1.7 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",sans-serif;
+}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+.container{max-width:1000px;margin:0 auto;padding:0 14px}
+
+/* header */
+header.site{
+  position:sticky;
+  top:0;
+  z-index:60;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  color:var(--brand);
+  white-space:nowrap;
+}
+.logo-mark{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#ff4a6e,var(--brand));
+}
+.actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.btn{
+  min-height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:#222;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.btn:hover{border-color:#cfcfcf}
+.btn.primary{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+
+/* main */
+main.container{margin:18px auto 30px}
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.page-head h1{
+  margin:0;
+  font-size:1.4rem;
+}
+.page-note{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.back-link{
+  color:var(--brand);
+  font-size:.9rem;
+  font-weight:700;
+}
+
+/* search */
+.search-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:14px 0 16px;
+}
+.search-row input{
+  flex:1;
+  min-width:230px;
+  height:40px;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.search-row select{
+  height:40px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.search-row button{
+  height:40px;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  cursor:pointer;
+}
+.search-row .search-btn{
+  background:var(--brand);
+  color:#fff;
+  border-color:var(--brand);
+}
+
+/* cards */
+.paper-list{
+  display:grid;
+  gap:14px;
+}
+.paper-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.paper-head{
+  padding:16px 16px 12px;
+  border-bottom:1px solid #f1f1f1;
+}
+.paper-title-line{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+.paper-title{
+  margin:0;
+  font-size:1.08rem;
+  line-height:1.5;
+}
+.paper-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:1px 8px;
+  border-radius:999px;
+  border:1px solid #ffd0da;
+  background:var(--soft);
+  color:var(--brand);
+  font-size:.76rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.paper-authors{
+  margin-top:5px;
+  color:#444;
+}
+.paper-meta{
+  display:flex;
+  gap:8px 14px;
+  flex-wrap:wrap;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:.86rem;
+}
+.paper-body{
+  padding:14px 16px 16px;
+}
+.comment-label{
+  margin:0 0 6px;
+  font-weight:900;
+  font-size:.9rem;
+}
+.paper-comment{
+  white-space:pre-line;
+  line-height:1.85;
+}
+.no-comment{
+  color:var(--muted);
+  font-style:italic;
+}
+.paper-links{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.paper-links a{
+  min-height:32px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:#fff;
+  display:inline-flex;
+  align-items:center;
+  font-size:.84rem;
+  font-weight:700;
+}
+.paper-links a:hover{
+  color:var(--brand);
+  border-color:var(--brand);
+}
+.paper-anchor{
+  scroll-margin-top:80px;
+}
+
+/* state */
+.state{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  color:var(--muted);
+}
+.state.error{
+  background:#fff5f7;
+  border-color:#f0c7d0;
+  color:#9b001d;
+}
+
+/* footer */
+footer{
+  margin-top:30px;
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+.footer-links{
+  padding:12px 0;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.footer-links a:hover{color:var(--brand)}
+.sep{color:#bbb}
+.copyright{
+  border-top:1px solid var(--line);
+  padding:12px 0;
+  color:#777;
+  font-size:.85rem;
+}
+
+@media(max-width:760px){
+  .header-inner{
+    flex-wrap:wrap;
+    align-items:stretch;
+  }
+  .logo{width:100%}
+  .actions{
+    width:100%;
+    margin-left:0;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .actions::-webkit-scrollbar{display:none}
+  .actions .btn{flex:0 0 auto}
+
+  .search-row input{min-width:100%}
+  .search-row select{flex:1}
+}
+</style>
+</head>
+
+<body>
+
+<header class="site">
+  <div class="container header-inner">
+    <a class="logo" href="index.html">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span>長峰実央</span>
+    </a>
+
+    <nav class="actions" aria-label="メインナビゲーション">
+      <a class="btn" href="history.html">CV</a>
+      <a class="btn primary" href="comments.html" aria-current="page">論文コメント</a>
+      <a class="btn" href="units.html">取得単位</a>
+      <a class="btn" href="lecture.html">講義情報</a>
+      <a class="btn" href="links.html">リンク集</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div>
+      <h1>論文コメント</h1>
+      <div class="page-note">自身の論文について、概要・補足・関連リンクを掲載しています。</div>
+    </div>
+    <a class="back-link" href="history.html">← CVへ戻る</a>
+  </div>
+
+  <div id="filters" class="search-row">
+    <input id="q" type="search" placeholder="検索（タイトル／著者／掲載誌／コメント）" aria-label="論文コメントを検索">
+    <select id="status-filter" aria-label="ステータスで絞り込み">
+      <option value="">状態（すべて）</option>
+    </select>
+    <button class="search-btn" type="button" onclick="applyFilters()">検索</button>
+    <button type="button" onclick="clearFilters()">クリア</button>
+  </div>
+
+  <div id="state" class="state">論文情報を読み込んでいます…</div>
+  <div id="paper-list" class="paper-list" hidden></div>
+</main>
+
+<footer>
+  <div class="container footer-links" id="footer-links"></div>
+  <div class="container copyright">
+    © 2025–<span id="copyright-year"></span> Mao Nagamine
+  </div>
+</footer>
+
+<script>
+const SPREADSHEET_ID = "1uV2Rdpa86KHv92NxBBcDZY1UI0V8dScUHtMbWanX2ks";
+const SHEET_NAME = "history";
+const SHEET_URL = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${encodeURIComponent(SHEET_NAME)}`;
+
+let PAPERS = [];
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[ch]));
+}
+
+function safeUrl(value){
+  const raw = String(value ?? "").trim();
+  if(!raw) return "";
+  try{
+    const u = new URL(raw, location.href);
+    return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
+  }catch(_){
+    return "";
+  }
+}
+
+function paperKey(x){
+  return String(x.id || x.title || "").trim();
+}
+
+function linkButton(url,label){
+  const href = safeUrl(url);
+  if(!href) return "";
+  return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`;
+}
+
+function paperHTML(x,index){
+  const key = paperKey(x);
+  const source = safeUrl(x.url);
+
+  const links = [
+    source ? linkButton(source,"論文ページ") : "",
+    linkButton(x.arxiv,"arXiv"),
+    linkButton(x.doi,"DOI")
+  ].filter(Boolean).join("");
+
+  return `
+    <article class="paper-card paper-anchor" id="paper-${esc(key)}" data-key="${esc(key)}">
+      <div class="paper-head">
+        <div class="paper-title-line">
+          <h2 class="paper-title">${esc(x.title || "(無題)")}</h2>
+          ${x.status ? `<span class="paper-status">${esc(x.status)}</span>` : ""}
+        </div>
+
+        ${x.authors ? `<div class="paper-authors">${esc(x.authors)}</div>` : ""}
+
+        <div class="paper-meta">
+          ${x.date ? `<span>${esc(x.date)}</span>` : ""}
+          ${x.venue ? `<span>${esc(x.venue)}</span>` : ""}
+        </div>
+      </div>
+
+      <div class="paper-body">
+        <div class="comment-label">コメント</div>
+        ${x.comment
+          ? `<div class="paper-comment">${esc(x.comment)}</div>`
+          : `<div class="no-comment">コメントはまだ登録されていません。</div>`}
+
+        ${links ? `<div class="paper-links">${links}</div>` : ""}
+      </div>
+    </article>`;
+}
+
+async function loadPapers(){
+  const state = document.getElementById("state");
+
+  try{
+    const res = await fetch(SHEET_URL, {cache:"no-store"});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    PAPERS = data.filter(x => x.type === "paper");
+
+    fillStatusFilter();
+    render();
+
+  }catch(err){
+    console.error(err);
+    state.textContent = "論文情報の読み込みに失敗しました。ページを再読み込みしてください。";
+    state.className = "state error";
+    state.hidden = false;
+    document.getElementById("paper-list").hidden = true;
+  }
+}
+
+function fillStatusFilter(){
+  const select = document.getElementById("status-filter");
+  const statuses = [...new Set(
+    PAPERS.map(x => String(x.status || "").trim()).filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b,"ja"));
+
+  select.innerHTML =
+    `<option value="">状態（すべて）</option>` +
+    statuses.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");
+}
+
+function applyFilters(){
+  sessionStorage.setItem("paper_comment_q", document.getElementById("q").value.trim());
+  sessionStorage.setItem("paper_comment_status", document.getElementById("status-filter").value);
+  render();
+}
+
+function clearFilters(){
+  sessionStorage.removeItem("paper_comment_q");
+  sessionStorage.removeItem("paper_comment_status");
+  document.getElementById("q").value = "";
+  document.getElementById("status-filter").value = "";
+  history.replaceState(null,"",location.pathname);
+  render();
+}
+
+function render(){
+  const list = document.getElementById("paper-list");
+  const state = document.getElementById("state");
+
+  const params = new URLSearchParams(location.search);
+  const requestedId = (params.get("id") || "").trim();
+
+  let rows = PAPERS.slice();
+
+  if(requestedId){
+    rows = rows.filter(x =>
+      paperKey(x) === requestedId ||
+      String(x.title || "").trim() === requestedId
+    );
+    document.getElementById("filters").style.display = "none";
+  }else{
+    document.getElementById("filters").style.display = "";
+
+    const q = (sessionStorage.getItem("paper_comment_q") || "").trim().toLowerCase();
+    const status = (sessionStorage.getItem("paper_comment_status") || "").trim();
+
+    document.getElementById("q").value = q;
+    document.getElementById("status-filter").value = status;
+
+    rows = rows.filter(x=>{
+      if(status && String(x.status || "").trim() !== status) return false;
+      if(!q) return true;
+
+      const hay = [
+        x.title,x.authors,x.venue,x.date,x.status,x.comment
+      ].join(" ").toLowerCase();
+
+      return hay.includes(q);
+    });
+  }
+
+  if(!rows.length){
+    list.innerHTML = "";
+    list.hidden = true;
+    state.textContent = requestedId
+      ? "指定された論文が見つかりませんでした。"
+      : "一致する論文がありません。";
+    state.className = "state";
+    state.hidden = false;
+    return;
+  }
+
+  list.innerHTML = rows.map(paperHTML).join("");
+  list.hidden = false;
+  state.hidden = true;
+
+  if(requestedId){
+    const first = list.querySelector(".paper-card");
+    if(first){
+      document.title = `${first.querySelector(".paper-title")?.textContent || "論文"} — 論文コメント`;
+    }
+  }
+}
+
+document.getElementById("q").addEventListener("keydown", e=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    applyFilters();
+  }
+});
+
+const FOOTER_LINKS = [
+  {label:"ホーム",href:"index.html"},
+  {label:"CV",href:"history.html"},
+  {label:"論文コメント",href:"comments.html"},
+  {label:"取得単位",href:"units.html"},
+  {label:"講義情報",href:"lecture.html"},
+  {label:"リンク集",href:"links.html"}
+];
+
+function renderFooter(){
+  const box = document.getElementById("footer-links");
+  box.innerHTML = FOOTER_LINKS.map((x,i)=>`
+    <a href="${esc(x.href)}">${esc(x.label)}</a>
+    ${i < FOOTER_LINKS.length-1 ? '<span class="sep">/</span>' : ''}
+  `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("copyright-year").textContent = new Date().getFullYear();
+  renderFooter();
+  loadPapers();
+});
+</script>
+
+</body>
+</html>
