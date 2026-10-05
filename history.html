@@ -537,6 +537,97 @@ header.site .actions .btn{
   }
 }
 
+
+/* ===== CV HEADER FINAL ALIGNMENT ===== */
+header.site .header-inner{
+  max-width:1200px !important;
+  width:100% !important;
+  margin:0 auto !important;
+  padding-left:14px !important;
+  padding-right:14px !important;
+  display:flex !important;
+  align-items:center !important;
+}
+header.site .logo{
+  flex:0 0 auto !important;
+}
+header.site .actions{
+  margin-left:auto !important;
+  width:auto !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:8px !important;
+  flex-wrap:nowrap !important;
+}
+header.site .actions .btn{
+  flex:0 0 auto !important;
+  width:auto !important;
+  white-space:nowrap !important;
+}
+@media (max-width:780px){
+  header.site .header-inner{
+    flex-wrap:wrap !important;
+    padding:8px 12px !important;
+  }
+  header.site .logo{
+    width:100% !important;
+  }
+  header.site .actions{
+    width:100% !important;
+    margin-left:0 !important;
+    justify-content:flex-start !important;
+    overflow-x:auto !important;
+    flex-wrap:nowrap !important;
+    scrollbar-width:none;
+  }
+  header.site .actions::-webkit-scrollbar{display:none}
+}
+
+
+/* ===== UNIFIED FOOTER ===== */
+footer{
+  margin-top:26px;
+  background:#fff;
+  border-top:1px solid var(--line,#e8e8e8);
+}
+footer .footer-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  padding:10px 0;
+}
+footer .footer-links a{
+  color:#444;
+  text-decoration:none;
+  padding:4px 6px;
+  border-radius:8px;
+}
+footer .footer-links a:hover{
+  background:rgba(0,0,0,.05);
+  color:var(--brand,#e60033);
+}
+footer .footer-links .sep,
+footer .sep{
+  color:#bbb;
+}
+footer .copyright{
+  border-top:1px solid var(--line,#e8e8e8);
+  color:#777;
+  padding:12px 0;
+  font-size:.86rem;
+}
+@media (max-width:780px){
+  footer .footer-links{
+    gap:5px;
+    line-height:1.9;
+  }
+  footer .footer-links a{
+    padding:3px 4px;
+  }
+}
+
 </style>
 </head>
 
@@ -548,7 +639,6 @@ header.site .actions .btn{
       <span class="logo-mark" aria-hidden="true"></span>
       <span>長峰実央</span>
     </a>
-
     <nav class="actions" aria-label="メインナビゲーション">
       <a class="btn primary" href="history.html" aria-current="page">CV</a>
       <a class="btn" href="units.html">取得単位</a>
@@ -707,7 +797,7 @@ header.site .actions .btn{
 <footer>
   <div class="container footer-links" id="footer-links"></div>
   <div class="container copyright">
-    © 2025–<span id="copyright-year"></span> Mao Nagamine
+    © 2025–<span class="copyright-year"></span> Mao Nagamine
   </div>
 </footer>
 
@@ -1065,12 +1155,12 @@ async function setLastUpdate(){
 /* ---------- footer ---------- */
 
 const FOOTER_LINKS = [
-  {label:"ホーム",href:"index.html"},
-  {label:"CV",href:"history.html"},
-  {label:"論文コメント",href:"comments.html"},
-  {label:"取得単位",href:"units.html"},
-  {label:"講義情報",href:"lecture.html"},
-  {label:"リンク集",href:"links.html"}
+  {label:'ホーム',href:'index.html'},
+  {label:'CV',href:'history.html'},
+  {label:'取得単位',href:'units.html'},
+  {label:'講義情報',href:'lecture.html'},
+  {label:'論文コメント',href:'comments.html'},
+  {label:'リンク集',href:'links.html'}
 ];
 
 function renderFooter(){
@@ -1089,6 +1179,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
   renderFooter();
   setLastUpdate();
   render();
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll(".copyright-year").forEach(el=>{
+    el.textContent = new Date().getFullYear();
+  });
 });
 </script>
 

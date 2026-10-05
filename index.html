@@ -753,6 +753,50 @@ header.site .actions .btn{
   }
 }
 
+
+/* ===== UNIFIED FOOTER ===== */
+footer{
+  margin-top:26px;
+  background:#fff;
+  border-top:1px solid var(--line,#e8e8e8);
+}
+footer .footer-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  padding:10px 0;
+}
+footer .footer-links a{
+  color:#444;
+  text-decoration:none;
+  padding:4px 6px;
+  border-radius:8px;
+}
+footer .footer-links a:hover{
+  background:rgba(0,0,0,.05);
+  color:var(--brand,#e60033);
+}
+footer .footer-links .sep,
+footer .sep{
+  color:#bbb;
+}
+footer .copyright{
+  border-top:1px solid var(--line,#e8e8e8);
+  color:#777;
+  padding:12px 0;
+  font-size:.86rem;
+}
+@media (max-width:780px){
+  footer .footer-links{
+    gap:5px;
+    line-height:1.9;
+  }
+  footer .footer-links a{
+    padding:3px 4px;
+  }
+}
+
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head>
@@ -897,12 +941,12 @@ header.site .actions .btn{
 
 <footer>
   <div class="container footer-links">
-    <a href="history.html">CV</a>
-    <a href="units.html">取得単位</a>
-    <a href="lecture.html">講義情報</a>
+    <a href="index.html">ホーム</a><span class="sep">/</span>
+    <a href="history.html">CV</a><span class="sep">/</span>
+    <a href="units.html">取得単位</a><span class="sep">/</span>
+    <a href="lecture.html">講義情報</a><span class="sep">/</span>
+    <a href="comments.html">論文コメント</a><span class="sep">/</span>
     <a href="links.html">リンク集</a>
-    <span class="sep">|</span>
-    <a href="https://www2.sci.hokudai.ac.jp/dept/math/">北大数学科HP</a>
   </div>
   <div class="container copyright">© 2025–<span class="copyright-year"></span> Mao Nagamine</div>
 </footer>

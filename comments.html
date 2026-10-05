@@ -466,6 +466,50 @@ header.site .actions .btn{
   }
 }
 
+
+/* ===== UNIFIED FOOTER ===== */
+footer{
+  margin-top:26px;
+  background:#fff;
+  border-top:1px solid var(--line,#e8e8e8);
+}
+footer .footer-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  padding:10px 0;
+}
+footer .footer-links a{
+  color:#444;
+  text-decoration:none;
+  padding:4px 6px;
+  border-radius:8px;
+}
+footer .footer-links a:hover{
+  background:rgba(0,0,0,.05);
+  color:var(--brand,#e60033);
+}
+footer .footer-links .sep,
+footer .sep{
+  color:#bbb;
+}
+footer .copyright{
+  border-top:1px solid var(--line,#e8e8e8);
+  color:#777;
+  padding:12px 0;
+  font-size:.86rem;
+}
+@media (max-width:780px){
+  footer .footer-links{
+    gap:5px;
+    line-height:1.9;
+  }
+  footer .footer-links a{
+    padding:3px 4px;
+  }
+}
+
 </style>
 </head>
 
@@ -515,7 +559,7 @@ header.site .actions .btn{
 <footer>
   <div class="container footer-links" id="footer-links"></div>
   <div class="container copyright">
-    © 2025–<span id="copyright-year"></span> Mao Nagamine
+    © 2025–<span class="copyright-year"></span> Mao Nagamine
   </div>
 </footer>
 
@@ -709,12 +753,12 @@ document.getElementById("q").addEventListener("keydown", e=>{
 });
 
 const FOOTER_LINKS = [
-  {label:"ホーム",href:"index.html"},
-  {label:"CV",href:"history.html"},
-  {label:"論文コメント",href:"comments.html"},
-  {label:"取得単位",href:"units.html"},
-  {label:"講義情報",href:"lecture.html"},
-  {label:"リンク集",href:"links.html"}
+  {label:'ホーム',href:'index.html'},
+  {label:'CV',href:'history.html'},
+  {label:'取得単位',href:'units.html'},
+  {label:'講義情報',href:'lecture.html'},
+  {label:'論文コメント',href:'comments.html'},
+  {label:'リンク集',href:'links.html'}
 ];
 
 function renderFooter(){
@@ -783,6 +827,15 @@ async function setPageLastUpdate(){
 }
 
 document.addEventListener("DOMContentLoaded", setPageLastUpdate);
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll(".copyright-year").forEach(el=>{
+    el.textContent = new Date().getFullYear();
+  });
+});
 </script>
 
 </body>
