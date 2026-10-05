@@ -467,6 +467,15 @@ footer{
     font-size:.86rem !important;
   }
 }
+
+.btn.disabled{
+  background:#d9d9d9;
+  border-color:#d9d9d9;
+  color:#777;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
 </style>
 </head>
 
@@ -481,9 +490,10 @@ footer{
 
     <nav class="actions" aria-label="メインナビゲーション">
       <a class="btn primary" href="history.html" aria-current="page">CV</a>
-      <a class="btn" href="comments.html">論文コメント</a>
       <a class="btn" href="units.html">取得単位</a>
       <a class="btn" href="lecture.html">講義情報</a>
+      <a class="btn" href="comments.html">論文コメント</a>
+      <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
       <a class="btn" href="links.html">リンク集</a>
     </nav>
   </div>
