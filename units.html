@@ -343,85 +343,28 @@ header.site .actions .btn{
   }
 }
 
-
-/* ===== units search below header ===== */
-.units-search{
-  width:100%;
-  margin:16px 0 6px;
-}
-@media (max-width:780px){
-  .units-search{
-    margin:12px 0 6px;
-  }
-}
-
-
-/* ===== UNIFIED FOOTER ===== */
-footer{
-  margin-top:26px;
-  background:#fff;
-  border-top:1px solid var(--line,#e8e8e8);
-}
-footer .footer-links{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:8px;
-  padding:10px 0;
-}
-footer .footer-links a{
-  color:#444;
-  text-decoration:none;
-  padding:4px 6px;
-  border-radius:8px;
-}
-footer .footer-links a:hover{
-  background:rgba(0,0,0,.05);
-  color:var(--brand,#e60033);
-}
-footer .footer-links .sep,
-footer .sep{
-  color:#bbb;
-}
-footer .copyright{
-  border-top:1px solid var(--line,#e8e8e8);
-  color:#777;
-  padding:12px 0;
-  font-size:.86rem;
-}
-@media (max-width:780px){
-  footer .footer-links{
-    gap:5px;
-    line-height:1.9;
-  }
-  footer .footer-links a{
-    padding:3px 4px;
-  }
-}
-
 </style>
 <link rel="stylesheet" href="./assets:/worldclass.css">
 </head><body>
 <header class="site">
   <div class="container header-inner">
     <a class="logo" href="index.html"><span class="logo-mark"></span><span>長峰実央</span></a>
-    <nav class="actions" aria-label="メインナビゲーション">
+    <form class="search" onsubmit="event.preventDefault(); doSearch()">
+      <input id="q" placeholder="検索（科目名／年度／学期／備考 など）" aria-label="検索">
+      <button type="submit" class="btn-search">検索</button>
+      <button type="button" class="btn-clear" onclick="clearSearch()">クリア</button>
+    </form>
+    <div class="actions">
       <a class="btn" href="history.html">CV</a>
       <a class="btn primary" href="units.html" aria-current="page">取得単位</a>
       <a class="btn" href="lecture.html">講義情報</a>
       <a class="btn" href="comments.html">論文コメント</a>
       <a class="btn disabled" href="javascript:void(0)" aria-disabled="true">Coming Soon</a>
       <a class="btn" href="links.html">リンク集</a>
-    </nav>
-  </div>
+    </div>
 </header>
 
 <main class="container">
-  <form class="search units-search" onsubmit="event.preventDefault(); doSearch()">
-    <input id="q" placeholder="検索（科目名／年度／学期／備考 など）" aria-label="取得単位を検索">
-    <button type="submit" class="btn-search">検索</button>
-    <button type="button" class="btn-clear" onclick="clearSearch()">クリア</button>
-  </form>
   <div class="layout">
     <div>
       <section>
@@ -592,12 +535,11 @@ function exportVisibleCSV(){
 }
 
 const FOOTER_LINKS = [
-  {label:'ホーム',href:'index.html'},
-  {label:'CV',href:'history.html'},
-  {label:'取得単位',href:'units.html'},
-  {label:'講義情報',href:'lecture.html'},
-  {label:'論文コメント',href:'comments.html'},
-  {label:'リンク集',href:'links.html'}
+  {label:'ホーム', href:'index.html'},
+  {label:'履歴', href:'history.html'},
+  {label:'取得単位', href:'units.html'},
+  {label:'リンク集', href:'links.html'},
+  {label:'お問い合わせ', href:'mailto:nagamine.mao.d9@elms.hokudai.ac.jp'}
 ];
 function renderFooter(){
   const nav = document.getElementById('footer-links');
