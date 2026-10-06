@@ -1,0 +1,22 @@
+Last update を Google Sheets の編集日時で更新する設定
+
+1. 対象のGoogleスプレッドシートを開く
+2. 「拡張機能」→「Apps Script」
+3. Code.gs の内容を貼り付けて保存
+4. initializeMeta() を一度だけ実行
+5. 権限を許可
+6. 作成された meta シートはそのまま残す
+
+以後は以下のように動きます。
+
+history.html  : history シート編集で更新
+comments.html : comments シート編集で更新
+units.html    : gid 764664318 のシート編集で更新
+lecture.html  : gid 310774291 または 172887479 のシート編集で更新
+links.html    : gid 1260198082 のシート編集で更新
+index.html    : gid 128329627 の編集、またはサイト全体のシート更新で更新
+
+表示する日付は「Sheet更新日」と「GitHub上のHTML更新日」の新しい方です。
+
+lecture.html の各科目カード内にあった「更新日」は非表示にしてあります。
+comments.html は comments シート参照に変更してあります。

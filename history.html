@@ -1020,46 +1020,111 @@ async function render(){
 
 async function setLastUpdate(){
   const box = document.getElementById("last-update");
+  if(!box) return;
 
-  try{
-    const cacheKey = "history_last_update";
-    const cached = sessionStorage.getItem(cacheKey);
+  const META_URL = "https://opensheet.elk.sh/1uV2Rdpa86KHv92NxBBcDZY1UI0V8dScUHtMbWanX2ks/meta";
+  const PAGE_FILE = "history.html";
+  const TARGET_NAMES = ["history"];
+  const TARGET_GIDS = [];
+  const USE_SITE_FALLBACK = false;
 
-    if(cached){
-      box.textContent = cached;
-      return;
-    }
+  function parseMetaDate(row){
+    const ms = Number(row?.updated_ms);
+    if(Number.isFinite(ms) && ms > 0) return new Date(ms);
 
-    const api =
-      "https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=history.html&per_page=1";
-
-    const res = await fetch(api, {
-      headers: {"Accept":"application/vnd.github+json"}
-    });
-
-    if(!res.ok) throw new Error("GitHub API error");
-
-    const data = await res.json();
-    const iso = data?.[0]?.commit?.committer?.date;
-    if(!iso) throw new Error("更新日を取得できません");
-
-    const d = new Date(iso);
-    const text =
-      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-
-    box.textContent = text;
-    sessionStorage.setItem(cacheKey, text);
-
-  }catch(_){
-    const d = new Date(document.lastModified);
-    if(Number.isNaN(d.getTime())){
-      box.textContent = "—";
-      return;
-    }
-
-    box.textContent =
-      `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const raw = String(row?.updated || "").trim();
+    if(!raw) return null;
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
   }
+
+  function formatJST(date){
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone:"Asia/Tokyo",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit"
+    }).formatToParts(date);
+
+    const v = type => parts.find(p => p.type === type)?.value || "";
+    return `${v("year")}-${v("month")}-${v("day")}`;
+  }
+
+  async function getSheetUpdated(){
+    try{
+      const res = await fetch(`${META_URL}?t=${Date.now()}`, {
+        cache:"no-store"
+      });
+      if(!res.ok) throw new Error("meta sheet error");
+
+      const rows = await res.json();
+
+      const matched = rows.filter(row => {
+        const name = String(row.sheet_name || row.key || row.sheet || "")
+          .trim().toLowerCase();
+        const gid = String(row.gid || row.sheet_id || "").trim();
+
+        return TARGET_NAMES.includes(name) || TARGET_GIDS.includes(gid);
+      });
+
+      let dates = matched.map(parseMetaDate).filter(Boolean);
+
+      if(!dates.length && USE_SITE_FALLBACK){
+        dates = rows
+          .filter(row =>
+            String(row.sheet_name || row.key || row.sheet || "")
+              .trim().toLowerCase() === "site"
+          )
+          .map(parseMetaDate)
+          .filter(Boolean);
+      }
+
+      if(!dates.length) return null;
+      return new Date(Math.max(...dates.map(d => d.getTime())));
+    }catch(_){
+      return null;
+    }
+  }
+
+  async function getGitHubUpdated(){
+    try{
+      const api =
+        `https://api.github.com/repos/sekibun-king/nagamine_mao/commits?path=${encodeURIComponent(PAGE_FILE)}&per_page=1&t=${Date.now()}`;
+
+      const res = await fetch(api, {
+        cache:"no-store",
+        headers:{"Accept":"application/vnd.github+json"}
+      });
+
+      if(!res.ok) return null;
+      const data = await res.json();
+      const iso = data?.[0]?.commit?.committer?.date;
+      if(!iso) return null;
+
+      const d = new Date(iso);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }catch(_){
+      return null;
+    }
+  }
+
+  const [sheetDate, githubDate] = await Promise.all([
+    getSheetUpdated(),
+    getGitHubUpdated()
+  ]);
+
+  const dates = [sheetDate, githubDate].filter(Boolean);
+  if(dates.length){
+    box.textContent = formatJST(
+      new Date(Math.max(...dates.map(d => d.getTime())))
+    );
+    return;
+  }
+
+  const fallback = new Date(document.lastModified);
+  box.textContent = Number.isNaN(fallback.getTime())
+    ? "—"
+    : formatJST(fallback);
 }
 
 /* ---------- footer ---------- */
