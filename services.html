@@ -215,7 +215,7 @@
   // 先に初期表示してからシートを読込むため、通信に時間がかかっても操作できます。
   fetch(SHEET_URL,{cache:'no-store'})
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(rows=>{if(!Array.isArray(rows))throw new Error('Invalid sheet response');if(rows.length)apply(rows);})
+    .then(rows=>{if(!Array.isArray(rows))throw new Error('Invalid sheet response');apply(rows);})
     .catch(err=>console.info('services シート未接続: 初期表示を使用',err));
 })();
 </script>
